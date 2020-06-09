@@ -12,12 +12,12 @@
 #include "G4RunManager.hh"
 #include "G4Event.hh"
 
-// #include <TTree.h>
-// #include <TFile.h>
-// #include <TBits.h>
-// #include <TObjString.h>
-// #include <vector>
-// #include <TXMLEngine.h>
+#include <TTree.h>
+#include <TFile.h>
+#include <TBits.h>
+#include <TObjString.h>
+#include <vector>
+#include <TXMLEngine.h>
 
 //#include "G4SystemOfUnits.hh" // NEW GLOBAL
 
@@ -31,6 +31,8 @@ public :
   ~pCTXML();
     
   G4String GetXMLFileName()     {return fXMLFile;};
+  G4String GetXMLExample()     {return fExample;};
+
   void SetInputs();
 
 private :

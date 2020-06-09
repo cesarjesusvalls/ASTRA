@@ -53,8 +53,8 @@ void pCTXML::XML2String(string tmp_app,string &dest){
         for (uint i = 0; i < line.length(); i++) if (!(line[i] == ' ' && tmp.size() == 0)) tmp += line[i];
     
         tmp = TrimSpaces(tmp); // remove spaces
-        string First = "";//Form("<%s>", tmp_app.c_str());
-        string Last  = "";//Form("</%s>",tmp_app.c_str());
+        string First = Form("<%s>", tmp_app.c_str());
+        string Last  = Form("</%s>",tmp_app.c_str());
      
         if ( tmp == First ){
             begin_tag = true;

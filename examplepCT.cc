@@ -44,6 +44,10 @@
 
 #include "Randomize.hh"
 #include "time.h"
+
+#include "pCTXML.hh"
+#include "pCTRootPersistencyManager.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 int main(int argc,char** argv)
@@ -62,16 +66,37 @@ int main(int argc,char** argv)
     ui = new G4UIExecutive(argc, argv);
   }
 
-  // Optionally: choose a different Random engine...
-  // G4Random::setTheEngine(new CLHEP::MTwistEngine);
-  
-  // Construct the default run manager
-  //
 #ifdef G4MULTITHREADED
   G4MTRunManager* runManager = new G4MTRunManager;
 #else
   G4RunManager* runManager = new G4RunManager;
 #endif
+
+  // Create ROOT the persistency manager.                                              
+  pCTRootPersistencyManager* persistencyManager = pCTRootPersistencyManager::GetInstance();
+    
+  std::string rootfilename = argv[2]; 
+  persistencyManager->Open(rootfilename); 
+  if(persistencyManager->IsOpen()){
+    G4cout << "The output ROOT file is open" << G4endl;
+  }
+  else{
+    G4Exception("ExN02DetectorConstruction",
+    "if(persistencyManager->IsOpen()",
+    FatalException,
+    "The file is not open");    
+  }  
+
+  G4String xmlfilename = "/Users/cjesus/Dev/protonCT/config/pCT.xml";
+  persistencyManager->OpenXML(xmlfilename);
+  pCTXML *pCTXMLInput = persistencyManager->GetXMLInput();
+  
+  G4cout << "File name: " << pCTXMLInput->GetXMLExample() << G4endl;
+  // G4cout << "Generator: " << pCTXMLInput->GetXMLGenerTypeName() << G4endl;
+  // G4cout << "Path to files: " << pCTXMLInput->GetXMLPathFiles() << G4endl;
+  // G4cout << "Tree name: " << pCTXMLInput->GetXMLGenerTreeName() << G4endl;
+  // G4cout << "File name: " << pCTXMLInput->GetXMLGenerFileName() << G4endl;
+
 
   // Set mandatory initialization classes
   //
