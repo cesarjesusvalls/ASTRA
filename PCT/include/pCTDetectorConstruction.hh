@@ -24,28 +24,38 @@
 // ********************************************************************
 //
 //
-/// \file B1ActionInitialization.hh
-/// \brief Definition of the B1ActionInitialization class
+/// \file pCTDetectorConstruction.hh
+/// \brief Definition of the pCTDetectorConstruction class
 
-#ifndef B1ActionInitialization_h
-#define B1ActionInitialization_h 1
+#ifndef pCTDetectorConstruction_h
+#define pCTDetectorConstruction_h 1
 
-#include "G4VUserActionInitialization.hh"
+#include "G4VUserDetectorConstruction.hh"
+#include "globals.hh"
 
-/// Action initialization class.
+class G4VPhysicalVolume;
+class G4LogicalVolume;
 
-class B1ActionInitialization : public G4VUserActionInitialization
+/// Detector construction class to define materials and geometry.
+
+class pCTDetectorConstruction : public G4VUserDetectorConstruction
 {
   public:
-    B1ActionInitialization();
-    virtual ~B1ActionInitialization();
+    pCTDetectorConstruction();
+    virtual ~pCTDetectorConstruction();
 
-    virtual void BuildForMaster() const;
-    virtual void Build() const;
+    virtual G4VPhysicalVolume* Construct();
+      void ConstructSDandField();
+ 
+    G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
+
+  protected:
+    G4LogicalVolume*  fScoringVolume;
+	G4LogicalVolume* epiLogic; 
+  G4LogicalVolume* logicRT;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
 
-    

@@ -24,10 +24,10 @@
 // ********************************************************************
 //
 //
-/// \file B1DetectorConstruction.cc
-/// \brief Implementation of the B1DetectorConstruction class
+/// \file pCTDetectorConstruction.cc
+/// \brief Implementation of the pCTDetectorConstruction class
 
-#include "B1DetectorConstruction.hh"
+#include "pCTDetectorConstruction.hh"
 #include "G4SDManager.hh"
 #include "CMOSSD.hh"
 #include "G4RunManager.hh"
@@ -46,18 +46,18 @@
 #include "G4IntersectionSolid.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B1DetectorConstruction::B1DetectorConstruction()
+pCTDetectorConstruction::pCTDetectorConstruction()
   : G4VUserDetectorConstruction()//,  fScoringVolume(0)
 { }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B1DetectorConstruction::~B1DetectorConstruction()
+pCTDetectorConstruction::~pCTDetectorConstruction()
 { }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4VPhysicalVolume* B1DetectorConstruction::Construct()
+G4VPhysicalVolume* pCTDetectorConstruction::Construct()
 {  
   // Get nist material manager
   G4NistManager* nist = G4NistManager::Instance();
@@ -255,7 +255,7 @@ new G4PVPlacement(0, pos3Sub, subLogic, "sub", logicEnv, false, 2,checkOverlaps)
 
 // this function is looked for in newer versions of geant4 to work with the SD
 
-void B1DetectorConstruction::ConstructSDandField()
+void pCTDetectorConstruction::ConstructSDandField()
 
 {
   G4cout << "Constructing SDs" << G4endl;

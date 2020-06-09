@@ -24,38 +24,36 @@
 // ********************************************************************
 //
 //
-/// \file B1DetectorConstruction.hh
-/// \brief Definition of the B1DetectorConstruction class
+/// \file pCTSteppingAction.hh
+/// \brief Definition of the pCTSteppingAction class
 
-#ifndef B1DetectorConstruction_h
-#define B1DetectorConstruction_h 1
+#ifndef pCTSteppingAction_h
+#define pCTSteppingAction_h 1
 
-#include "G4VUserDetectorConstruction.hh"
+#include "G4UserSteppingAction.hh"
 #include "globals.hh"
 
-class G4VPhysicalVolume;
+class pCTEventAction;
+
 class G4LogicalVolume;
 
-/// Detector construction class to define materials and geometry.
+/// Stepping action class
+/// 
 
-class B1DetectorConstruction : public G4VUserDetectorConstruction
+class pCTSteppingAction : public G4UserSteppingAction
 {
   public:
-    B1DetectorConstruction();
-    virtual ~B1DetectorConstruction();
+    pCTSteppingAction(pCTEventAction* eventAction);
+    virtual ~pCTSteppingAction();
 
-    virtual G4VPhysicalVolume* Construct();
-      void ConstructSDandField();
- 
-    G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
+    // method from the base class
+    virtual void UserSteppingAction(const G4Step*);
 
-  protected:
-    G4LogicalVolume*  fScoringVolume;
-	G4LogicalVolume* epiLogic; 
-  G4LogicalVolume* logicRT;
+  private:
+    pCTEventAction*  fEventAction;
+  //    G4LogicalVolume* fScoringVolume;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-

@@ -24,10 +24,10 @@
 // ********************************************************************
 //
 //
-/// \file B1PrimaryGeneratorAction.cc
-/// \brief Implementation of the B1PrimaryGeneratorAction class
+/// \file pCTPrimaryGeneratorAction.cc
+/// \brief Implementation of the pCTPrimaryGeneratorAction class
 
-#include "B1PrimaryGeneratorAction.hh"
+#include "pCTPrimaryGeneratorAction.hh"
 
 #include "G4LogicalVolumeStore.hh"
 #include "G4LogicalVolume.hh"
@@ -42,7 +42,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
+pCTPrimaryGeneratorAction::pCTPrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),
   fParticleGun(0), 
   fEnvelopeBox(0)
@@ -62,14 +62,14 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B1PrimaryGeneratorAction::~B1PrimaryGeneratorAction()
+pCTPrimaryGeneratorAction::~pCTPrimaryGeneratorAction()
 {
   delete fParticleGun;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
+void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   //this function is called at the begining of ecah event
   //
@@ -97,7 +97,7 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     msg << "Envelope volume of box shape not found.\n"; 
     msg << "Perhaps you have changed geometry.\n";
     msg << "The gun will be place at the center.";
-    G4Exception("B1PrimaryGeneratorAction::GeneratePrimaries()",
+    G4Exception("pCTPrimaryGeneratorAction::GeneratePrimaries()",
      "MyCode0002",JustWarning,msg);
   }
 

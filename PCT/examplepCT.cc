@@ -24,11 +24,11 @@
 // ********************************************************************
 //
 //
-/// \file exampleB1.cc
-/// \brief Main program of the B1 example
+/// \file examplepCT.cc
+/// \brief Main program of the pCT example
 
-#include "B1DetectorConstruction.hh"
-#include "B1ActionInitialization.hh"
+#include "pCTDetectorConstruction.hh"
+#include "pCTActionInitialization.hh"
 
 #ifdef G4MULTITHREADED
 #include "G4MTRunManager.hh"
@@ -76,7 +76,7 @@ int main(int argc,char** argv)
   // Set mandatory initialization classes
   //
   // Detector construction
-  runManager->SetUserInitialization(new B1DetectorConstruction());
+  runManager->SetUserInitialization(new pCTDetectorConstruction());
 
   // Physics list
   G4VModularPhysicsList* physicsList = new QBBC;
@@ -84,7 +84,7 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(physicsList);
     
   // User action initialization
-  runManager->SetUserInitialization(new B1ActionInitialization());
+  runManager->SetUserInitialization(new pCTActionInitialization());
   
   // Initialize visualization
   //

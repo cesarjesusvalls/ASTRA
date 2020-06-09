@@ -24,38 +24,45 @@
 // ********************************************************************
 //
 //
-/// \file B1EventAction.hh
-/// \brief Definition of the B1EventAction class
+/// \file pCTEventAction.cc
+/// \brief Implementation of the pCTEventAction class
 
-#ifndef B1EventAction_h
-#define B1EventAction_h 1
+#include "pCTEventAction.hh"
+#include "pCTRunAction.hh"
 
-#include "G4UserEventAction.hh"
-#include "globals.hh"
-
-class B1RunAction;
-
-/// Event action class
-///
-
-class B1EventAction : public G4UserEventAction
-{
-  public:
-    B1EventAction(B1RunAction* runAction);
-    virtual ~B1EventAction();
-
-    virtual void BeginOfEventAction(const G4Event* event);
-    virtual void EndOfEventAction(const G4Event* event);
-
-void AddEdep(G4double edep, G4int n) { fEdep[n] += edep; }
-
-  private:
-    B1RunAction* fRunAction;
-    G4double     fEdep[3];
-};
+#include "G4Event.hh"
+#include "G4RunManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#endif
+pCTEventAction::pCTEventAction(pCTRunAction* runAction)
+  : G4UserEventAction()//,  fRunAction(runAction)//,
+  //  fEdep(0.) 
+{} 
 
-    
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+pCTEventAction::~pCTEventAction()
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void pCTEventAction::BeginOfEventAction(const G4Event*)
+{    
+  
+    fEdep[0] = 0.;
+    fEdep[1] = 0.;
+    fEdep[2] = 0.;
+  
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void pCTEventAction::EndOfEventAction(const G4Event*)
+{   
+    std::cout<< "Energy in the first Detector "<<fEdep[0]<<" Energy in the second Detector "<<fEdep[1]<<" Energy in the third Detector "<<fEdep[2]<<"\n";
+   // accumulate statistics in run action
+  //     fRunAction->AddEdep(fEdep);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
