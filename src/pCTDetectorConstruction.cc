@@ -28,7 +28,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 pCTDetectorConstruction::pCTDetectorConstruction()
-  : G4VUserDetectorConstruction()//,  fScoringVolume(0)
+  : G4VUserDetectorConstruction() //,  fScoringVolume(0)
 { }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

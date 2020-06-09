@@ -37,6 +37,7 @@ include_directories (${ROOT_INCLUDE_DIR})
 include(${Geant4_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include/CMOS)
+include_directories(${PROJECT_SOURCE_DIR}/include/SciDet)
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
@@ -45,13 +46,15 @@ include_directories(${PROJECT_SOURCE_DIR}/include/CMOS)
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
-file(GLOB CMOScc ${PROJECT_SOURCE_DIR}/src/CMOS/*.cc)
-file(GLOB CMOShh ${PROJECT_SOURCE_DIR}/include/CMOS/*.hh)
+file(GLOB CMOScc   ${PROJECT_SOURCE_DIR}/src/CMOS/*.cc)
+file(GLOB CMOShh   ${PROJECT_SOURCE_DIR}/include/CMOS/*.hh)
+file(GLOB SciDetcc ${PROJECT_SOURCE_DIR}/src/SciDet/*.cc)
+file(GLOB SciDethh ${PROJECT_SOURCE_DIR}/include/SciDet/*.hh)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(examplepCT examplepCT.cc ${sources} ${headers} ${CMOScc} ${CMOShh})
+add_executable(examplepCT examplepCT.cc ${sources} ${headers} ${CMOScc} ${CMOShh} ${SciDetcc} ${SciDethh})
 target_link_libraries(examplepCT ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------

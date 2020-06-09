@@ -31,7 +31,7 @@ public :
   ~pCTXML();
     
   G4String GetXMLFileName()     {return fXMLFile;};
-  G4String GetXMLExample()     {return fExample;};
+  G4String GetXMLExample()      {return fExample;};
 
   void SetInputs();
 
