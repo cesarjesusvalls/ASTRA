@@ -22,7 +22,7 @@ endif()
 #
 include(${Geant4_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR}/include)
-
+include_directories(${PROJECT_SOURCE_DIR}/include/CMOS)
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
@@ -31,10 +31,13 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
+file(GLOB CMOScc ${PROJECT_SOURCE_DIR}/src/CMOS/*.cc)
+file(GLOB CMOShh ${PROJECT_SOURCE_DIR}/include/CMOS/*.hh)
+
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(examplepCT examplepCT.cc ${sources} ${headers})
+add_executable(examplepCT examplepCT.cc ${sources} ${headers} ${CMOScc} ${CMOShh})
 target_link_libraries(examplepCT ${Geant4_LIBRARIES})
 
 #----------------------------------------------------------------------------

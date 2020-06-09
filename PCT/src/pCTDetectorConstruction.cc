@@ -72,7 +72,9 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4VSolid* solidUnion          = new G4UnionSolid("phantomShape",        solidUnion_EC,solidIntersec_BC,0,G4ThreeVector(0,0.,1.25*mm));
     G4LogicalVolume* logicPhantom = new G4LogicalVolume(solidUnion, phantom_mat,"Phantom"); 
     G4VPhysicalVolume* physPhan   = new G4PVPlacement(0,phantomPos,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
-      
+    //___________________
+
+
     // 3 detectors configuration (25um epitaxial 75um substrate +100um OPTIONAL)
     G4Material* Silicon   = nist->FindOrBuildMaterial("G4_Si");
     G4ThreeVector pos1Epi = G4ThreeVector(0, 0*cm, -12.00*cm);
