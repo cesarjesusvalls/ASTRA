@@ -32,6 +32,7 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
+#include "pCTXML.hh"
 
 class G4VPhysicalVolume;
 class G4LogicalVolume;
@@ -40,19 +41,21 @@ class G4LogicalVolume;
 
 class pCTDetectorConstruction : public G4VUserDetectorConstruction
 {
-  public:
-    pCTDetectorConstruction();
-    virtual ~pCTDetectorConstruction();
+    public:
+        pCTDetectorConstruction();
+        virtual ~pCTDetectorConstruction();
 
-    virtual G4VPhysicalVolume* Construct();
-      void ConstructSDandField();
- 
-    G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
+        virtual G4VPhysicalVolume* Construct();
+        void ConstructSDandField();
+     
+        G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
 
-  protected:
-    G4LogicalVolume*  fScoringVolume;
-	G4LogicalVolume* epiLogic; 
-  G4LogicalVolume* logicRT;
+        pCTXML* pCTXMLInput;
+
+    protected:
+        G4LogicalVolume*  fScoringVolume;
+        G4LogicalVolume* epiLogic; 
+        G4LogicalVolume* logicRT;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

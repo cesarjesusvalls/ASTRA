@@ -1,11 +1,10 @@
 //
 // C. Jesús Valls 
 // cjesus@ifae.es
+//
 // M. Granado-González
 // MMG998@student.bham.ac.uk
 //
-/// \file pCTDetectorConstruction.cc
-/// \brief Implementation of the pCTDetectorConstruction class
 
 #include "pCTDetectorConstruction.hh"
 #include "G4SDManager.hh"
@@ -24,6 +23,8 @@
 #include "G4SystemOfUnits.hh"
 #include "G4UnionSolid.hh"
 #include "G4IntersectionSolid.hh"
+
+#include "pCTRootPersistencyManager.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 pCTDetectorConstruction::pCTDetectorConstruction()
@@ -39,6 +40,9 @@ pCTDetectorConstruction::~pCTDetectorConstruction()
 
 G4VPhysicalVolume* pCTDetectorConstruction::Construct()
 {  
+    pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
+    pCTXMLInput = InputPersistencyManager->GetXMLInput();
+
     // Get nist material manager
     G4NistManager* nist = G4NistManager::Instance();
     // Option to switch on/off checking of volumes overlaps

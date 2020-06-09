@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+ 
+<fileStructure>
+<Main_Package>
+   File_Navigate
+</Main_Package>
+<Dependency_Details>
+
+<Dependency>
+  
+  <Example>
+    SomethingHere
+  </Example>
+
+</Dependency>
+
+</Dependency_Details>
+</fileStructure>
+
+
+  
+

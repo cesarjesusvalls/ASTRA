@@ -17,6 +17,20 @@ else()
 endif()
 
 #----------------------------------------------------------------------------
+# lines to add ROOT libraries
+list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )
+MESSAGE(STATUS ${PROJECT_SOURCE_DIR}/cmake)
+
+find_package (ROOT COMPONENTS MathCoreProut RIO Hist Tree Net TreePlayer Geom)
+if (ROOT_FOUND)
+    message(STATUS "${ROOT_LIBRARIES}")
+else (ROOT_FOUND)
+    message(FATAL "Unable to find ROOT")
+endif (ROOT_FOUND)
+include_directories (${ROOT_INCLUDE_DIR})
+#----------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
 # Setup include directory for this project
 #
@@ -38,7 +52,7 @@ file(GLOB CMOShh ${PROJECT_SOURCE_DIR}/include/CMOS/*.hh)
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(examplepCT examplepCT.cc ${sources} ${headers} ${CMOScc} ${CMOShh})
-target_link_libraries(examplepCT ${Geant4_LIBRARIES})
+target_link_libraries(examplepCT ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
@@ -61,6 +75,13 @@ foreach(_script ${EXAMPLEpCT_SCRIPTS})
     COPYONLY
     )
 endforeach()
+
+#----------------------------------------------------------------------------
+# remove plenty of warnings from ROOT source code
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-overloaded-virtual -Wno-shadow -Wno-unused-const-variable")
+if (APPLE)
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field -Wno-pointer-bool-conversion")
+endif (APPLE)
 
 #----------------------------------------------------------------------------
 # For internal Geant4 use - but has no effect if you build this
