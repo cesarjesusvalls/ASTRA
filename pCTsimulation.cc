@@ -59,11 +59,23 @@ int main(int argc,char** argv)
   G4int seed = time(NULL);
   G4Random::setTheSeed(seed);
   
+  for(int arg=0; arg<argc; arg++)
+    G4cout << "Argument " << arg << ":\t" << argv[arg] << G4endl;
+
   // Detect interactive mode (if no arguments) and define UI session
   //
+  std::string rootfilename = "../output/output_file";
+  G4String    xmlfilename  = "../config/pCT.xml";
+  G4String    macroname    = "../mac/wrl_vis.mac";
+
   G4UIExecutive* ui = 0;
-  if ( argc == 1 ) {
+  if ( argc != 4 ) {
     ui = new G4UIExecutive(argc, argv);
+  }
+  else{
+    rootfilename = argv[1];
+    xmlfilename  = argv[2];
+    macroname    = argv[3];
   }
 
 #ifdef G4MULTITHREADED
@@ -75,7 +87,7 @@ int main(int argc,char** argv)
   // Create ROOT the persistency manager.                                              
   pCTRootPersistencyManager* persistencyManager = pCTRootPersistencyManager::GetInstance();
     
-  std::string rootfilename = argv[2]; 
+   
   persistencyManager->Open(rootfilename); 
   if(persistencyManager->IsOpen()){
     G4cout << "The output ROOT file is open" << G4endl;
@@ -87,11 +99,10 @@ int main(int argc,char** argv)
     "The file is not open");    
   }  
 
-  G4String xmlfilename = "/Users/cjesus/Dev/protonCT/config/pCT.xml";
   persistencyManager->OpenXML(xmlfilename);
   pCTXML *pCTXMLInput = persistencyManager->GetXMLInput();
   
-  G4cout << "File name: " << pCTXMLInput->GetXMLExample() << G4endl;
+  G4cout << "XML Check: " << pCTXMLInput->GetXMLExample() << G4endl;
 
   // Set mandatory initialization classes
   //
@@ -117,16 +128,14 @@ int main(int argc,char** argv)
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
   // Process macro or start UI session
-  //
   if ( ! ui ) { 
     // batch mode
     G4String command = "/control/execute ";
-    G4String fileName = argv[1];
-    UImanager->ApplyCommand(command+fileName);
+    UImanager->ApplyCommand(command+macroname);
   }
   else { 
     // interactive mode
-    UImanager->ApplyCommand("/control/execute init_vis.mac");
+    // UImanager->ApplyCommand("/control/execute ../mac/wrl_vis.mac");
     ui->SessionStart();
     delete ui;
   }
@@ -134,6 +143,7 @@ int main(int argc,char** argv)
   if(persistencyManager->IsOpen()){
     persistencyManager->Close(); 
   }
+
   delete persistencyManager;
 
   // Job termination

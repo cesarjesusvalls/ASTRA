@@ -1,1 +1,4 @@
 /build/*
+/output/*
+Test_CMOS.txt
+*.DS_Store

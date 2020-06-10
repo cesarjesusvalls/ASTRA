@@ -99,13 +99,10 @@ bool pCTRootPersistencyManager::Close() {
     fOutput->Close();
 
     G4cout << "Output file " << GetFilename() << " closed." << G4endl;
-  
-    delete fEventTree;
-    delete fpCTEvent;
 
     fEventTree = NULL;
     fpCTEvent  = NULL;
-
+    
     return true;
 }
 
