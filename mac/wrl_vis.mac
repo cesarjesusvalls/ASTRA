@@ -24,5 +24,8 @@
 
 /vis/scene/endOfEventAction accumulate
 
+/vis/geometry/set/visibility World 0 false
+/vis/geometry/set/visibility Envelope 0 false
+# "Envelope" is transparent blue to represent water
 
 /run/beamOn 1

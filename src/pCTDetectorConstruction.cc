@@ -127,12 +127,13 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     // new G4PVPlacement(0, RTpos, logicRT, "RT", logicEnv, false, 3,checkOverlaps); 
 
     //______ SciDet ______
-    pCTSciDetConstructor* fSciDetConstructor = new pCTSciDetConstructor("envelope", this);
+    pCTSciDetConstructor* fSciDetConstructor = new pCTSciDetConstructor("SciDet", this);
     G4String nameSciDet = fSciDetConstructor->GetName();
-    fSciDetConstructor->SetEdge(10*mm);
-    fSciDetConstructor->SetCubeNumX(2);
-    fSciDetConstructor->SetCubeNumY(2);
-    fSciDetConstructor->SetCubeNumZ(2);
+    fSciDetConstructor->SetNLayers(6);
+    fSciDetConstructor->SetNBars(5);
+    fSciDetConstructor->SetBarX(2*mm);
+    fSciDetConstructor->SetBarY(10*mm);
+    fSciDetConstructor->SetBarZ(2*mm);
     logicSciDet = fSciDetConstructor->GetPiece(); 
     new G4PVPlacement(0,RTpos,logicSciDet,nameSciDet,logicEnv,false,0,checkOverlaps);
     //_____________________

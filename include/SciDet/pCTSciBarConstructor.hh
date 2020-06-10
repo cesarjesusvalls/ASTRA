@@ -29,17 +29,13 @@ public:
     /// Construct and return a G4 volume for the object.
     virtual G4LogicalVolume* GetPiece(void);
 
-    /// Get the length of the bar to be constructed.
-    virtual double GetLength(void) {return fLength;};
-
-    /// Set the length of the bar to be constructed.
-    virtual void SetLength(double len) {fLength = len;};
-
-    /// Get the base width of the extruded bar.
-    virtual double GetBase(void) {return fBase;};
-
-    /// Set the base width of the extruded bar.
-    virtual void SetBase(double base);
+    // Sci Bars Total Size (X,Y,Z)
+    void   SetBarX(double x) {fBarX = x;}
+    double GetBarX(void)     {return fBarX;}
+    void   SetBarY(double y) {fBarY = y;}
+    double GetBarY(void)     {return fBarY;}
+    void   SetBarZ(double z) {fBarZ = z;}
+    double GetBarZ(void)     {return fBarZ;}
 
     /// Get the thickness of the reflective coating.
     virtual double GetCoatingThickness(void) {return fCoatingThickness;}
@@ -55,13 +51,6 @@ public:
     /// Get the gap between the bars which corresponds to the space taken by
     /// whatever material is around the extrusion.  
     virtual double GetGap(void) {return fGap;};
-
-    /// Get the height of the extruded bar.  The default value will be by a
-    /// call to SetBase().
-    virtual double GetHeight(void) {return fHeight;};
-
-    /// Set the height of the extruded bar.
-    virtual void SetHeight(double height);
 
     /// @{ The name of the material to use for the scintillator coating.
     /// [Default: ScintillatorCoating]
@@ -88,19 +77,10 @@ private:
     // The name of the SciBar.
     G4String fName;
 
-    /// The length of the scintillator bar.
-    double fLength;
-
-    /// The width of the base of the scintillator.  The base is along the X
-    /// axis.
-    double fBase;
-    
-    /// The height of the scintillator.  If the bar is triangular this will be
-    /// calculated when the base is set, but may be overridden.  
-    double fHeight;
-
-    /// The radius of the hole.
-    double fHoleRadius;
+    // Size of the SciBars
+    double fBarX;
+    double fBarY;
+    double fBarZ;
   
     /// The thickness of the material that is wrapping the scintillator (this
     /// may be extruded).

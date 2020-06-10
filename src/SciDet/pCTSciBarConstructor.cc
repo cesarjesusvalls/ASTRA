@@ -27,14 +27,15 @@ pCTSciBarConstructor::~pCTSciBarConstructor() {;}
 
 void pCTSciBarConstructor::Init() {
   
-    SetLength(10*CLHEP::cm);
-    SetBase(10*CLHEP::cm);
-    SetHeight(10*CLHEP::cm);
+    SetBarX(1*CLHEP::cm);
+    SetBarY(1*CLHEP::cm);
+    SetBarZ(1*CLHEP::cm);
     SetCoatingThickness(0*CLHEP::mm);
     SetGap(0.0*CLHEP::mm);
     SetVisibility(false);
     SetCoatingMaterial("PlasticScintillator");
     SetScintillatorMaterial("PlasticScintillator"); 
+
 }
 
 G4LogicalVolume* pCTSciBarConstructor::GetPiece(void) {
@@ -47,34 +48,34 @@ G4LogicalVolume* pCTSciBarConstructor::GetPiece(void) {
   G4VSolid* extrusion = NULL;
   G4VSolid* scintillator = NULL;
 
-  //G4cout << "SuperFGD Cube base = " << GetBase() << G4endl;
-  //G4cout << "SuperFGD Cube height = " << GetHeight() << G4endl;
-  //G4cout << "SuperFGD Cube length = " << GetLength() << G4endl;
+  //G4cout << "SuperFGD Cube base = " << GetBarX() << G4endl;
+  //G4cout << "SuperFGD Cube height = " << GetBarY() << G4endl;
+  //G4cout << "SuperFGD Cube length = " << GetBarZ() << G4endl;
   //G4cout << "SuperFGD Hole radius = " << GetHoleRadius() << G4endl;
   
   G4VisAttributes *visAtt_Scint = new G4VisAttributes();
-  visAtt_Scint->SetColor(0.5,0.5,0.5,0.); // gray
+  visAtt_Scint->SetColor(0.0,0.8,0.8,0.); // gray
   visAtt_Scint->SetForceSolid(true);
   G4VisAttributes *visAtt_Coat = new G4VisAttributes();
   visAtt_Coat->SetColor(1.0,1.0,1.0); // white
   visAtt_Coat->SetForceSolid(true);
 
   cube = new G4Box(GetName(),
-		   GetBase()/2,
-		   GetHeight()/2,
-		   GetLength()/2
+		   GetBarX()/2,
+		   GetBarY()/2,
+		   GetBarZ()/2
 		   );
 
   extrusion = new G4Box(GetName()+"/Extrusion",
-			GetBase()/2,
-			GetHeight()/2,
-			GetLength()/2
+			GetBarX()/2,
+			GetBarY()/2,
+			GetBarZ()/2
 			);
   
   scintillator = new G4Box(GetName()+"/Extrusion/Core",
-   			   GetBase()/2-GetCoatingThickness(),
-  			   GetHeight()/2-GetCoatingThickness(),
-  			   GetLength()/2-GetCoatingThickness()
+   			   GetBarX()/2-GetCoatingThickness(),
+  			   GetBarY()/2-GetCoatingThickness(),
+  			   GetBarZ()/2-GetCoatingThickness()
 			   );
 
   // logical volumes
@@ -103,18 +104,10 @@ G4LogicalVolume* pCTSciBarConstructor::GetPiece(void) {
   new G4PVPlacement(0,G4ThreeVector(0,0,0),extrusionVolume,GetName()+"/Extrusion",cubeVolume,false,0);                  // copy number
 
   cubeVolume      ->SetVisAttributes(G4VisAttributes::Invisible);
-  extrusionVolume ->SetVisAttributes(visAtt_Coat); 
+  //extrusionVolume ->SetVisAttributes(visAtt_Coat); 
+  extrusionVolume ->SetVisAttributes(G4VisAttributes::Invisible); 
   scintVolume     ->SetVisAttributes(visAtt_Scint);
 
 
   return cubeVolume;
-}
-
-
-void pCTSciBarConstructor::SetBase(double base) {
-    fBase = base;
-}
-
-void pCTSciBarConstructor::SetHeight(double height) {
-    fHeight = height;
 }
