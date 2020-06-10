@@ -41,6 +41,7 @@
 #include "G4HCofThisEvent.hh"
 #include "G4VHitsCollection.hh"
 
+
 TROOT root("ROOT","Root of Everything");
 
 pCTRootPersistencyManager::pCTRootPersistencyManager() :
@@ -76,21 +77,47 @@ bool pCTRootPersistencyManager::Open(G4String filename) {
     G4cout << "pCTRootPersistencyManager::Open " << GetFilename() << G4endl;
     fOutput    = new TFile(GetFilename().c_str(),"RECREATE");
     fEventTree = new TTree("pCT_Events","pCT Tree of Events");  
-    //fEventTree->Branch("Event","classnameofsomething",&fpCTEvent,128000,0);
+    fpCTEvent = new pCTEvent();
+    fEventTree->Branch("Event","pCTEvent",&fpCTEvent,128000,0);
     fEventsNotSaved = 0;
     return true;
 }
 
 bool pCTRootPersistencyManager::Close() {
+    if (!fOutput) {
+        G4ExceptionDescription msg;
+        msg << "No Output File" << G4endl; 
+        G4Exception("pCTRootPersistencyManager::Close",
+        "ExN02Code001",FatalException, msg);
+        return false;
+    }
+
     delete fpCTXMLInput; fpCTXMLInput=NULL;
+
+    fOutput->cd();
+    fOutput->Write();
+    fOutput->Close();
+
+    G4cout << "Output file " << GetFilename() << " closed." << G4endl;
+  
+    delete fEventTree;
+    delete fpCTEvent;
+
+    fEventTree = NULL;
+    fpCTEvent  = NULL;
+
     return true;
 }
 
-
 G4bool pCTRootPersistencyManager::Store(const G4Event* anEvent) {
-  (void)anEvent;
-  //ND280Severe(" -- Event store called without a save method " 
-  //<< GetFilename());
+  
+  fOutput->cd();  
+  fEventTree->Fill();
+  fpCTEvent->SetEvtId(anEvent->GetEventID());
+
+  G4cout << "Storing event: " << anEvent->GetEventID() << endl;
+  fpCTEvent->ResetEvent();
+
   return false;
 }
 

@@ -28,4 +28,4 @@
 /vis/geometry/set/visibility Envelope 0 false
 # "Envelope" is transparent blue to represent water
 
-/run/beamOn 1
+/run/beamOn 10

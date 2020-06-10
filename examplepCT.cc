@@ -92,11 +92,6 @@ int main(int argc,char** argv)
   pCTXML *pCTXMLInput = persistencyManager->GetXMLInput();
   
   G4cout << "File name: " << pCTXMLInput->GetXMLExample() << G4endl;
-  // G4cout << "Generator: " << pCTXMLInput->GetXMLGenerTypeName() << G4endl;
-  // G4cout << "Path to files: " << pCTXMLInput->GetXMLPathFiles() << G4endl;
-  // G4cout << "Tree name: " << pCTXMLInput->GetXMLGenerTreeName() << G4endl;
-  // G4cout << "File name: " << pCTXMLInput->GetXMLGenerFileName() << G4endl;
-
 
   // Set mandatory initialization classes
   //
@@ -135,6 +130,11 @@ int main(int argc,char** argv)
     ui->SessionStart();
     delete ui;
   }
+
+  if(persistencyManager->IsOpen()){
+    persistencyManager->Close(); 
+  }
+  delete persistencyManager;
 
   // Job termination
   // Free the store: user actions, physics_list and detector_description are

@@ -22,6 +22,7 @@ class TTree;
 #include "G4NavigationHistory.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
+#include "pCTEvent.hh"
 
 //#include <TH2F.h> 
 
@@ -74,7 +75,7 @@ private:
     /// The event tree that contains the output events.
     TTree *fEventTree;
     /// The TTree branches
-    //TpCTUpEvent *pCTEvent; // The pCTEvent class
+    pCTEvent *fpCTEvent; // The pCTEvent class
 
 public:
     pCTXML *fpCTXMLInput;

@@ -144,7 +144,6 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
 // this function is looked for in newer versions of geant4 to work with the SD
 void pCTDetectorConstruction::ConstructSDandField()
 {
-    return;
     G4cout << "Constructing SDs" << G4endl;
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
     CMOSSD* sensitive_det = new CMOSSD("CMOS");

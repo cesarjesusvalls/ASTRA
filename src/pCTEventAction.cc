@@ -33,6 +33,8 @@
 #include "G4Event.hh"
 #include "G4RunManager.hh"
 
+#include "pCTRootPersistencyManager.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 pCTEventAction::pCTEventAction(pCTRunAction* runAction)

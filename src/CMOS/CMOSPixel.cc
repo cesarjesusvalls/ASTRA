@@ -14,8 +14,6 @@ CMOSPixel::~CMOSPixel()
 {
 }
 
-
-
 void CMOSPixel::Print()
 {
    G4cout << "CMOSPixel::Print()" << G4endl;
