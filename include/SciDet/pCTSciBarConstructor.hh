@@ -29,8 +29,6 @@ public:
     /// Construct and return a G4 volume for the object.
     virtual G4LogicalVolume* GetPiece(void);
 
-    G4Material* FindMaterial(G4String m);
-
     /// Get the length of the bar to be constructed.
     virtual double GetLength(void) {return fLength;};
 

@@ -47,15 +47,19 @@ class pCTDetectorConstruction : public G4VUserDetectorConstruction
 
         virtual G4VPhysicalVolume* Construct();
         void ConstructSDandField();
+
+        void DefineMaterials();
      
         G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
 
         pCTXML* pCTXMLInput;
 
     protected:
+        G4Material* FindMaterial(G4String m);
         G4LogicalVolume*  fScoringVolume;
         G4LogicalVolume* epiLogic; 
         G4LogicalVolume* logicRT;
+        G4LogicalVolume* logicSciDet;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

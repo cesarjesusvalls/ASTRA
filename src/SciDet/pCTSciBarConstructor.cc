@@ -33,16 +33,9 @@ void pCTSciBarConstructor::Init() {
     SetCoatingThickness(0*CLHEP::mm);
     SetGap(0.0*CLHEP::mm);
     SetVisibility(false);
-    SetCoatingMaterial("Scintillator");
-    SetScintillatorMaterial("FGDScintillator"); 
-
+    SetCoatingMaterial("PlasticScintillator");
+    SetScintillatorMaterial("PlasticScintillator"); 
 }
-
-G4Material* pCTSciBarConstructor::FindMaterial(G4String name) {
-    G4Material* material = G4Material::GetMaterial(name,true);
-    return material;
-}
-
 
 G4LogicalVolume* pCTSciBarConstructor::GetPiece(void) {
   

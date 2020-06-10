@@ -46,11 +46,8 @@ void pCTSciDetConstructor::Init(void) {
     SetNameRepXZ(nameRepXZ);
     SetNameRepZ(nameRepZ);
     SetNameCube(nameCube);
-}
 
-G4Material* pCTSciDetConstructor::FindMaterial(G4String name) {
-      G4Material* material = G4Material::GetMaterial(name,true);
-      return material;
+    AddConstructor(new pCTSciBarConstructor(GetNameCube(), this)); 
 }
 
 G4LogicalVolume *pCTSciDetConstructor::GetPiece(void) {

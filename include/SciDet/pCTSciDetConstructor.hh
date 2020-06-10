@@ -25,8 +25,6 @@ public:
 
     G4String GetName(void) {return fName;}
 
-    G4Material* FindMaterial(G4String m);
-
     /// Construct and return a G4 volume for the object.
     virtual G4LogicalVolume* GetPiece(void);
 

@@ -25,6 +25,9 @@
 #include "G4IntersectionSolid.hh"
 
 #include "pCTRootPersistencyManager.hh"
+#include "pCTSciDetConstructor.hh"
+
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 pCTDetectorConstruction::pCTDetectorConstruction()
@@ -40,6 +43,8 @@ pCTDetectorConstruction::~pCTDetectorConstruction()
 
 G4VPhysicalVolume* pCTDetectorConstruction::Construct()
 {  
+    this->DefineMaterials();
+
     pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
     pCTXMLInput = InputPersistencyManager->GetXMLInput();
 
@@ -60,10 +65,11 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4LogicalVolume* logicWorld   = new G4LogicalVolume(solidWorld,world_mat,"World");                  
     G4VPhysicalVolume* physWorld  = new G4PVPlacement(0,G4ThreeVector(),logicWorld,"World",0,false,0,checkOverlaps);
      
-    // Envelope
+    //_____ PHANTOM _____
     G4Box* solidEnv               = new G4Box("Envelope",0.5*env_sizeXY,0.5*env_sizeXY,0.5*env_sizeZ);
     G4LogicalVolume* logicEnv     = new G4LogicalVolume(solidEnv,env_mat,"Envelope");
-    G4VPhysicalVolume* physEnv    = new G4PVPlacement(0,G4ThreeVector(),logicEnv,"Envelope",logicWorld,false,0,checkOverlaps);
+    new G4PVPlacement(0,G4ThreeVector(),logicEnv,"Envelope",logicWorld,false,0,checkOverlaps);
+    //___________________
 
     //_____ PHANTOM _____
     G4ThreeVector phantomPos      = G4ThreeVector(0,0,-3*cm);            // TODO: get from XML.
@@ -75,9 +81,8 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4VSolid* solidIntersec_BC    = new G4IntersectionSolid("boc+cylinder", solidCylinder,solidBox,0,G4ThreeVector(4*mm,2.*mm,0.05*mm));
     G4VSolid* solidUnion          = new G4UnionSolid("phantomShape",        solidUnion_EC,solidIntersec_BC,0,G4ThreeVector(0,0.,1.25*mm));
     G4LogicalVolume* logicPhantom = new G4LogicalVolume(solidUnion, phantom_mat,"Phantom"); 
-    G4VPhysicalVolume* physPhan   = new G4PVPlacement(0,phantomPos,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
+    new G4PVPlacement(0,phantomPos,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
     //___________________
-
 
     // 3 detectors configuration (25um epitaxial 75um substrate +100um OPTIONAL)
     G4Material* Silicon   = nist->FindOrBuildMaterial("G4_Si");
@@ -116,10 +121,21 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     new G4PVPlacement(0, pos3Epi, epiLogic, "epi", logicEnv, false, 2, checkOverlaps);
     new G4PVPlacement(0, pos3Sub, subLogic, "sub", logicEnv, false, 2,checkOverlaps);
          
-    // Range Telescope
-    G4Box* RTShape = new G4Box("RT",2.5*cm,2.5*cm,4.5*cm);
-    logicRT = new G4LogicalVolume(RTShape,Silicon, "RT");
-    new G4PVPlacement(0, RTpos, logicRT, "RT", logicEnv, false, 3,checkOverlaps); 
+    // // Range Telescope
+    // G4Box* RTShape = new G4Box("RT",2.5*cm,2.5*cm,4.5*cm);
+    // logicRT = new G4LogicalVolume(RTShape,Silicon, "RT");
+    // new G4PVPlacement(0, RTpos, logicRT, "RT", logicEnv, false, 3,checkOverlaps); 
+
+    //______ SciDet ______
+    pCTSciDetConstructor* fSciDetConstructor = new pCTSciDetConstructor("envelope", this);
+    G4String nameSciDet = fSciDetConstructor->GetName();
+    fSciDetConstructor->SetEdge(10*mm);
+    fSciDetConstructor->SetCubeNumX(2);
+    fSciDetConstructor->SetCubeNumY(2);
+    fSciDetConstructor->SetCubeNumZ(2);
+    logicSciDet = fSciDetConstructor->GetPiece(); 
+    new G4PVPlacement(0,RTpos,logicSciDet,nameSciDet,logicEnv,false,0,checkOverlaps);
+    //_____________________
 
     return physWorld;
 }
@@ -127,12 +143,49 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
 // this function is looked for in newer versions of geant4 to work with the SD
 void pCTDetectorConstruction::ConstructSDandField()
 {
+    return;
     G4cout << "Constructing SDs" << G4endl;
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
     CMOSSD* sensitive_det = new CMOSSD("CMOS");
     SDman->AddNewDetector(sensitive_det);
     epiLogic->SetSensitiveDetector(sensitive_det);      
-    logicRT->SetSensitiveDetector(sensitive_det);
+    logicSciDet->SetSensitiveDetector(sensitive_det);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4Material *pCTDetectorConstruction::FindMaterial(G4String name)
+{
+    G4Material *material = G4Material::GetMaterial(name, true);
+    return material;
+}
+
+void pCTDetectorConstruction::DefineMaterials()
+{
+    G4double density,temperature, pressure,fractionmass;
+    G4String name;
+    G4int nel;
+
+    G4NistManager *nistMan = G4NistManager::Instance();
+
+    G4Element *elH = nistMan->FindOrBuildElement(1);
+    G4Element *elC = nistMan->FindOrBuildElement(6);
+    G4Element *elN = nistMan->FindOrBuildElement(7);
+    G4Element *elO = nistMan->FindOrBuildElement(8);
+
+    //Air
+    density = 1.29 * CLHEP::mg / CLHEP::cm3;
+    pressure = 1 * CLHEP::atmosphere;
+    temperature = 293.15 * CLHEP::kelvin;
+    G4Material *air = new G4Material(name = "Air", density,
+                                     nel = 2, kStateGas, temperature,
+                                     pressure);
+    air->AddElement(elN, fractionmass = 70 * CLHEP::perCent);
+    air->AddElement(elO, fractionmass = 30 * CLHEP::perCent);
+
+    //PlasticScintillator
+    density = 1.032 * CLHEP::g / CLHEP::cm3;
+    G4Material *plasticScintillator = new G4Material(name = "PlasticScintillator", density, nel = 2);
+    plasticScintillator->AddElement(elC, 8);
+    plasticScintillator->AddElement(elH, 8);
+}
