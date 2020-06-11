@@ -1,0 +1,21 @@
+message(STATUS "src ... ")
+
+AUX_SOURCE_DIRECTORY(.            SOURCE_FILES)
+AUX_SOURCE_DIRECTORY(/CMOS/       SOURCE_FILES)
+AUX_SOURCE_DIRECTORY(/SciDet/     SOURCE_FILES)
+
+set (EVENT_DICT_HEADERFILES
+    ../include/pCTEvent.hh
+)
+
+set( EVENT_HEADERFILES
+    ${EVENT_DICT_HEADERFILES}
+)
+
+ROOT_GENERATE_DICTIONARY(EventDict ${EVENT_DICT_HEADERFILES} LINKDEF LinkDef.h )
+
+ADD_LIBRARY(Evtdict      SHARED      ${SOURCE_FILES}  pCTEvent.cc EventDict.cxx ${EXTRA_SOURCEFILES})
+target_link_libraries(Evtdict ${ROOT_LIBRARIES} ${Geant4_LIBRARIES})
+
+
+

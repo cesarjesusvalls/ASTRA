@@ -43,15 +43,15 @@ public:
 public:
   //simple set and get methods
 
-  void          SetPixelIndex(std::pair<G4int, G4int>  pix)  { Pixel = pix; }
+  void    SetPixelIndex(std::pair<G4int, G4int>  pix)  { Pixel = pix; }
   void		SetPlaneNumber(const G4int plane) {planeNumber = plane; }
   void		SetElectronsLiberated(const G4double e) {electrons = e;}
   
   std::pair<G4int, G4int> GetPixelIndex()    const  { return Pixel; }
-  G4int		GetX() const { return Pixel.first; }
-  G4int		GetY() const { return Pixel.second; }
-  G4int         GetPlaneNumber() const  { return planeNumber; }
-  G4double	GetElectronsLiberated() const { return electrons; };
+  G4int		                GetX() const { return Pixel.first; }
+  G4int		                GetY() const { return Pixel.second; }
+  G4int                   GetPlaneNumber() const  { return planeNumber; }
+  G4double	              GetElectronsLiberated() const { return electrons; };
     
 private:
 	G4int   planeNumber;

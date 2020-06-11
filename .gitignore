@@ -1,4 +1,9 @@
 /build/*
+/buildAna/*
 /output/*
+/bin/*
+*.wrl
 Test_CMOS.txt
 *.DS_Store
+*.pcm
+*.dylib

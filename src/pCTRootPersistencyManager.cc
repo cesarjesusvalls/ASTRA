@@ -38,6 +38,7 @@
 #include <G4TransportationManager.hh>
 #include <G4FieldManager.hh>
 
+#include "G4RunManager.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4VHitsCollection.hh"
 
@@ -78,7 +79,10 @@ bool pCTRootPersistencyManager::Open(G4String filename) {
     fOutput    = new TFile(GetFilename().c_str(),"RECREATE");
     fEventTree = new TTree("pCT_Events","pCT Tree of Events");  
     fpCTEvent = new pCTEvent();
-    fEventTree->Branch("Event","pCTEvent",&fpCTEvent,128000,0);
+    eraseme = -999;
+    fEventTree->Branch("EventINT",&eraseme,128000,0);
+    fEventTree->Branch("Event",&fpCTEvent,128000,0);
+    fEventTree->Print();
     fEventsNotSaved = 0;
     return true;
 }
@@ -95,7 +99,7 @@ bool pCTRootPersistencyManager::Close() {
     delete fpCTXMLInput; fpCTXMLInput=NULL;
 
     fOutput->cd();
-    fOutput->Write();
+    fEventTree->Write();
     fOutput->Close();
 
     G4cout << "Output file " << GetFilename() << " closed." << G4endl;
@@ -108,9 +112,12 @@ bool pCTRootPersistencyManager::Close() {
 
 G4bool pCTRootPersistencyManager::Store(const G4Event* anEvent) {
   
+  eraseme = (int) G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+
   fOutput->cd();  
-  fEventTree->Fill();
   fpCTEvent->SetEvtId(anEvent->GetEventID());
+  G4cout << "fpCTEvent eventID: " << fpCTEvent->GetEvtId() << endl;
+  fEventTree->Fill();
 
   G4cout << "Storing event: " << anEvent->GetEventID() << endl;
   fpCTEvent->ResetEvent();

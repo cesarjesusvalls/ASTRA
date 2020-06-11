@@ -64,7 +64,7 @@ int main(int argc,char** argv)
 
   // Detect interactive mode (if no arguments) and define UI session
   //
-  std::string rootfilename = "../output/output_file";
+  std::string rootfilename = "../output/simulation_file";
   G4String    xmlfilename  = "../config/pCT.xml";
   G4String    macroname    = "../mac/wrl_vis.mac";
 

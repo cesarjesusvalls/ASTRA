@@ -53,6 +53,9 @@ public:
     /// Return a pointer to the TTree
     TTree* GetTTree() const {return fEventTree;}
 
+    /// Return a pointer to the TTree
+    pCTEvent* GetEvent() const {return fpCTEvent;}
+
     /// Interface with PersistencyMessenger (open and close the
     /// database).
     virtual G4bool Open(G4String dbname);
@@ -81,7 +84,7 @@ public:
     pCTXML *fpCTXMLInput;
     G4int fEventFirst;
     G4int fNEvents;
-
+    int eraseme;
 
 private:
     /// The filename of the output file.

@@ -15,6 +15,8 @@
 #include "G4Box.hh"
 #include "G4RunManager.hh"
 #include "G4UIcommand.hh"
+#include "pCTRootPersistencyManager.hh"
+#include "pCTEvent.hh"
 
 #include "stdio.h"
 
@@ -211,15 +213,18 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
 	  fout.open(fname.c_str(), std::ios::out); //| std::ios::app);  
 	}
 
-	
-
  	unsigned short int nPlanes = Counter.size();
 	
 	//	fout.write((const char*)&evtID, sizeof(evtID));
 	//fout.write((const char*)&nPlanes, sizeof(nPlanes));
 	//fout << "Event ID: " << evtID << " Number of planes: " << nPlanes << std::endl;
 
-	
+ 	pCTRootPersistencyManager* persistencyManager = pCTRootPersistencyManager::GetInstance();
+	pCTEvent* pCT_Event = persistencyManager->GetEvent();
+	pCT_Event->SetPixelHits(Counter);
+
+	std::cout << "Nhits:" << pCT_Event->GetPixelHits().size() << std::endl;
+
  	std::map<G4int, std::vector< CMOSPixel*> >::iterator it2;
  	for(it2=Counter.begin(); it2!=Counter.end(); it2++)
  	{
@@ -243,9 +248,8 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
 		  //fout.write((const char*)&X, sizeof(X));
 		  //fout.write((const char*)&Y, sizeof(Y));
 		  //fout.write((const char*)&e, sizeof(e));
+
 		  fout << X << ", " << Y << ", "<< Plane <<", " << e <<"," <<G4endl;
-
-
 		}
  	}
 	

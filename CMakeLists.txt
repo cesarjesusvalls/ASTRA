@@ -1,14 +1,11 @@
+# Check if cmake has the required version
+cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
 
-#----------------------------------------------------------------------------
-# Setup the project
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+
+# Set name of our project
 project(pCT)
 
-#----------------------------------------------------------------------------
-# Find Geant4 package, activating all available UI and Vis drivers by default
-# You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
-# to build a batch mode only executable
-#
 option(WITH_GEANT4_UIVIS "Build pCT simulation with Geant4 UI and Vis drivers" ON)
 if(WITH_GEANT4_UIVIS)
   find_package(Geant4 REQUIRED ui_all vis_all)
@@ -16,8 +13,33 @@ else()
   find_package(Geant4 REQUIRED)
 endif()
 
-#----------------------------------------------------------------------------
-# lines to add ROOT libraries
+include(${Geant4_USE_FILE})
+include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include/CMOS)
+include_directories(${PROJECT_SOURCE_DIR}/include/SciDet)
+
+file (GLOB EXTRA_SOURCEFILES 
+    ${PROJECT_SOURCE_DIR}/src/CMOS/*.cc
+    ${PROJECT_SOURCE_DIR}/src/SciDet/*.cc
+)
+
+file (GLOB EXTRA_HEADERFILES 
+    ${PROJECT_SOURCE_DIR}/src/CMOS/*.hh
+    ${PROJECT_SOURCE_DIR}/src/SciDet/*.hh
+)
+
+list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
+
+set(LIBRARY_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-overloaded-virtual -Wno-shadow -Wno-unused-const-variable")
+if (APPLE)
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field -Wno-pointer-bool-conversion")
+endif (APPLE)
+
+INCLUDE_DIRECTORIES(. ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )
 MESSAGE(STATUS ${PROJECT_SOURCE_DIR}/cmake)
 
@@ -28,51 +50,18 @@ else (ROOT_FOUND)
     message(FATAL "Unable to find ROOT")
 endif (ROOT_FOUND)
 include_directories (${ROOT_INCLUDE_DIR})
-#----------------------------------------------------------------------------
 
-#----------------------------------------------------------------------------
-# Setup Geant4 include directories and compile definitions
-# Setup include directory for this project
-#
-include(${Geant4_USE_FILE})
-include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/include/CMOS)
-include_directories(${PROJECT_SOURCE_DIR}/include/SciDet)
+message(STATUS "C flags      : " ${CMAKE_C_FLAGS})
+message(STATUS "CXX flags    : " ${CMAKE_CXX_FLAGS})
+message(STATUS "Linker flags : " ${CMAKE_EXE_LINKER_FLAGS}\n)
 
-#----------------------------------------------------------------------------
-# Locate sources and headers for this project
-# NB: headers are included so they will show up in IDEs
-#
-file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
-file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/analysis)
 
-file(GLOB CMOScc   ${PROJECT_SOURCE_DIR}/src/CMOS/*.cc)
-file(GLOB CMOShh   ${PROJECT_SOURCE_DIR}/include/CMOS/*.hh)
-file(GLOB SciDetcc ${PROJECT_SOURCE_DIR}/src/SciDet/*.cc)
-file(GLOB SciDethh ${PROJECT_SOURCE_DIR}/include/SciDet/*.hh)
+ADD_EXECUTABLE(pCTsim                             pCTsimulation.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
+TARGET_LINK_LIBRARIES(pCTsim                      Evtdict ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 
-#----------------------------------------------------------------------------
-# Add the executable, and link it to the Geant4 libraries
-#
-add_executable(pCTsimulation pCTsimulation.cc ${sources} ${headers} ${CMOScc} ${CMOShh} ${SciDetcc} ${SciDethh})
-target_link_libraries(pCTsimulation ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
-
-#----------------------------------------------------------------------------
-# remove plenty of warnings from ROOT source code
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-overloaded-virtual -Wno-shadow -Wno-unused-const-variable")
-if (APPLE)
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field -Wno-pointer-bool-conversion")
-endif (APPLE)
-
-#----------------------------------------------------------------------------
-# For internal Geant4 use - but has no effect if you build this
-# example standalone
-#
-add_custom_target(pCT DEPENDS pCTsimulation)
-
-#----------------------------------------------------------------------------
-# Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
-#
-install(TARGETS pCTsimulation DESTINATION bin)
-
-
+install(FILES ${CMAKE_BINARY_DIR}/src/libEventDict_rdict.pcm 
+	      ${CMAKE_BINARY_DIR}/src/libEventDict.rootmap 
+              ${CMAKE_BINARY_DIR}/src/EventDict.cxx 
+		DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib)
