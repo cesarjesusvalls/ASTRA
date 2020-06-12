@@ -12,11 +12,16 @@
 #include <G4VisAttributes.hh>
 #include <G4PVReplica.hh>
 #include <G4PVPlacement.hh>
+#include <G4SubtractionSolid.hh>
 
 #include <G4Tubs.hh>
-
 #include "pCTSciDetConstructor.hh"
-#include "pCTSciBarConstructor.hh"
+
+#include "G4SDManager.hh"
+// used to keep a list of SD logical volumes
+#include "G4RegionStore.hh"
+#include <G4Region.hh> 
+#include "CMOSSD.hh"
 
 pCTSciDetConstructor::~pCTSciDetConstructor() {;}
 
@@ -33,6 +38,8 @@ void pCTSciDetConstructor::Init(void) {
     fBarZ  = 1*CLHEP::mm;
     fBarY = 1*CLHEP::mm;
 
+    fCoatingThickness = 0.1*CLHEP::mm;
+
     // Set total size of the SciDet
     double TotWidth  = fBarX * fNBars; 
     double TotHeight = fBarY; 
@@ -47,18 +54,8 @@ void pCTSciDetConstructor::Init(void) {
     fPosY = 0.;
     fPosZ = 0.;
 
-    // change this... somehow
-    G4String nameRepXYZ = "RepY"; // replica of single bar along Z
-    G4String nameRepXZ  = nameRepXYZ+"/RepX"; // replica of single row  along X
-    G4String nameRepZ   = nameRepXZ +"/RepZ"; // replica of single layer along Y
-    G4String nameCube   = nameRepZ+"/CubeScint";
-    
-    SetNameRepXYZ(nameRepXYZ);
-    SetNameRepXZ(nameRepXZ);
-    SetNameRepZ(nameRepZ);
-    SetNameBar(nameCube);
-
-    AddConstructor(new pCTSciBarConstructor(GetNameBar(), this)); 
+    SetBarName(GetName()+"Bar");
+    //AddConstructor(new pCTSciBarConstructor(GetBarName(), this)); 
 }
 
 G4LogicalVolume *pCTSciDetConstructor::GetPiece(void) {
@@ -79,44 +76,44 @@ G4LogicalVolume *pCTSciDetConstructor::GetPiece(void) {
   // create the SciDet logical volume
   G4VSolid* SciDet_solidV = new G4Box(GetName(), GetDetX()/ 2., GetDetY()/ 2., GetDetZ()/ 2.);
   G4LogicalVolume* SciDet_logicalV = new G4LogicalVolume(SciDet_solidV,FindMaterial("Air"),GetName());
-  SciDet_logicalV->SetVisAttributes(G4Colour(1.0, 0.0, 0.0));
+  //SciDet_logicalV->SetVisAttributes(G4Colour(1.0, 0.0, 0.0));
+  SciDet_logicalV->SetVisAttributes(G4VisAttributes::Invisible);
 
-  // create a single bar
-  pCTSciBarConstructor& bar
-    = Get<pCTSciBarConstructor>(GetNameBar());
-  
-  bar.SetBarX(fBarX);
-  bar.SetBarY(fBarY);
-  bar.SetBarZ(fBarZ);
-  bar.SetCoatingThickness(0.1*CLHEP::mm);
-  bar.SetGap(0.0*CLHEP::mm);
+  G4SDManager* SDman      = G4SDManager::GetSDMpointer();
+  CMOSSD*      aTrackerSD = (CMOSSD*)SDman->FindSensitiveDetector("CMOS");
 
-  // create the logic volume of a bar
-  G4LogicalVolume* bar_logical = bar.GetPiece();
+  for(int nlayer=0; nlayer<GetNLayers(); nlayer++){
+      for(int nbar=0; nbar<GetNBars(); nbar++){
+          TString barName = "/Layer";
+          barName += nlayer;
+          barName += "/Bar";
+          barName += nbar;
+          G4cout << barName << G4endl;
 
-  // create the logic volume of a layer of bars
-  G4VSolid* XY_plane = new G4Box(GetName()+"/"+GetNameRepZ(), GetDetX()/2, bar.GetBarY()/2, GetBarZ()/2); 
-  G4LogicalVolume* XY_plane_logical = new G4LogicalVolume(XY_plane, FindMaterial("Air"), GetName()+"/"+GetNameRepZ());
-  XY_plane_logical->SetVisAttributes(G4VisAttributes::Invisible);
+          G4VSolid* barSolid               = new G4Box(GetName()+barName.Data()+"/Scint",GetBarX()/2,GetBarY()/2,GetBarZ()/2);
+          G4VSolid* scintSolid             = new G4Box(GetName()+barName.Data()+"/Coating",GetBarX()/2-fCoatingThickness,GetBarY()/2-fCoatingThickness,GetBarZ()/2-fCoatingThickness);
+          G4SubtractionSolid* coatingSolid = new G4SubtractionSolid("Coating", barSolid, scintSolid);
 
-  new G4PVReplica(GetName(),                          // its name
-      bar_logical,                                    // its logical volume
-      XY_plane_logical,                               // its mother volume
-      kXAxis,                                         // axis along replication applied
-      fNBars,                                         // number of replicated volumes
-      bar.GetBarX()                                   // width of single replica along axis 
-      );
+          G4LogicalVolume *scintVolume   = new G4LogicalVolume(scintSolid,  FindMaterial("PlasticScintillator"),GetName()+barName.Data()+"/Scint");
+          G4LogicalVolume *coatingVolume = new G4LogicalVolume(coatingSolid,FindMaterial("PlasticScintillator"),GetName()+barName.Data()+"/Coating");
 
-  for(int layer=0; layer<GetNLayers(); layer++){
-      TString layerName = "/Plane";
-      layerName += layer;
-      G4cout << layerName << G4endl;
+          scintVolume->SetSensitiveDetector( aTrackerSD ); 
+          coatingVolume->SetSensitiveDetector( aTrackerSD ); 
+          scintVolume->SetVisAttributes(G4Color(0.0,0.8,0.8,0.));
+          //coatingVolume->SetVisAttributes(G4Color(0.0,0.0,0.8,0.));
+          coatingVolume->SetVisAttributes(G4VisAttributes::Invisible);
 
-      G4RotationMatrix rotM;
-      if(layer%2==0) rotM.rotateZ(90.0 * CLHEP::deg);
-    
-      G4cout << (GetNLayers()-layer*2-1)*bar.GetBarZ()/2 << G4endl;
-      new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector(0, 0, (GetNLayers()-layer*2-1)*bar.GetBarZ()/2 )),XY_plane_logical,GetName()+layerName.Data(),SciDet_logicalV,false,0);
+          G4RotationMatrix rotM;
+          if(nlayer%2==0){
+              rotM.rotateZ(90.0 * CLHEP::deg);
+              new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector(0, (GetNBars()-nbar*2-1)*fBarX/2, (GetNLayers()-nlayer*2-1)*fBarZ/2)),scintVolume,  GetName()+barName.Data()+"/Scint",SciDet_logicalV,false,nlayer*GetNBars()+nbar);
+              new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector(0, (GetNBars()-nbar*2-1)*fBarX/2, (GetNLayers()-nlayer*2-1)*fBarZ/2)),coatingVolume,GetName()+barName.Data()+"/Coating",SciDet_logicalV,false,nlayer*GetNBars()+nbar);
+          }
+          else{
+              new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector((GetNBars()-nbar*2-1)*fBarX/2, 0, (GetNLayers()-nlayer*2-1)*fBarZ/2)),scintVolume,  GetName()+barName.Data()+"/Scint"  ,SciDet_logicalV,false,nlayer*GetNBars()+nbar);
+              new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector((GetNBars()-nbar*2-1)*fBarX/2, 0, (GetNLayers()-nlayer*2-1)*fBarZ/2)),coatingVolume,GetName()+barName.Data()+"/Coating",SciDet_logicalV,false,nlayer*GetNBars()+nbar);
+          }
+      }
   }
 
   return SciDet_logicalV;

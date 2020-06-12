@@ -133,29 +133,19 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
  // G4double y0 =	(G4UniformRand()-0.5)*dist*6*std::sqrt(1-pow(x0/dist*1.5,2));
 
 
-
-
-
-
  ////////////////////// Rectangular Beam: ///////////////////////
 //////////////////////////////////////////////////////////////
   G4double x0 =	(G4UniformRand()-0.5)*dist*14;
   G4double y0 =	(G4UniformRand()-0.5)*dist*7;
-
-
-
-
-
-
-  
-  
   G4double z0 = -0.5 * envSizeZ;
-  std::cout << "_________________" <<	std::endl;
-  std::cout << "_________________" <<	std::endl;
-  std::cout << x0 << std::endl;
-  std::cout << y0 << std::endl;
-  std::cout << "_________________" << std::endl;
-  std::cout << "_________________" <<	std::endl;
+
+  // std::cout << "_________________" <<	std::endl;
+  // std::cout << "_________________" <<	std::endl;
+  // std::cout << x0 << std::endl;
+  // std::cout << y0 << std::endl;
+  // std::cout << "_________________" << std::endl;
+  // std::cout << "_________________" <<	std::endl;
+  
   fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
 
   fParticleGun->GeneratePrimaryVertex(anEvent);

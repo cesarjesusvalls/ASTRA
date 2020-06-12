@@ -23,6 +23,7 @@
 #include "G4SystemOfUnits.hh"
 #include "G4UnionSolid.hh"
 #include "G4IntersectionSolid.hh"
+#include <G4VisAttributes.hh>
 
 #include "pCTRootPersistencyManager.hh"
 #include "pCTSciDetConstructor.hh"
@@ -44,6 +45,10 @@ pCTDetectorConstruction::~pCTDetectorConstruction()
 G4VPhysicalVolume* pCTDetectorConstruction::Construct()
 {  
     this->DefineMaterials();
+
+    G4SDManager* SDman = G4SDManager::GetSDMpointer();
+    fCMOSSD = new CMOSSD("CMOS");
+    SDman->AddNewDetector(fCMOSSD);
 
     pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
     pCTXMLInput = InputPersistencyManager->GetXMLInput();
@@ -121,7 +126,10 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     new G4PVPlacement(0, pos3Epi, epiLogic, "epi", logicEnv, false, 2, checkOverlaps);
     new G4PVPlacement(0, pos3Sub, subLogic, "sub", logicEnv, false, 2,checkOverlaps);
          
-    // // Range Telescope
+    epiLogic->SetVisAttributes(G4Colour(0.0, 1.0, 0.0));
+    subLogic->SetVisAttributes(G4Colour(1.0, 0.0, 0.0));
+
+    // Range Telescope
     // G4Box* RTShape = new G4Box("RT",2.5*cm,2.5*cm,4.5*cm);
     // logicRT = new G4LogicalVolume(RTShape,Silicon, "RT");
     // new G4PVPlacement(0, RTpos, logicRT, "RT", logicEnv, false, 3,checkOverlaps); 
@@ -129,10 +137,10 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     //______ SciDet ______
     pCTSciDetConstructor* fSciDetConstructor = new pCTSciDetConstructor("SciDet", this);
     G4String nameSciDet = fSciDetConstructor->GetName();
-    fSciDetConstructor->SetNLayers(6);
-    fSciDetConstructor->SetNBars(5);
+    fSciDetConstructor->SetNLayers(20);
+    fSciDetConstructor->SetNBars(25);
     fSciDetConstructor->SetBarX(2*mm);
-    fSciDetConstructor->SetBarY(10*mm);
+    fSciDetConstructor->SetBarY(50*mm);
     fSciDetConstructor->SetBarZ(2*mm);
     logicSciDet = fSciDetConstructor->GetPiece(); 
     new G4PVPlacement(0,RTpos,logicSciDet,nameSciDet,logicEnv,false,0,checkOverlaps);
@@ -145,11 +153,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
 void pCTDetectorConstruction::ConstructSDandField()
 {
     G4cout << "Constructing SDs" << G4endl;
-    G4SDManager* SDman = G4SDManager::GetSDMpointer();
-    CMOSSD* sensitive_det = new CMOSSD("CMOS");
-    SDman->AddNewDetector(sensitive_det);
-    epiLogic->SetSensitiveDetector(sensitive_det);      
-    logicSciDet->SetSensitiveDetector(sensitive_det);
+    epiLogic->SetSensitiveDetector(fCMOSSD);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

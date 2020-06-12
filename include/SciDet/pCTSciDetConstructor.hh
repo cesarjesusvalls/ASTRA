@@ -69,16 +69,10 @@ public:
     // Get the Z position of the SciDet detector 
     double GetPosZ(void) {return fPosZ;}
 
-    // Set and Get the detectors name
-    virtual void SetNameRepXYZ(G4String name){fNameRepXYZ=name;};
-    virtual void SetNameRepXZ (G4String name){fNameRepXZ =name;};
-    virtual void SetNameRepZ  (G4String name){fNameRepZ  =name;};
-    virtual void SetNameBar  (G4String name){fNameBar  =name;};
-
-    virtual G4String GetNameRepXYZ(){return fNameRepXYZ;};
-    virtual G4String GetNameRepXZ (){return fNameRepXZ;};
-    virtual G4String GetNameRepZ  (){return fNameRepZ;};
-    virtual G4String GetNameBar  (){return fNameBar;};
+    /// Set bar name
+    void SetBarName(G4String name) {fBarName = name;}
+    // Get bar name
+    G4String GetBarName(void) {return fBarName;}
 
     pCTXML * GetpCTXML() const {return fpCTXMLInput;};
 
@@ -107,11 +101,10 @@ private:
     double fPosY;
     double fPosZ;
 
-    // Detector names
-    G4String fNameRepXYZ; // Replica of layers along Y
-    G4String fNameRepXZ;  // Replica of rows along X
-    G4String fNameRepZ;   // Replica of cubes along Z
-    G4String fNameBar;   // Single cube
+    double fCoatingThickness;
+
+    // Name of bar logical volume
+    G4String fBarName;
 
     void Init(void);
 

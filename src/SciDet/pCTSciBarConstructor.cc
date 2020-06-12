@@ -22,11 +22,11 @@
 // used to keep a list of SD logical volumes
 #include "G4RegionStore.hh"
 #include <G4Region.hh> 
+#include "CMOSSD.hh"
 
 pCTSciBarConstructor::~pCTSciBarConstructor() {;}
 
 void pCTSciBarConstructor::Init() {
-  
     SetBarX(1*CLHEP::cm);
     SetBarY(1*CLHEP::cm);
     SetBarZ(1*CLHEP::cm);
@@ -40,6 +40,12 @@ void pCTSciBarConstructor::Init() {
 
 G4LogicalVolume* pCTSciBarConstructor::GetPiece(void) {
   
+  G4SDManager* SDman      = G4SDManager::GetSDMpointer();
+  CMOSSD*      aTrackerSD = (CMOSSD*)SDman->FindSensitiveDetector("CMOS");
+
+
+  G4cout << "BarName: " << GetName() << G4endl;
+
   pCTRootPersistencyManager* InputPersistencyManager
     = pCTRootPersistencyManager::GetInstance();
   pCTXMLInput = InputPersistencyManager->GetXMLInput();
@@ -87,27 +93,26 @@ G4LogicalVolume* pCTSciBarConstructor::GetPiece(void) {
   G4LogicalVolume* extrusionVolume
     = new G4LogicalVolume(extrusion,
 			  FindMaterial(GetCoatingMaterial()),
-			  GetName()+"/Extrusion");
+			  GetName()+"/Coating");
 			  
   G4LogicalVolume *scintVolume;
   scintVolume = new G4LogicalVolume(scintillator,
 				    FindMaterial(GetScintillatorMaterial()),
-				    GetName()+"/Extrusion/Core");
+				    GetName()+"/Core");
     
-  // // Define the volume of plastic scintillator as sensitive detector
-  // scintVolume->SetSensitiveDetector( aTrackerSD ); 
+  // Define the volume of plastic scintillator as sensitive detector
+  cubeVolume->SetSensitiveDetector( aTrackerSD ); 
 
   // Place the scintillator inside the extrusion volume
-  new G4PVPlacement(0,G4ThreeVector(0,0,0),scintVolume,GetName()+"/Extrusion/Core",extrusionVolume,false,0);                  // copy number
+  new G4PVPlacement(0,G4ThreeVector(0,0,0),scintVolume,GetName()+"/Core",extrusionVolume,false,0);                  // copy number
 
   // Place the extrusion inside the cube volume
-  new G4PVPlacement(0,G4ThreeVector(0,0,0),extrusionVolume,GetName()+"/Extrusion",cubeVolume,false,0);                  // copy number
+  new G4PVPlacement(0,G4ThreeVector(0,0,0),extrusionVolume,GetName()+"/Coating",cubeVolume,false,0);                  // copy number
 
   cubeVolume      ->SetVisAttributes(G4VisAttributes::Invisible);
   //extrusionVolume ->SetVisAttributes(visAtt_Coat); 
   extrusionVolume ->SetVisAttributes(G4VisAttributes::Invisible); 
   scintVolume     ->SetVisAttributes(visAtt_Scint);
-
 
   return cubeVolume;
 }

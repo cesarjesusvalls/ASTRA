@@ -33,6 +33,7 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 #include "pCTXML.hh"
+#include "CMOSSD.hh"
 
 class G4VPhysicalVolume;
 class G4LogicalVolume;
@@ -51,15 +52,16 @@ class pCTDetectorConstruction : public G4VUserDetectorConstruction
         void DefineMaterials();
      
         G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
-
         pCTXML* pCTXMLInput;
+        CMOSSD* GetSensitiveDetector() {return fCMOSSD;};
 
     protected:
         G4Material* FindMaterial(G4String m);
-        G4LogicalVolume*  fScoringVolume;
+        G4LogicalVolume* fScoringVolume;
         G4LogicalVolume* epiLogic; 
         G4LogicalVolume* logicRT;
         G4LogicalVolume* logicSciDet;
+        CMOSSD*          fCMOSSD;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -2,6 +2,7 @@
 /buildAna/*
 /output/*
 /bin/*
+*.root
 *.wrl
 Test_CMOS.txt
 *.DS_Store

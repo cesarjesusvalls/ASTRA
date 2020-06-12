@@ -24,7 +24,7 @@ public:
         : pCTConstructor(n,p) {Init();};
     virtual ~pCTSciBarConstructor();
 
-    G4String GetName(void) {return fName;}
+    //virtual G4String GetName(void) {return fName;}
 
     /// Construct and return a G4 volume for the object.
     virtual G4LogicalVolume* GetPiece(void);
@@ -75,7 +75,7 @@ private:
     void Init(void);
 
     // The name of the SciBar.
-    G4String fName;
+    //G4String fName;
 
     // Size of the SciBars
     double fBarX;
