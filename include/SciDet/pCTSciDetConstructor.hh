@@ -14,19 +14,18 @@ class G4LogicalVolume;
 #include "pCTDetectorConstruction.hh"   
 #include "pCTConstructor.hh"   
 
-class pCTSciDetConstructor : public pCTConstructor {
+class pCTSciDetConstructor{
 
 public:
-    pCTSciDetConstructor(G4String n, pCTDetectorConstruction* c)
-      : pCTConstructor(n,c) {Init();};
-    pCTSciDetConstructor(G4String n, pCTConstructor* p)
-      : pCTConstructor(n,p) {Init();};
+    pCTSciDetConstructor(G4String n)
+      : fName(n){Init();};
+
     virtual ~pCTSciDetConstructor();
 
     G4String GetName(void) {return fName;}
 
     /// Construct and return a G4 volume for the object.
-    virtual G4LogicalVolume* GetPiece(void);
+    G4LogicalVolume* GetPiece(void);
 
     // Detector Total Size (X,Y,Z)
     void   SetDetX(double x) {fDetX = x;}
@@ -68,6 +67,8 @@ public:
     void SetPosZ(double pos) {fPosZ = pos;}
     // Get the Z position of the SciDet detector 
     double GetPosZ(void) {return fPosZ;}
+
+    G4Material* FindMaterial(G4String name);
 
     /// Set bar name
     void SetBarName(G4String name) {fBarName = name;}

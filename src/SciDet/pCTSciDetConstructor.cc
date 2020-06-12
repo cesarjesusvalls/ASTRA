@@ -58,6 +58,11 @@ void pCTSciDetConstructor::Init(void) {
     //AddConstructor(new pCTSciBarConstructor(GetBarName(), this)); 
 }
 
+G4Material* pCTSciDetConstructor::FindMaterial(G4String name) {
+    G4Material* material = G4Material::GetMaterial(name,true);
+    return material;
+}
+
 G4LogicalVolume *pCTSciDetConstructor::GetPiece(void) {
 
   pCTRootPersistencyManager* InputPersistencyManager

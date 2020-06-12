@@ -135,7 +135,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     // new G4PVPlacement(0, RTpos, logicRT, "RT", logicEnv, false, 3,checkOverlaps); 
 
     //______ SciDet ______
-    pCTSciDetConstructor* fSciDetConstructor = new pCTSciDetConstructor("SciDet", this);
+    pCTSciDetConstructor* fSciDetConstructor = new pCTSciDetConstructor("SciDet");
     G4String nameSciDet = fSciDetConstructor->GetName();
     fSciDetConstructor->SetNLayers(20);
     fSciDetConstructor->SetNBars(25);
