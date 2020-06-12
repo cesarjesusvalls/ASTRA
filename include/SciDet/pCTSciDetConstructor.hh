@@ -11,8 +11,7 @@ class G4LogicalVolume;
 
 #include "pCTRootPersistencyManager.hh"
 #include "pCTXML.hh"
-#include "pCTDetectorConstruction.hh"   
-#include "pCTConstructor.hh"   
+#include "pCTDetectorConstruction.hh"    
 
 class pCTSciDetConstructor{
 
