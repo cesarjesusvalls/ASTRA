@@ -27,25 +27,55 @@ class pCTXML
 {
 public :
 
-  pCTXML(const G4String inxmlname="");
-  ~pCTXML();
+    pCTXML(const G4String inxmlname="");
+    ~pCTXML();
+      
+    G4String GetXMLFileName()   {return fXMLFile;};
+    G4String GetXMLExample()    {return fExample;};
     
-  G4String GetXMLFileName()     {return fXMLFile;};
-  G4String GetXMLExample()      {return fExample;};
+    G4int GetSciDetNBars()      {return fSciDetNBars;};
+    G4int GetSciDetNLayers()    {return fSciDetNLayers;};
+    
+    G4double GetSciDetBarX()       {return fSciDetBarX;};
+    G4double GetSciDetBarY()       {return fSciDetBarY;};
+    G4double GetSciDetBarZ()       {return fSciDetBarZ;};
 
-  void SetInputs();
+    G4double GetSciDetX()          {return fSciDetX;};
+    G4double GetSciDetY()          {return fSciDetY;};
+    G4double GetSciDetZ()          {return fSciDetZ;};
+
+    G4bool GetUseSciDet()          {return fUseSciDet;};
+    G4bool GetUseCMOS()            {return fUseCMOS;};
+    G4bool GetUsePhatom()          {return fUsePhantom;};
+
+    void SetInputs();
 
 private :
 
-  G4String fXMLFile;
-  G4String fExample;
+    G4String fXMLFile;
+    G4String fExample;
 
-  void XML2String(string tmp_app,string &dest);
-  void XML2Double(string tmp_app,double &dest);
-  void XML2Int   (string tmp_app,int &dest);
-  void XML2Bool  (string tmp_app,bool &dest);
-  string TrimSpaces(string input);
-  
+    G4int    fSciDetNBars;
+    G4int    fSciDetNLayers;
+
+    G4double fSciDetBarX;
+    G4double fSciDetBarY;
+    G4double fSciDetBarZ;
+
+    G4double fSciDetX;
+    G4double fSciDetY;
+    G4double fSciDetZ;
+
+    G4bool   fUseSciDet;
+    G4bool   fUseCMOS;
+    G4bool   fUsePhantom;
+
+    void XML2String(string tmp_app,string &dest);
+    void XML2Double(string tmp_app,double &dest);
+    void XML2Int   (string tmp_app,int &dest);
+    void XML2Bool  (string tmp_app,bool &dest);
+    string TrimSpaces(string input);
+    
 };
 
 #endif

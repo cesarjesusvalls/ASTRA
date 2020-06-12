@@ -9,6 +9,7 @@
 #include "pCTDetectorConstruction.hh"
 #include "G4SDManager.hh"
 #include "CMOSSD.hh"
+#include "SciDetSD.hh"
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -49,6 +50,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
     fCMOSSD = new CMOSSD("CMOS");
     SDman->AddNewDetector(fCMOSSD);
+    SDman->AddNewDetector(new SciDetSD("SciDetSensDet"));
 
     pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
     pCTXMLInput = InputPersistencyManager->GetXMLInput();
@@ -137,11 +139,11 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     //______ SciDet ______
     pCTSciDetConstructor* fSciDetConstructor = new pCTSciDetConstructor("SciDet");
     G4String nameSciDet = fSciDetConstructor->GetName();
-    fSciDetConstructor->SetNLayers(20);
-    fSciDetConstructor->SetNBars(25);
-    fSciDetConstructor->SetBarX(2*mm);
-    fSciDetConstructor->SetBarY(50*mm);
-    fSciDetConstructor->SetBarZ(2*mm);
+    fSciDetConstructor->SetNLayers(pCTXMLInput->GetSciDetNLayers());
+    fSciDetConstructor->SetNBars(pCTXMLInput->GetSciDetNBars());
+    fSciDetConstructor->SetBarX(pCTXMLInput->GetSciDetBarX()*mm);
+    fSciDetConstructor->SetBarY(pCTXMLInput->GetSciDetBarY()*mm);
+    fSciDetConstructor->SetBarZ(pCTXMLInput->GetSciDetBarZ()*mm);
     logicSciDet = fSciDetConstructor->GetPiece(); 
     new G4PVPlacement(0,RTpos,logicSciDet,nameSciDet,logicEnv,false,0,checkOverlaps);
     //_____________________

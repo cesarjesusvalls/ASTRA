@@ -12,6 +12,62 @@
     SomethingHere
   </Example>
 
+<!-- Use Detector -->
+
+  <UseSciDet>  
+    True
+  </UseSciDet>
+
+  <UseCMOS>  
+    True
+  </UseCMOS>
+
+  <UsePhantom>  
+    True
+  </UsePhantom>
+
+<!-- ............ -->
+
+<!-- SciDet Geometry -->
+
+  <SciDetNBars>
+    25
+  </SciDetNBars>
+
+  <SciDetNLayers>
+    40
+  </SciDetNLayers>
+
+  <SciDetBarX>
+    2
+  </SciDetBarX>
+
+  <SciDetBarY>
+    50
+  </SciDetBarY>
+
+  <SciDetBarZ>
+    2
+  </SciDetBarZ>
+
+<!-- .............. -->
+
+<!-- SciDet placement -->
+
+  <SciDetX>
+    2
+  </SciDetX>
+
+  <SciDetY>
+    2
+  </SciDetY>
+
+  <SciDetZ>
+    2
+  </SciDetZ>
+
+<!-- ................ -->
+
 </Dependency>
 
 </Dependency_Details>
