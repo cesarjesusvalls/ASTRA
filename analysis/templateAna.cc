@@ -29,12 +29,12 @@ int main(int argc,char** argv){
     for(int ievt(0); ievt<data->GetEntries(); ievt++){
         data->GetEntry(ievt);
 
-        std::cout << "-------------------------------\n";
+        std::cout << "-oOo--oOo--oOo--oOo--oOo--oOo-\n";
         std::cout << "Event: " << ievt << std::endl;
-        std::cout << "-------------------------------\n";
+        std::cout << "-------------CMOS-------------" << std::endl;
+        std::cout << "SciDet: " << ievt << std::endl;
         std::map<G4int, std::vector< CMOSPixel* > > Counter = event->GetPixelHitsMap();
         std::cout << "Nhits:" << Counter.size() << std::endl;
-
         std::map<G4int, std::vector< CMOSPixel*> >::iterator it2;
         for(it2=Counter.begin(); it2!=Counter.end(); it2++)
         {
@@ -51,10 +51,12 @@ int main(int argc,char** argv){
               std::cout << X << ", " << Y << ", "<< Plane <<", " << e <<"," << std::endl;
             }
         }
+        std::cout << "------------SciDet------------" << std::endl;
+        std::vector< SciDetHit* > listOfSciHits = event->GetSciDetHits();
+        std::cout << "# SciHits: " << listOfSciHits.size() << std::endl;
+        std::vector< SciDetHit* >::iterator sciHit;
+        for(sciHit=listOfSciHits.begin(); sciHit!=listOfSciHits.end(); sciHit++) std::cout << "Edep: " <<  (*sciHit)->GetEnergyDeposited() << endl;
     }
-    
-
-
     //_____________________
 
     inputFile->Close();

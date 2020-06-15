@@ -15,8 +15,7 @@
 #pragma link C++ class std::vector< CMOSPixel >+;
 #pragma link C++ class std::map<G4int, std::vector< CMOSPixel >>+;
 
-#pragma link C++ class SciDetBar+;
-#pragma link C++ class std::vector< SciDetBar >+;
-#pragma link C++ class std::map<G4int, std::vector< SciDetBar >>+;
+#pragma link C++ class SciDetHit+;
+#pragma link C++ class std::vector< SciDetHit >+;
 
 #endif // __CINT__
