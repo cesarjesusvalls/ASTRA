@@ -45,9 +45,6 @@ G4bool SciDetSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   G4int layerID       = (int) copyNumber/pCTXMLInput->GetSciDetNLayers();
   G4int barID         = copyNumber - layerID;
 
-  //G4cout << "plane: " << planeCopyNo << ", volName: " << touchable->GetVolume()->GetName() << G4endl;
-  G4cout << "layer: " << layerID << ", bar: " << barID << ", copyNumber: " << copyNumber <<G4endl;
-
    // get step points in world coordinate system
   G4ThreeVector point1 = step->GetPreStepPoint()->GetPosition();
   G4ThreeVector point2 = step->GetPostStepPoint()->GetPosition();
@@ -102,11 +99,11 @@ void SciDetSD::EndOfEvent(G4HCofThisEvent*)
     G4double threshold = 550;// 3.3*150; //DUT to e- conversion for TPAC = 3.3e. Basic threshold = 150 DUT
     
     float eventID = (float)G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-    G4cout << "EndOfEvent " << eventID << G4endl;
+    //G4cout << "EndOfEvent " << eventID << G4endl;
   
     // test output of hits
-    G4cout << "\nSciDetSD::EndOfEvent method of SD `" << GetName() << "' called." << G4endl;
-    G4cout << "\thitCollection " << collectionName[0] << " has " << nHits << " hits" << G4endl;
+    //G4cout << "\nSciDetSD::EndOfEvent method of SD `" << GetName() << "' called." << G4endl;
+    //G4cout << "\thitCollection " << collectionName[0] << " has " << nHits << " hits" << G4endl;
     
     // container to add the edep for multiple hits on a strip (if this happens)
     std::map<std::pair<G4int, std::pair<G4int,G4int> >, G4double> Digits;
@@ -144,7 +141,7 @@ void SciDetSD::EndOfEvent(G4HCofThisEvent*)
                 Digits[hit_key] = hit->GetEnergyDeposited() ;
   }
         
-    G4cout << "\n\t----- Total Energy Deposited -----" << G4endl;
+    //G4cout << "\n\t----- Total Energy Deposited -----" << G4endl;
     
     std::map<G4int, std::vector< SciDetBar* > > Counter;
     // now loop through the map and check if above threshold
@@ -190,14 +187,14 @@ void SciDetSD::EndOfEvent(G4HCofThisEvent*)
     {
         unsigned short int Plane = (*it2).first;
         unsigned short int nHitsInPlane = (*it2).second.size();
-            G4cout << "oOoOoPlane " << Plane << " has " << nHitsInPlane << " pixels above threshold (" << threshold << "e-)" << G4endl;
+            //G4cout << "oOoOoPlane " << Plane << " has " << nHitsInPlane << " pixels above threshold (" << threshold << "e-)" << G4endl;
 
         for(unsigned index(0); index<nHitsInPlane; index++)
         {
           unsigned short int X = (*it2).second.at(index)->GetX();
           unsigned short int Y = (*it2).second.at(index)->GetY();
           
-          G4cout << X << ", " << Y << ", "<< Plane <<"," <<G4endl;
+          //G4cout << X << ", " << Y << ", "<< Plane <<"," <<G4endl;
         }
     }
 }

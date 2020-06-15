@@ -35,9 +35,9 @@ CMOSSD::CMOSSD(G4String SDname)
 CMOSSD::~CMOSSD()
 {
   
-        G4cout << "BLAH" << " deleting SD called "<< GetName() << G4endl;
-        fout.close();
-    rename(fname.c_str(), ("Test_"+GetName()+".txt").c_str()); 
+    //     G4cout << "BLAH" << " deleting SD called "<< GetName() << G4endl;
+    //     fout.close();
+    // rename(fname.c_str(), ("Test_"+GetName()+".txt").c_str()); 
     //  rename(fname.c_str(), (fHistoManager->GetFileName()+"_"+GetName()+".bin").c_str());
 }
 
@@ -111,11 +111,11 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
     G4double threshold = 550;// 3.3*150; //DUT to e- conversion for TPAC = 3.3e. Basic threshold = 150 DUT
     
     float eventID = (float)G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-    G4cout << "EndOfEvent " << eventID << G4endl;
+    //G4cout << "EndOfEvent " << eventID << G4endl;
   
     // test output of hits
-    G4cout << "\nCMOSSD::EndOfEvent method of SD `" << GetName() << "' called." << G4endl;
-    G4cout << "\thitCollection " << collectionName[0] << " has " << nHits << " hits" << G4endl;
+    //G4cout << "\nCMOSSD::EndOfEvent method of SD `" << GetName() << "' called." << G4endl;
+    //G4cout << "\thitCollection " << collectionName[0] << " has " << nHits << " hits" << G4endl;
     
     // container to add the edep for multiple hits on a strip (if this happens)
     std::map<std::pair<G4int, std::pair<G4int,G4int> >, G4double> Digits;
@@ -153,7 +153,7 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
                 Digits[hit_key] = hit->GetEnergyDeposited() ;
   }
         
-    G4cout << "\n\t----- Total Energy Deposited -----" << G4endl;
+    //G4cout << "\n\t----- Total Energy Deposited -----" << G4endl;
     
     std::map<G4int, std::vector< CMOSPixel* > > Counter;
     // now loop through the map and check if above threshold
@@ -192,16 +192,16 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
     
     pCTRootPersistencyManager* persistencyManager = pCTRootPersistencyManager::GetInstance();
     pCTEvent* pCT_Event = persistencyManager->GetEvent();
-    pCT_Event->SetPixelHits(Counter);
+    pCT_Event->SetPixelHitsMap(Counter);
 
-    std::cout << "Nhits:" << pCT_Event->GetPixelHits().size() << std::endl;
+    //std::cout << "Nhits:" << pCT_Event->GetPixelHitsMap().size() << std::endl;
 
     std::map<G4int, std::vector< CMOSPixel*> >::iterator it2;
     for(it2=Counter.begin(); it2!=Counter.end(); it2++)
     {
         unsigned short int Plane = (*it2).first;
         unsigned short int nHitsInPlane = (*it2).second.size();
-            G4cout << "Plane " << Plane << " has " << nHitsInPlane << " pixels above threshold (" << threshold << "e-)" << G4endl;
+            //G4cout << "Plane " << Plane << " has " << nHitsInPlane << " pixels above threshold (" << threshold << "e-)" << G4endl;
 
         for(unsigned index(0); index<nHitsInPlane; index++)
         {
@@ -209,7 +209,7 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
           unsigned short int Y = (*it2).second.at(index)->GetY();
           unsigned int e = (*it2).second.at(index)->GetElectronsLiberated();
           
-          fout << X << ", " << Y << ", "<< Plane <<", " << e <<"," <<G4endl;
+          //fout << X << ", " << Y << ", "<< Plane <<", " << e <<"," <<G4endl;
         }
     }
 

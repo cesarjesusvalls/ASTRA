@@ -1,6 +1,7 @@
 
 #include "CMOSPixel.hh"
 #include "pCTEvent.hh"
+#include "pCTXML.hh"
 #include <iostream>
 
 #include "TTree.h"
@@ -22,13 +23,16 @@ int main(int argc,char** argv){
     pCTEvent* event = new pCTEvent();
     dataBranch->SetAddress(&event);
 
+    pCTXML* config = (pCTXML*) inputFile->Get("XMLinput");
+    std::cout << config->GetSciDetNBars()  <<"-------------------------------\n";
+
     for(int ievt(0); ievt<data->GetEntries(); ievt++){
         data->GetEntry(ievt);
 
         std::cout << "-------------------------------\n";
         std::cout << "Event: " << ievt << std::endl;
         std::cout << "-------------------------------\n";
-        std::map<G4int, std::vector< CMOSPixel* > > Counter = event->GetPixelHits();
+        std::map<G4int, std::vector< CMOSPixel* > > Counter = event->GetPixelHitsMap();
         std::cout << "Nhits:" << Counter.size() << std::endl;
 
         std::map<G4int, std::vector< CMOSPixel*> >::iterator it2;
