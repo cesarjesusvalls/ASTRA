@@ -41,8 +41,10 @@ G4bool SciDetSD::ProcessHits(G4Step *step, G4TouchableHistory *)
     G4int track_id              = step->GetTrack()->GetTrackID ();
     G4double edep               = step->GetTotalEnergyDeposit();
     G4int copyNumber            = touchable->GetReplicaNumber();
-    G4int layerID               = (int) copyNumber/pCTXMLInput->GetSciDetNLayers();
-    G4int barID                 = copyNumber - layerID;
+    G4int layerID               = (int) copyNumber/pCTXMLInput->GetSciDetNBars();
+    G4int barID                 = copyNumber - pCTXMLInput->GetSciDetNBars()*(layerID);
+
+    G4cout << layerID << ", " << barID << ", " << copyNumber << ", " << (int) copyNumber/pCTXMLInput->GetSciDetNBars() << ", " << copyNumber/pCTXMLInput->GetSciDetNBars()<< endl;
 
     // get step points in world coordinate system
     G4ThreeVector point1        = step->GetPreStepPoint()->GetPosition();

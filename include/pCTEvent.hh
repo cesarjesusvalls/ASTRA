@@ -11,6 +11,7 @@
 
 #include <TObject.h>
 #include "CMOSPixel.hh"
+#include "pCTXML.hh"
 #include "SciDetHit.hh"
 
 class pCTEvent : public TObject {
@@ -30,6 +31,8 @@ public:
 
     void Init(){
     };
+
+    void DrawSciDetHits(pCTXML* config);
 
     //-----Setters------
 

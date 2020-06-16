@@ -41,7 +41,7 @@ void pCTSciDetConstructor::Init(void) {
     fBarZ  = 1*CLHEP::mm;
     fBarY = 1*CLHEP::mm;
 
-    fCoatingThickness = 0.1*CLHEP::mm;
+    fCoatingThickness = 0.*CLHEP::mm;
 
     // Set total size of the SciDet
     double TotWidth  = fBarX * fNBars; 
@@ -108,6 +108,7 @@ G4LogicalVolume *pCTSciDetConstructor::GetPiece(void) {
           barName += nlayer;
           barName += "/Bar";
           barName += nbar;
+          G4cout << barName.Data() << ", " << nlayer*GetNBars()+nbar << G4endl;
 
           G4RotationMatrix rotM;
           if(nlayer%2==0){
