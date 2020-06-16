@@ -18,8 +18,9 @@ class pCTEvent : public TObject {
 
 private:
     int fEvtId;
-    std::map<G4int, std::vector< CMOSPixel* >>  fPixelsMap;
-    std::vector< SciDetHit* >                   fSciDetHits;
+    std::map <G4int, std::vector< CMOSPixel* >>     fPixelsMap;
+    std::vector< SciDetHit* >                       fSciDetHits;
+    std::map <int, double >                         fGunEnergy;   // map from track ID to pgun true kin energy.
 
 public:
 
@@ -32,13 +33,15 @@ public:
     void Init(){
     };
 
-    void DrawSciDetHits(pCTXML* config);
+    void DrawSciDetHits (pCTXML* config);
+    void DrawCMOSHits   (pCTXML* config);
 
     //-----Setters------
 
     void SetEvtId(int evtid)                                                {fEvtId      = evtid;};
     void SetPixelHitsMap(std::map<G4int, std::vector< CMOSPixel* >> fpxls)  {fPixelsMap  = fpxls;};
     void SetSciDetHits(std::vector< SciDetHit* > fhits)                     {fSciDetHits = fhits;};
+    void SetGunEnergyMap(std::map <int, double > fgun)                      {fGunEnergy = fgun;};
 
     //------------------
 
@@ -47,6 +50,7 @@ public:
     int GetEvtId() {return fEvtId;};
     std::map<G4int, std::vector< CMOSPixel* >>  GetPixelHitsMap()    {return fPixelsMap;};
     std::vector< SciDetHit* >                   GetSciDetHits()      {return fSciDetHits;};
+    std::map <int, double >                     GetGunEnergyMap()    {return fGunEnergy;};
 
     //------------------
 
@@ -55,6 +59,7 @@ public:
         fEvtId = -999;
         fPixelsMap.clear();
         fSciDetHits.clear();
+        fGunEnergy.clear();
     }
 
     ClassDef(pCTEvent,1) 

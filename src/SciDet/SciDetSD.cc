@@ -44,7 +44,8 @@ G4bool SciDetSD::ProcessHits(G4Step *step, G4TouchableHistory *)
     G4int layerID               = (int) copyNumber/pCTXMLInput->GetSciDetNBars();
     G4int barID                 = copyNumber - pCTXMLInput->GetSciDetNBars()*(layerID);
 
-    G4cout << layerID << ", " << barID << ", " << copyNumber << ", " << (int) copyNumber/pCTXMLInput->GetSciDetNBars() << ", " << copyNumber/pCTXMLInput->GetSciDetNBars()<< endl;
+    //G4cout << layerID << ", " << barID << ", " << copyNumber << ", " << (int) copyNumber/pCTXMLInput->GetSciDetNBars() << ", " << copyNumber/pCTXMLInput->GetSciDetNBars()<< endl;
+    //G4cout << step->GetTrack()->GetTrackID () << "," << step->GetTrack()->GetParentID () << G4endl;
 
     // get step points in world coordinate system
     G4ThreeVector point1        = step->GetPreStepPoint()->GetPosition();
@@ -53,7 +54,7 @@ G4bool SciDetSD::ProcessHits(G4Step *step, G4TouchableHistory *)
     G4ThreeVector localPosition = touchable->GetHistory()->GetTopTransform().TransformPoint(worldPosition);  
       
     // create a hit and populate it with information
-    SciDetHit* hit = new SciDetHit(copyNumber,layerID,barID, layerID%2, false, localPosition, edep, particle_id, track_id);
+    SciDetHit* hit = new SciDetHit(copyNumber,layerID,barID, layerID%2, false, edep, particle_id, track_id);
     hitCollection->insert(hit);
 
     return true;
@@ -99,5 +100,4 @@ void SciDetSD::EndOfEvent(G4HCofThisEvent*)
     pCTRootPersistencyManager* persistencyManager = pCTRootPersistencyManager::GetInstance();
     pCTEvent* pCT_Event = persistencyManager->GetEvent();
     pCT_Event->SetSciDetHits(mergedHits);
-    G4cout << "NHITS SCIDET: " << pCT_Event->GetSciDetHits().size() << G4endl;
 }

@@ -37,6 +37,7 @@
 #include <G4StepStatus.hh>
 #include <G4TransportationManager.hh>
 #include <G4FieldManager.hh>
+#include <G4PrimaryVertex.hh>
 
 #include "G4RunManager.hh"
 #include "G4HCofThisEvent.hh"
@@ -109,11 +110,18 @@ bool pCTRootPersistencyManager::Close() {
 
 G4bool pCTRootPersistencyManager::Store(const G4Event* anEvent) {
 
-  fOutput->cd();  
-  fpCTEvent->SetEvtId(anEvent->GetEventID());
-  fEventTree->Fill();
+  std::map <int, double > trackIdToGunEnergy;
+  G4PrimaryVertex* vtx = anEvent->GetPrimaryVertex();
+  while(vtx){
+      trackIdToGunEnergy[vtx->GetPrimary()->GetTrackID()] = vtx->GetPrimary()->GetKineticEnergy();
+      vtx = vtx->GetNext();
+  }
 
-  G4cout << "Storing event: " << anEvent->GetEventID() << endl;
+  fOutput->cd(); 
+  fpCTEvent->SetEvtId(anEvent->GetEventID());
+  fpCTEvent->SetGunEnergyMap(trackIdToGunEnergy);
+  fEventTree->Fill();
+  if(anEvent->GetEventID()%10==0) G4cout << "STATUS: ...Processing Event " << anEvent->GetEventID() << G4endl;
   fpCTEvent->ResetEvent();
 
   return false;

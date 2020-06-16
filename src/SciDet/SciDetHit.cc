@@ -6,9 +6,9 @@
 G4ThreadLocal G4Allocator<SciDetHit>* SciDetHitAllocator = 0;
 
 SciDetHit::SciDetHit( const G4int copyID,  G4int layerID, G4int barID,
-              		  G4int orientation,  G4bool isScint,  G4ThreeVector position,
+              		  G4int orientation,  G4bool isScint,
               		  G4double edep,  G4int particle_ID, G4int track_ID)
-	: fCopyID(copyID), fLayerID(layerID), fBarID(barID),fOrientation(orientation), fIsScint(isScint), fPos(position), fEdep(edep), fParticleID(particle_ID), fTrackID(track_ID) {;};
+	: fCopyID(copyID), fLayerID(layerID), fBarID(barID),fOrientation(orientation), fIsScint(isScint), fEdep(edep), fParticleID(particle_ID), fTrackID(track_ID) {;};
 
 
 SciDetHit::~SciDetHit()

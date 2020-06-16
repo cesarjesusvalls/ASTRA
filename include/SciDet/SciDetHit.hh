@@ -4,7 +4,7 @@
 
 #include "G4VHit.hh"
 #include "G4Allocator.hh"
-#include "G4ThreeVector.hh"
+//#include "G4ThreeVector.hh"
 #include "G4THitsCollection.hh"
 #include "G4Types.hh"
 #include "G4SystemOfUnits.hh"
@@ -14,7 +14,7 @@ public:
     /// Constructor
     SciDetHit(){;};
     SciDetHit( const G4int copyID,  G4int layerID, G4int barID,
-               G4int orientation,  G4bool isScint,  G4ThreeVector position,
+               G4int orientation,  G4bool isScint,
                G4double edep,  G4int particle_ID, G4int trackID);
     /// Destructor
     ~SciDetHit();
@@ -27,7 +27,7 @@ public:
     inline void  operator delete(void *aHit);
 
 public:
-    void SetLocalPosition(const G4ThreeVector & pos)    {fPos               = pos;          }
+    //void SetLocalPosition(const G4ThreeVector & pos)    {fPos               = pos;          }
     void SetCopyID(const  G4int ID)                     {fCopyID            = ID;           }
     void SetLayerID(const G4int ID)                     {fLayerID           = ID;           }
     void SetBarID(const   G4int ID)                     {fBarID             = ID;           }
@@ -39,7 +39,7 @@ public:
     void AddTrackID(int ID)                             {fListOfTrackID.push_back(ID);      }
     void AddParticleID(int ID)                          {fListOfParticleID.push_back(ID);   }
 
-    G4ThreeVector GetLocalPosition()        const  { return fPos;               }
+    //G4ThreeVector GetLocalPosition()        const  { return fPos;               }
     G4int         GetCopyID()               const  { return fCopyID;            }
     G4int         GetLayerID()              const  { return fLayerID;           }
     G4int         GetBarID()                const  { return fBarID;             }
@@ -57,7 +57,7 @@ private:
     G4int         fBarID;
     G4int         fOrientation;
     G4bool        fIsScint;
-    G4ThreeVector fPos;
+    //G4ThreeVector fPos;
     G4double      fEdep;  
     G4int         fParticleID;
     G4int         fTrackID;

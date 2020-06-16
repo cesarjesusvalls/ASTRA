@@ -54,14 +54,16 @@ int main(int argc,char** argv){
 
     double hitsMap [nlayers][nbars][2];
     memset( hitsMap, 0, nlayers*nbars*2*sizeof(int) );
-    TCanvas *canv = new TCanvas("canv","canv",600,1200);
-    canv->Divide(1,2);
-    gStyle->SetOptStat(0);
-    TH2F* h_hitsMap[2];
-    h_hitsMap[0] = new TH2F("h_hitsMapZY","TOP VIEW",nlayers,0,nlayers,nbars,0,nbars);
-    h_hitsMap[1] = new TH2F("h_hitsMapZX","SIDE VIEW",nlayers,0,nlayers,nbars,0,nbars);
+
     for(int ievt(0); ievt<data->GetEntries(); ievt++){
         data->GetEntry(ievt);
+
+        std::map <int, double > trackIdToGunEnergy = event->GetGunEnergyMap();
+        std::map <int, double >::iterator gunEit;
+
+        for ( gunEit = trackIdToGunEnergy.begin(); gunEit != trackIdToGunEnergy.end(); gunEit++ )
+            std::cout << (*gunEit).first << "," << (*gunEit).second << std::endl;
+
         std::vector< SciDetHit* > listOfSciHits = event->GetSciDetHits();
         std::vector< SciDetHit* >::iterator sciHit;
 
@@ -69,8 +71,9 @@ int main(int argc,char** argv){
         = (*sciHit)->GetEnergyDeposited();
 
         event->DrawSciDetHits(config);
+        event->DrawCMOSHits(config);
     }
-    
+
     //_____________________
 
     inputFile->Close();

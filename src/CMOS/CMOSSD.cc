@@ -54,9 +54,7 @@ G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   //G4cout << "plane: " << planeCopyNo << ", volName: " << touchable->GetVolume()->GetName() << G4endl;
   //G4cout << "momName: " << touchable->GetVolume()->GetMotherLogical()->GetCopyNo() << G4endl;
 
-
-
-   // get step points in world coordinate system
+  // get step points in world coordinate system
   G4ThreeVector point1 = step->GetPreStepPoint()->GetPosition();
   G4ThreeVector point2 = step->GetPostStepPoint()->GetPosition();
     G4ThreeVector worldPosition = point1 + G4UniformRand()*(point2 - point1);   

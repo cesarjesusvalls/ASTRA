@@ -61,7 +61,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4bool checkOverlaps = true;
 
     // Envelope parameters
-    G4double env_sizeXY = 20*cm, env_sizeZ = 30*cm;
+    G4double env_sizeXY = 20*cm, env_sizeZ = 100*cm;
     G4Material* env_mat = nist->FindOrBuildMaterial("G4_AIR");
 
     // World
@@ -99,7 +99,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4ThreeVector pos2Sub = G4ThreeVector(0, 0*cm, -1.995*cm);
     G4ThreeVector pos3Epi = G4ThreeVector(0, 0*cm, 3.*cm);
     G4ThreeVector pos3Sub = G4ThreeVector(0, 0*cm, 3.005*cm);
-    G4ThreeVector RTpos   = G4ThreeVector(0, 0*cm, 10.5*cm);
+    G4ThreeVector RTpos   = G4ThreeVector(0, 0*cm, 3.005*cm + 0.5*cm + pCTXMLInput->GetSciDetNLayers()*pCTXMLInput->GetSciDetBarZ()*mm/2);
 
     ///////////////test for a single flavour detector or 5x5cm2 (if 2.5*..)
     G4double Si_epi_dx = 4*0.448*cm;
