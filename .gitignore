@@ -8,3 +8,6 @@ Test_CMOS.txt
 *.DS_Store
 *.pcm
 *.dylib
+*#*
+*~*
+

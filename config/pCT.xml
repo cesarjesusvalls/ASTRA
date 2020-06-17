@@ -68,6 +68,50 @@
 
 <!-- ................ -->
 
+<!-- Silicon Det planes placement -->
+<PosX>
+  0
+</PosX>
+
+<PosY>
+  0
+</PosY>
+
+<PosZ0>
+  -12
+</PosZ0>
+
+<PosZ1>
+  -2
+</PosZ1>
+
+<PosZ2>
+  3
+</PosZ2>
+<!-- ................ -->
+
+
+<!-- Silicon thickness -->
+<EpiThickness>
+  25
+</EpiThickness>
+
+<SubThickness>
+  75
+</SubThickness>
+<!-- ................ -->
+
+
+<!-- Silicon shape -->
+<PlaneWidth>
+  448
+</PlaneWidth>
+
+<PlaneHeight>
+  224
+</PlaneHeight>
+<!-- ................ -->
+
 </Dependency>
 
 </Dependency_Details>

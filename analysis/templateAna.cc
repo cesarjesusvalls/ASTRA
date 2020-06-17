@@ -12,7 +12,7 @@ int main(int argc,char** argv){
 
     std::cout << "Starting Analysis Example..." << std::endl;
 
-    TString inputFileName = "/Users/cjesus/Dev/protonCT/output/simulation_file.root";
+    TString inputFileName = "/Users/marc/pCT_Geant4/protonCT/output/outputFile.root";
     TFile* inputFile = new TFile(inputFileName.Data(),"update");
     if(!inputFile) {std::cout << "no output file! exit." << std::endl; exit(1);}
     

@@ -58,7 +58,9 @@ class pCTDetectorConstruction : public G4VUserDetectorConstruction
     protected:
         G4Material* FindMaterial(G4String m);
         G4LogicalVolume* fScoringVolume;
-        G4LogicalVolume* epiLogic; 
+  //        G4LogicalVolume* epiLogic; 
+        G4LogicalVolume* logicPlane;
+         G4LogicalVolume* logicPlane_;
         G4LogicalVolume* logicRT;
         G4LogicalVolume* logicSciDet;
         CMOSSD*          fCMOSSD;

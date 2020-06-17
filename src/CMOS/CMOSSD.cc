@@ -49,11 +49,10 @@ G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   G4int particle_id = step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
   // energy deposit in this step 
   G4double edep = step->GetTotalEnergyDeposit();
-  G4int planeCopyNo = touchable->GetReplicaNumber();
-
-  //G4cout << "plane: " << planeCopyNo << ", volName: " << touchable->GetVolume()->GetName() << G4endl;
-  //G4cout << "momName: " << touchable->GetVolume()->GetMotherLogical()->GetCopyNo() << G4endl;
-
+  G4int planeCopyNo =touchable->GetReplicaNumber(1);
+  //  G4cout << "plane: " << planeCopyNo << ", volName: " << touchable->GetVolume()->GetName() << G4endl;
+  //G4cout << "momName: " << touchable->GetVolume()->GetMotherLogical()->GetName() << G4endl;
+  //G4cout << "momCopyNum: " << touchable->GetReplicaNumber(1)<< G4endl;
 
 
    // get step points in world coordinate system

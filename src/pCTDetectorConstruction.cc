@@ -28,7 +28,7 @@
 
 #include "pCTRootPersistencyManager.hh"
 #include "pCTSciDetConstructor.hh"
-
+#include "pCTSiDetConstructor.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -92,6 +92,8 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     //___________________
 
     // 3 detectors configuration (25um epitaxial 75um substrate +100um OPTIONAL)
+     G4ThreeVector RTpos   = G4ThreeVector(0, 0*cm, 10.5*cm);
+    /*
     G4Material* Silicon   = nist->FindOrBuildMaterial("G4_Si");
     G4ThreeVector pos1Epi = G4ThreeVector(0, 0*cm, -12.00*cm);
     G4ThreeVector pos1Sub = G4ThreeVector(0, 0*cm, -11.995*cm);
@@ -100,6 +102,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4ThreeVector pos3Epi = G4ThreeVector(0, 0*cm, 3.*cm);
     G4ThreeVector pos3Sub = G4ThreeVector(0, 0*cm, 3.005*cm);
     G4ThreeVector RTpos   = G4ThreeVector(0, 0*cm, 10.5*cm);
+    
 
     ///////////////test for a single flavour detector or 5x5cm2 (if 2.5*..)
     G4double Si_epi_dx = 4*0.448*cm;
@@ -115,7 +118,24 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     
     G4Box* subShape = new G4Box("subShape", 0.5*Si_sub_dx, 0.5*Si_dy, 0.5*Si_sub_dz);
     G4LogicalVolume* subLogic = new G4LogicalVolume(subShape,Silicon, "sub");
-     
+    */
+
+    pCTSiDetConstructor* fSiDetConstructor = new pCTSiDetConstructor("SiliconDet");
+    G4String nameSiliconDet = fSiDetConstructor->GetPlaneName();
+    fSiDetConstructor->SetPlaneWidth(pCTXMLInput->GetPlaneWidth()*0.04);
+    fSiDetConstructor->SetPlaneHeight(pCTXMLInput->GetPlaneHeight()*0.036);
+    fSiDetConstructor->SetEpiThickness(pCTXMLInput->GetEpiThickness());
+    fSiDetConstructor->SetSubThickness(pCTXMLInput->GetSubThickness());
+    logicPlane = fSiDetConstructor->GetPiece();
+
+    G4ThreeVector pos0 = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ0())*cm);
+    G4ThreeVector pos1 = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ1())*cm);
+    G4ThreeVector pos2 = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ2())*cm);
+
+    new G4PVPlacement(0,pos0,logicPlane,nameSiliconDet,logicEnv,false,0,checkOverlaps);
+    new G4PVPlacement(0,pos1,logicPlane,nameSiliconDet,logicEnv,false,1,checkOverlaps);
+    new G4PVPlacement(0,pos2,logicPlane,nameSiliconDet,logicEnv,false,2,checkOverlaps);
+    /*
     // 1st Detecotr
     new G4PVPlacement(0, pos1Epi, epiLogic, "epi", logicEnv, false, 0, checkOverlaps);
     new G4PVPlacement(0, pos1Sub, subLogic, "sub", logicEnv, false, 0, checkOverlaps);
@@ -127,9 +147,9 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     // 3rd Detector
     new G4PVPlacement(0, pos3Epi, epiLogic, "epi", logicEnv, false, 2, checkOverlaps);
     new G4PVPlacement(0, pos3Sub, subLogic, "sub", logicEnv, false, 2,checkOverlaps);
-         
-    epiLogic->SetVisAttributes(G4Colour(0.0, 1.0, 0.0));
-    subLogic->SetVisAttributes(G4Colour(1.0, 0.0, 0.0));
+    */   
+    //    epiLogic->SetVisAttributes(G4Colour(0.0, 1.0, 0.0));
+    //subLogic->SetVisAttributes(G4Colour(1.0, 0.0, 0.0));
 
     // Range Telescope
     // G4Box* RTShape = new G4Box("RT",2.5*cm,2.5*cm,4.5*cm);
@@ -152,11 +172,12 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
 }
 
 // this function is looked for in newer versions of geant4 to work with the SD
+
 void pCTDetectorConstruction::ConstructSDandField()
 {
     G4cout << "Constructing SDs" << G4endl;
-    epiLogic->SetSensitiveDetector(fCMOSSD);
-}
+    //    epiLogic->SetSensitiveDetector(fCMOSSD);
+    }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

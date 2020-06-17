@@ -44,10 +44,22 @@ public :
     G4double GetSciDetY()          {return fSciDetY;};
     G4double GetSciDetZ()          {return fSciDetZ;};
 
-    G4bool GetUseSciDet()          {return fUseSciDet;};
-    G4bool GetUseCMOS()            {return fUseCMOS;};
-    G4bool GetUsePhatom()          {return fUsePhantom;};
 
+  G4double GetPosX()               {return fPosX;};
+  G4double GetPosY() {return fPosY;};
+  G4double GetPosZ0() {return fPosZ0;};
+  G4double GetPosZ1() {return fPosZ1;};
+  G4double GetPosZ2() {return fPosZ2;};
+  G4double GetPlaneWidth()     {return fPlaneWidth;}
+  G4double GetPlaneHeight()     {return fPlaneHeight;}
+  G4double GetEpiThickness()     {return fEpiThickness;}
+  G4double GetSubThickness()     {return fSubThickness;}
+  
+  G4bool GetUseSciDet()          {return fUseSciDet;};
+  G4bool GetUseCMOS()            {return fUseCMOS;};
+  G4bool GetUsePhatom()          {return fUsePhantom;};
+
+  
     void SetInputs();
 
 private :
@@ -66,6 +78,17 @@ private :
     G4double fSciDetY;
     G4double fSciDetZ;
 
+  G4double fPosX;
+  G4double fPosY;
+  G4double fPosZ0;
+  G4double fPosZ1;
+  G4double fPosZ2;
+  G4double fPlaneWidth;
+  G4double fPlaneHeight;
+  G4double fEpiThickness;
+  G4double fSubThickness;
+
+  
     G4bool   fUseSciDet;
     G4bool   fUseCMOS;
     G4bool   fUsePhantom;
