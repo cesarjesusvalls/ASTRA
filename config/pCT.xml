@@ -31,7 +31,7 @@
 <!-- SciDet Geometry -->
 
   <SciDetNBars>
-    20
+    10
   </SciDetNBars>
 
   <SciDetNLayers>
@@ -39,15 +39,15 @@
   </SciDetNLayers>
 
   <SciDetBarX>
-    2
+    3
   </SciDetBarX>
 
   <SciDetBarY>
-    40
+    30
   </SciDetBarY>
 
   <SciDetBarZ>
-    2
+    3
   </SciDetBarZ>
 
 <!-- .............. -->

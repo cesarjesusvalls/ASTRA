@@ -163,7 +163,7 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         // std::cout << "_________________" <<  std::endl;
 
         fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
-        fParticleGun->SetParticleEnergy(36 + (G4UniformRand()*(234.)));
+        fParticleGun->SetParticleEnergy(36 + (G4UniformRand()*(194.)));
         fParticleGun->GeneratePrimaryVertex(anEvent);
     }
 }
