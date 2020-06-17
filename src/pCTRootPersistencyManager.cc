@@ -37,6 +37,7 @@
 #include <G4StepStatus.hh>
 #include <G4TransportationManager.hh>
 #include <G4FieldManager.hh>
+#include <G4PrimaryVertex.hh>
 
 #include "G4RunManager.hh"
 #include "G4HCofThisEvent.hh"
@@ -79,10 +80,7 @@ bool pCTRootPersistencyManager::Open(G4String filename) {
     fOutput    = new TFile(GetFilename().c_str(),"RECREATE");
     fEventTree = new TTree("pCT_Events","pCT Tree of Events");  
     fpCTEvent = new pCTEvent();
-    eraseme = -999;
-    fEventTree->Branch("EventINT",&eraseme,128000,0);
     fEventTree->Branch("Event",&fpCTEvent,128000,0);
-    fEventTree->Print();
     fEventsNotSaved = 0;
     return true;
 }
@@ -96,12 +94,12 @@ bool pCTRootPersistencyManager::Close() {
         return false;
     }
 
-    delete fpCTXMLInput; fpCTXMLInput=NULL;
-
     fOutput->cd();
     fEventTree->Write();
+    fpCTXMLInput->Write("XMLinput");
     fOutput->Close();
 
+    delete fpCTXMLInput; fpCTXMLInput=NULL;
     G4cout << "Output file " << GetFilename() << " closed." << G4endl;
 
     fEventTree = NULL;
@@ -111,15 +109,19 @@ bool pCTRootPersistencyManager::Close() {
 }
 
 G4bool pCTRootPersistencyManager::Store(const G4Event* anEvent) {
-  
-  eraseme = (int) G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
 
-  fOutput->cd();  
+  std::map <int, double > trackIdToGunEnergy;
+  G4PrimaryVertex* vtx = anEvent->GetPrimaryVertex();
+  while(vtx){
+      trackIdToGunEnergy[vtx->GetPrimary()->GetTrackID()] = vtx->GetPrimary()->GetKineticEnergy();
+      vtx = vtx->GetNext();
+  }
+
+  fOutput->cd(); 
   fpCTEvent->SetEvtId(anEvent->GetEventID());
-  G4cout << "fpCTEvent eventID: " << fpCTEvent->GetEvtId() << endl;
+  fpCTEvent->SetGunEnergyMap(trackIdToGunEnergy);
   fEventTree->Fill();
-
-  G4cout << "Storing event: " << anEvent->GetEventID() << endl;
+  if(anEvent->GetEventID()%10==0) G4cout << "STATUS: ...Processing Event " << anEvent->GetEventID() << G4endl;
   fpCTEvent->ResetEvent();
 
   return false;
