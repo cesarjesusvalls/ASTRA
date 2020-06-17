@@ -153,6 +153,26 @@ void pCTEvent::DrawCMOSHits(pCTXML* config){
 
 // double pCTEvent::RecoEnergyByRange(pCTXML* config){
 
+//     double range = -999;
+//     double ini[1][1][1] = {0};
+//     double fin[1][1][1] = {0};
+
+//     double maxEdepZX = 0;
+//     double maxEdepZY = 0;
+
+//     int lastLayerID = -999;
+//     std::vector< SciDetHit* > listOfSciHits = this->GetSciDetHits();
+//     std::vector< SciDetHit* >::iterator sciHit;
+//     for(sciHit=listOfSciHits.begin(); sciHit!=listOfSciHits.end(); sciHit++){
+//         int     layerID = (*sciHit)->GetLayerID();
+//         int     edep = (*sciHit)->GetLayerID();
+
+//         if(layerID==0)
+
+
+//     }
+
+
 
 // }
 
