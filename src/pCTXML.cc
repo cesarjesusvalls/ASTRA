@@ -19,6 +19,8 @@ pCTXML::pCTXML(const G4String inxml){
     SetInputs();
 }
 
+pCTXML::pCTXML(){}
+
 pCTXML::~pCTXML(){
     fXMLFile = "";
 }

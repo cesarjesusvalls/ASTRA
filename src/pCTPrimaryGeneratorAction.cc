@@ -135,20 +135,37 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
  ////////////////////// Rectangular Beam: ///////////////////////
 //////////////////////////////////////////////////////////////
-  G4double x0 =	(G4UniformRand()-0.5)*dist*14;
-  G4double y0 =	(G4UniformRand()-0.5)*dist*7;
-  G4double z0 = -0.5 * envSizeZ;
+  // G4double x0 =	(G4UniformRand()-0.5)*dist*14;
+  // G4double y0 =	(G4UniformRand()-0.5)*dist*7;
+  // G4double z0 = -0.5 * envSizeZ;
 
-  // std::cout << "_________________" <<	std::endl;
-  // std::cout << "_________________" <<	std::endl;
-  // std::cout << x0 << std::endl;
-  // std::cout << y0 << std::endl;
-  // std::cout << "_________________" << std::endl;
-  // std::cout << "_________________" <<	std::endl;
+  // // std::cout << "_________________" <<	std::endl;
+  // // std::cout << "_________________" <<	std::endl;
+  // // std::cout << x0 << std::endl;
+  // // std::cout << y0 << std::endl;
+  // // std::cout << "_________________" << std::endl;
+  // // std::cout << "_________________" <<	std::endl;
   
-  fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+  // fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+  // //fParticleGun->SetParticleEnergy(36);
+  // fParticleGun->GeneratePrimaryVertex(anEvent);
 
-  fParticleGun->GeneratePrimaryVertex(anEvent);
+      for (int ind=0; ind<1; ind++){
+        G4double x0 =   (G4UniformRand()-0.5)*dist*14;
+        G4double y0 =   (G4UniformRand()-0.5)*dist*7;
+        G4double z0 = -0.5 * envSizeZ;
+
+        // std::cout << "_________________" <<  std::endl;
+        // std::cout << "_________________" <<  std::endl;
+        // std::cout << x0 << std::endl;
+        // std::cout << y0 << std::endl;
+        // std::cout << "_________________" << std::endl;
+        // std::cout << "_________________" <<  std::endl;
+
+        fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+        fParticleGun->SetParticleEnergy(36 + (G4UniformRand()*(194.)));
+        fParticleGun->GeneratePrimaryVertex(anEvent);
+    }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

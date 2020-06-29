@@ -2,7 +2,7 @@
 /run/initialize
 /vis/open VRML2FILE
 /gun/particle proton
-/gun/energy 36 MeV
+/gun/energy 100 MeV
 /vis/drawVolume
 
 /vis/viewer/set/autoRefresh false
@@ -28,4 +28,4 @@
 /vis/geometry/set/visibility Envelope 0 false
 # "Envelope" is transparent blue to represent water
 
-/run/beamOn 10
+/run/beamOn 100

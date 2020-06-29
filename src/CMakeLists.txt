@@ -6,6 +6,7 @@ AUX_SOURCE_DIRECTORY(/SciDet/     SOURCE_FILES)
 
 set (EVENT_DICT_HEADERFILES
     ../include/pCTEvent.hh
+    ../include/pCTXML.hh
 )
 
 set( EVENT_HEADERFILES

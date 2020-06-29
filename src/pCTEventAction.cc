@@ -62,9 +62,9 @@ void pCTEventAction::BeginOfEventAction(const G4Event*)
 
 void pCTEventAction::EndOfEventAction(const G4Event*)
 {   
-    std::cout<< "Energy in the first Detector "<<fEdep[0]<<" Energy in the second Detector "<<fEdep[1]<<" Energy in the third Detector "<<fEdep[2]<<"\n";
-   // accumulate statistics in run action
-  //     fRunAction->AddEdep(fEdep);
+    //std::cout<< "Energy in the first Detector "<<fEdep[0]<<" Energy in the second Detector "<<fEdep[1]<<" Energy in the third Detector "<<fEdep[2]<<"\n";
+   	// accumulate statistics in run action
+  	//     fRunAction->AddEdep(fEdep);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

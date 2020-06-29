@@ -76,7 +76,7 @@ private:
     TFile *fOutput;
     
     /// The event tree that contains the output events.
-    TTree *fEventTree;
+    TTree* fEventTree;
     /// The TTree branches
     pCTEvent *fpCTEvent; // The pCTEvent class
 

@@ -101,8 +101,6 @@ int main(int argc,char** argv)
 
   persistencyManager->OpenXML(xmlfilename);
   pCTXML *pCTXMLInput = persistencyManager->GetXMLInput();
-  
-  G4cout << "XML Check: " << pCTXMLInput->GetXMLExample() << G4endl;
 
   // Set mandatory initialization classes
   //
@@ -111,7 +109,7 @@ int main(int argc,char** argv)
 
   // Physics list
   G4VModularPhysicsList* physicsList = new QBBC;
-  physicsList->SetVerboseLevel(1);
+  physicsList->SetVerboseLevel(0);
   runManager->SetUserInitialization(physicsList);
     
   // User action initialization

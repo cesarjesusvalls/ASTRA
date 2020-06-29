@@ -12,6 +12,7 @@
 #include "G4RunManager.hh"
 #include "G4Event.hh"
 
+#include <TObject.h>
 #include <TTree.h>
 #include <TFile.h>
 #include <TBits.h>
@@ -23,11 +24,11 @@
 
 using namespace std;
 
-class pCTXML
-{
+class pCTXML: public TObject{
 public :
 
-    pCTXML(const G4String inxmlname="");
+    pCTXML();
+    pCTXML(const G4String inxmlname);
     ~pCTXML();
       
     G4String GetXMLFileName()   {return fXMLFile;};
@@ -103,6 +104,7 @@ private :
     void XML2Bool  (string tmp_app,bool &dest);
     string TrimSpaces(string input);
     
+    ClassDef(pCTXML,1) 
 };
 
 #endif
