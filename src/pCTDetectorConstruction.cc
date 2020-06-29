@@ -122,8 +122,8 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
 
     pCTSiDetConstructor* fSiDetConstructor = new pCTSiDetConstructor("SiliconDet");
     G4String nameSiliconDet = fSiDetConstructor->GetPlaneName();
-    fSiDetConstructor->SetPlaneWidth(pCTXMLInput->GetPlaneWidth()*0.04);
-    fSiDetConstructor->SetPlaneHeight(pCTXMLInput->GetPlaneHeight()*0.036);
+    fSiDetConstructor->SetPlaneColumns(pCTXMLInput->GetPlaneColumns()*0.04);
+    fSiDetConstructor->SetPlaneRows(pCTXMLInput->GetPlaneRows()*0.036);
     fSiDetConstructor->SetEpiThickness(pCTXMLInput->GetEpiThickness());
     fSiDetConstructor->SetSubThickness(pCTXMLInput->GetSubThickness());
     logicPlane = fSiDetConstructor->GetPiece();
@@ -131,10 +131,13 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4ThreeVector pos0 = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ0())*cm);
     G4ThreeVector pos1 = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ1())*cm);
     G4ThreeVector pos2 = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ2())*cm);
-
+    G4ThreeVector pos3 = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ3())*cm);
+    
     new G4PVPlacement(0,pos0,logicPlane,nameSiliconDet,logicEnv,false,0,checkOverlaps);
     new G4PVPlacement(0,pos1,logicPlane,nameSiliconDet,logicEnv,false,1,checkOverlaps);
     new G4PVPlacement(0,pos2,logicPlane,nameSiliconDet,logicEnv,false,2,checkOverlaps);
+    new G4PVPlacement(0,pos3,logicPlane,nameSiliconDet,logicEnv,false,3,checkOverlaps);
+
     /*
     // 1st Detecotr
     new G4PVPlacement(0, pos1Epi, epiLogic, "epi", logicEnv, false, 0, checkOverlaps);

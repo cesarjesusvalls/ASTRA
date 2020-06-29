@@ -26,11 +26,11 @@ public:
 
 
   // Plane Total Sizes                                                                                                                                                   
-  void   SetPlaneWidth(double width) {fPlaneWidth = width;}
-  double GetPlaneWidth(void)     {return fPlaneWidth;}
+  void   SetPlaneColumns(double columns) {fPlaneColumns = columns;}
+  double GetPlaneColumns(void)     {return fPlaneColumns;}
    
-  void   SetPlaneHeight(double height) {fPlaneHeight = height;}
-  double GetPlaneHeight(void)     {return fPlaneHeight;}
+  void   SetPlaneRows(double rows) {fPlaneRows = rows;}
+  double GetPlaneRows(void)     {return fPlaneRows;}
 
   void   SetPlaneThickness(double thick) {fPlaneThickness = thick;}
   double GetPlaneThickness(void)     {return fPlaneThickness;}
@@ -68,6 +68,12 @@ public:
   /// Get the Z2 position of the SiDet detector
   double GetPosZ2(void) {return fPosZ2;}
 
+  /// Set the Z3 position of the SiDet detector
+  void SetPosZ3(double pos) {fPosZ3 = pos;}
+  /// Get the Z3 position of the SiDet detector
+  double GetPosZ3(void) {return fPosZ3;}
+
+  
   /// Set plane name
   void SetPlaneName(G4String name) {fPlaneName = name;}
   // Get plane name
@@ -113,8 +119,8 @@ public:
   // Copy number
   int fCopyNum;
   //Size of the plane
-  double fPlaneWidth;
-  double fPlaneHeight;
+  double fPlaneRows;
+  double fPlaneColumns;
   double fPlaneThickness;
 
   //Layers thickness
@@ -129,6 +135,7 @@ public:
   double fPosZ0;
   double fPosZ1;
   double fPosZ2;
+  double fPosZ3;
 
   G4String fPlaneName;
   G4String fEpiName;
