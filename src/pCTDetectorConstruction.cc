@@ -119,19 +119,20 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     fSiDetConstructor->SetSubThickness(pCTXMLInput->GetSubThickness());
     logicPlane = fSiDetConstructor->GetPiece();
 
-
-
     G4ThreeVector pos0   = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ0())*cm);
     G4ThreeVector pos1   = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ1())*cm);
     G4ThreeVector pos2   = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ2())*cm);
-    G4ThreeVector pos3 = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ3())*cm); 
-    G4ThreeVector SciDet = G4ThreeVector(0, pos3.getZ() + 0.5*cm + pCTXMLInput->GetSciDetNLayers()*pCTXMLInput->GetSciDetBarZ()*mm/2);
+    G4ThreeVector pos3   = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ3())*cm);
+
+    G4ThreeVector SciDet;
+    if(pCTXMLInput->GetUse4thCMOS()) SciDet = G4ThreeVector(0, 0, pos3.getZ() + 0.5*cm + pCTXMLInput->GetSciDetNLayers()*pCTXMLInput->GetSciDetBarZ()*mm/2);
+    else                             SciDet = G4ThreeVector(0, 0, pos2.getZ() + 0.5*cm + pCTXMLInput->GetSciDetNLayers()*pCTXMLInput->GetSciDetBarZ()*mm/2);
 
    if(pCTXMLInput->GetUseCMOS()){
 		new G4PVPlacement(0,pos0,logicPlane,nameSiliconDet,logicEnv,false,0,checkOverlaps);
     	new G4PVPlacement(0,pos1,logicPlane,nameSiliconDet,logicEnv,false,1,checkOverlaps);
     	new G4PVPlacement(0,pos2,logicPlane,nameSiliconDet,logicEnv,false,2,checkOverlaps);
-   		new G4PVPlacement(0,pos3,logicPlane,nameSiliconDet,logicEnv,false,3,checkOverlaps);
+   		if(pCTXMLInput->GetUse4thCMOS()) new G4PVPlacement(0,pos3,logicPlane,nameSiliconDet,logicEnv,false,3,checkOverlaps);
    }
 
     //______ SciDet ______
