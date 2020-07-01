@@ -48,6 +48,7 @@ void pCTXML::SetInputs(){
         XML2Double  ("SciDetZ",fSciDetZ);
         XML2Bool    ("UseSciDet",fUseSciDet);
         XML2Bool    ("UseCMOS",fUseCMOS);
+	XML2Bool    ("Use4thCMOS",fUse4thCMOS);
         XML2Bool    ("UsePhantom",fUsePhantom);
 
 
@@ -57,8 +58,9 @@ void pCTXML::SetInputs(){
 	XML2Double ("PosZ0",fPosZ0);
 	XML2Double ("PosZ1",fPosZ1);
 	XML2Double ("PosZ2",fPosZ2);
-	XML2Double ("PlaneWidth", fPlaneWidth);
-     	XML2Double ("PlaneHeight", fPlaneHeight);
+	XML2Double ("PosZ3",fPosZ3);
+	XML2Double ("PlaneColumns", fPlaneColumns);
+     	XML2Double ("PlaneRows", fPlaneRows);
 
 	XML2Double ("EpiThickness", fEpiThickness);
 	XML2Double ("SubThickness", fSubThickness);

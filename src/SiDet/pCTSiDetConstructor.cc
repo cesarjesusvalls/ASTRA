@@ -28,18 +28,18 @@ void pCTSiDetConstructor::Init(void) {
     //numPlanes = 1;
 
 
-    SetPlaneWidth(fPlaneWidth);
-    SetPlaneHeight(fPlaneHeight);
+    SetPlaneColumns(fPlaneColumns);
+    SetPlaneRows(fPlaneRows);
     //    SetThickness(fThickness);
     
 
-    // Position of the center of the Scintillator Detector
+    // position of the center of the Scintillator Detector
     fPosX = 0.;
     fPosY = 0.;
     fPosZ0 = 0.;
     fPosZ1 = 0.;
     fPosZ2 = 0.;
-  
+    fPosZ3 = 0.;
 
     G4String namePlane = "Plane";
     G4String nameSub  = namePlane+"/Sub";
@@ -70,14 +70,14 @@ G4LogicalVolume *pCTSiDetConstructor::GetPiece(void) {
   
   // Set total size of the SiDet
 
-  double width  = fPlaneWidth; 
-  double height = fPlaneHeight; 
+  double columns  = fPlaneColumns; 
+  double rows = fPlaneRows; 
   double PlaneThickness = fEpiThick + fSubThick; 
   G4ThreeVector posEpi = G4ThreeVector(0*cm, 0*cm, -12.5*um);
   G4ThreeVector posSub = G4ThreeVector(0*cm, 0*cm, 37.5*um);
 
-  SetPlaneWidth(width);
-  SetPlaneHeight(height);
+  SetPlaneColumns(columns);
+  SetPlaneRows(rows);
   SetPlaneThickness(PlaneThickness);
 
   G4bool checkOverlaps = true;
@@ -89,8 +89,8 @@ G4LogicalVolume *pCTSiDetConstructor::GetPiece(void) {
 
 G4Box* planeShape =
     new G4Box(GetPlaneName(),
-              0.5*GetPlaneWidth()*mm,
-              0.5*GetPlaneHeight()*mm,
+              0.5*GetPlaneColumns()*mm,
+              0.5*GetPlaneRows()*mm,
               2*0.5*GetPlaneThickness()*um);
  
   G4LogicalVolume *planeLogic
@@ -100,8 +100,8 @@ G4Box* planeShape =
 
 G4Box* epiShape =
     new G4Box(GetEpiName(),
-	      0.5*GetPlaneWidth()*mm,
-	      0.5*GetPlaneHeight()*mm,
+	      0.5*GetPlaneColumns()*mm,
+	      0.5*GetPlaneRows()*mm,
 	      0.5*GetEpiThickness()*um);//Maybe GetEpiThickness()
  epiLogic = //defined in hh to pass it to CMOSSD
     new G4LogicalVolume(epiShape, Silicon,"epi");  
@@ -109,8 +109,8 @@ G4Box* epiShape =
  
 G4Box* subShape =
     new G4Box(GetSubName(),
-              0.5*GetPlaneWidth()*mm,
-              0.5*GetPlaneHeight()*mm,
+              0.5*GetPlaneColumns()*mm,
+              0.5*GetPlaneRows()*mm,
               0.5*GetSubThickness()*um);//Maybe GetEpiThickness()                                                                                                                      
 G4LogicalVolume* subLogic = new G4LogicalVolume(subShape,Silicon, "sub");
  new G4PVPlacement(0, posSub, subLogic, "sub", planeLogic, false, GetCopyNum(),checkOverlaps);

@@ -22,11 +22,20 @@
     True
   </UseCMOS>
 
+  <Use4thCMOS>
+    True
+  </Use4thCMOS>
+  
   <UsePhantom>  
     True
   </UsePhantom>
 
 <!-- ............ -->
+
+
+
+
+
 
 <!-- SciDet Geometry -->
 
@@ -82,12 +91,17 @@
 </PosZ0>
 
 <PosZ1>
-  -2
+  -7
 </PosZ1>
 
 <PosZ2>
-  3
+  -2
 </PosZ2>
+
+<PosZ3>
+  3
+</PosZ3>
+
 <!-- ................ -->
 
 
@@ -103,13 +117,13 @@
 
 
 <!-- Silicon shape -->
-<PlaneWidth>
-  448
-</PlaneWidth>
+<PlaneColumns>
+  2240
+</PlaneColumns>
 
-<PlaneHeight>
-  224
-</PlaneHeight>
+<PlaneRows>
+  2240
+</PlaneRows>
 <!-- ................ -->
 
 </Dependency>

@@ -51,13 +51,15 @@ public :
   G4double GetPosZ0() {return fPosZ0;};
   G4double GetPosZ1() {return fPosZ1;};
   G4double GetPosZ2() {return fPosZ2;};
-  G4double GetPlaneWidth()     {return fPlaneWidth;}
-  G4double GetPlaneHeight()     {return fPlaneHeight;}
+  G4double GetPosZ3() {return fPosZ3;};
+  G4double GetPlaneColumns()     {return fPlaneColumns;}
+  G4double GetPlaneRows()     {return fPlaneRows;}
   G4double GetEpiThickness()     {return fEpiThickness;}
   G4double GetSubThickness()     {return fSubThickness;}
   
   G4bool GetUseSciDet()          {return fUseSciDet;};
   G4bool GetUseCMOS()            {return fUseCMOS;};
+  G4bool GetUse4thCMOS()         {return fUse4thCMOS;};
   G4bool GetUsePhatom()          {return fUsePhantom;};
 
   
@@ -84,14 +86,16 @@ private :
   G4double fPosZ0;
   G4double fPosZ1;
   G4double fPosZ2;
-  G4double fPlaneWidth;
-  G4double fPlaneHeight;
+  G4double fPosZ3;
+  G4double fPlaneColumns;
+  G4double fPlaneRows;
   G4double fEpiThickness;
   G4double fSubThickness;
 
   
     G4bool   fUseSciDet;
     G4bool   fUseCMOS;
+    G4bool   fUse4thCMOS;
     G4bool   fUsePhantom;
 
     void XML2String(string tmp_app,string &dest);
