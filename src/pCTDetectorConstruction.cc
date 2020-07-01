@@ -83,7 +83,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4Material*   phantom_mat     = nist->FindOrBuildMaterial("G4_Cu");
     // G4Ellipsoid*  solidEllipsoid  = new G4Ellipsoid ("ellipsoid", 1.5*mm, 2.5*mm , 0.6*mm,0,0); 
     // G4Tubs*       solidCylinder   = new G4Tubs("cylinder", 0, 4.*mm, 0.6*mm, 0,2*M_PI);    
-    // G4Box*        solidBox        = new G4Box("box",4,4,0.25);
+    // G4Box*        solidBox        = new G4Box("box",4,4,0.35);
     // G4VSolid* solidUnion_EC       = new G4UnionSolid("ellipsoid+cylinder",  solidEllipsoid,solidCylinder,0,G4ThreeVector(0,0.,0.7*mm));
     // G4VSolid* solidIntersec_BC    = new G4IntersectionSolid("boc+cylinder", solidCylinder,solidBox,0,G4ThreeVector(4*mm,2.*mm,0.05*mm));
     // G4VSolid* solidUnion          = new G4UnionSolid("phantomShape",        solidUnion_EC,solidIntersec_BC,0,G4ThreeVector(0,0.,1.25*mm));
@@ -96,18 +96,18 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     // G4VSolid* solidUnion          = new G4UnionSolid("phantomShape",        solidUnion_EC,solidIntersec_BC,0,G4ThreeVector(0,0.,1.25*mm));
     // G4LogicalVolume* logicPhantom = new G4LogicalVolume(solidUnion, phantom_mat,"Phantom"); 
 
-    G4Box*        solidBox1        = new G4Box("box",1.2*mm,0.3*mm,5*mm);
-    G4Box*        solidBox2        = new G4Box("box",0.3*mm, 1.2*mm,5*mm);
-    G4VSolid*     crossSolid       = new G4UnionSolid("boc+cylinder", solidBox1,solidBox2,0,G4ThreeVector(0.*mm,0.*mm,0.*mm));
-    G4LogicalVolume* logicPhantom  = new G4LogicalVolume(crossSolid, phantom_mat,"Phantom"); 
-
-    logicPhantom->SetVisAttributes(G4Colour(0.6, 0.6, 0.0));
     if(pCTXMLInput->GetUsePhatom()){
-        new G4PVPlacement(0,G4ThreeVector(0.2*cm,0.2*cm,-3*cm)  ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
-        new G4PVPlacement(0,G4ThreeVector(-0.2*cm,0.2*cm,-3*cm) ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
-        new G4PVPlacement(0,G4ThreeVector(0.2*cm,-0.2*cm,-3*cm) ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
-        new G4PVPlacement(0,G4ThreeVector(-0.2*cm,-0.2*cm,-3*cm),logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
-        new G4PVPlacement(0,G4ThreeVector(0.*cm,0.*cm,-3*cm)    ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
+        for(int star(0); star<9; star++){
+            // G4Box*        solidBox1        = new G4Box("box",2*mm,   0.5*mm,  1*(star+1)*mm);
+            // G4Box*        solidBox2        = new G4Box("box",0.5*mm, 2*mm, 1*(star+1)*mm);
+            // G4VSolid*     crossSolid       = new G4UnionSolid("boc+cylinder", solidBox1,solidBox2,0,G4ThreeVector(0.*mm,0.*mm,0.*mm));
+            G4Tubs*       crossSolid   = new G4Tubs("cylinder", 0, 4.*mm, 1*(star+1)*mm, 0,2*M_PI);   
+            G4LogicalVolume* logicPhantom  = new G4LogicalVolume(crossSolid, phantom_mat,"Phantom"); 
+            logicPhantom->SetVisAttributes(G4Colour(0.6, 0.6, 0.0));
+            int xCoor = star%3;
+            int yCoor = ((int) (star/3))%3;
+            new G4PVPlacement(0,G4ThreeVector((1-xCoor)*1.5*cm,(1-yCoor)*1.5*cm, -2.5*cm-2*(star+1)*mm)  ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
+        }
     }
     //___________________
 

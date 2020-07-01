@@ -36,6 +36,7 @@
 #include "G4ParticleGun.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
+#include "pCTRootPersistencyManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
 #include "time.h"
@@ -70,103 +71,49 @@ pCTPrimaryGeneratorAction::~pCTPrimaryGeneratorAction()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
-{
-  //this function is called at the begining of ecah event
-  //
+{  
+    G4double envSizeXY = 0;
+    G4double envSizeZ = 0;
 
-  // In order to avoid dependence of PrimaryGeneratorAction
-  // on DetectorConstruction class we get Envelope volume
-  // from G4LogicalVolumeStore.
-  
-  G4double envSizeXY = 0;
-  G4double envSizeZ = 0;
-
-  if (!fEnvelopeBox)
-  {
-    G4LogicalVolume* envLV
-      = G4LogicalVolumeStore::GetInstance()->GetVolume("Envelope");
-    if ( envLV ) fEnvelopeBox = dynamic_cast<G4Box*>(envLV->GetSolid());
-  }
-
-  if ( fEnvelopeBox ) {
-    envSizeXY = fEnvelopeBox->GetXHalfLength()*2.;
-    envSizeZ = fEnvelopeBox->GetZHalfLength()*2.;
-  }  
-  else  {
-    G4ExceptionDescription msg;
-    msg << "Envelope volume of box shape not found.\n"; 
-    msg << "Perhaps you have changed geometry.\n";
-    msg << "The gun will be place at the center.";
-    G4Exception("pCTPrimaryGeneratorAction::GeneratePrimaries()",
-     "MyCode0002",JustWarning,msg);
-  }
-
-  G4double size = 0.0125*envSizeXY; //envSizeXY = 20 cm --> size= 2.5 mm
-  //size set to be 5mm
-  G4double dist = size*0.4; //dist = 1mm 
-
-
-  //  G4double x0 = size * envSizeXY * (G4UniformRand()-0.5);
-  // G4double y0 = size * envSizeXY * (G4UniformRand()-0.5);
-
-
-  /*   
-  G4double r = size * envSizeXY * std::sqrt(G4UniformRand());
-  G4double phi = G4UniformRand()*2*3.141592;
-  G4double x0 = std::cos(phi)*r;
-  G4double y0 = std::sin(phi)*r;
-  */
-    
-  //size set to be 5mm
-  //  G4double dist = size*0.4; //dist = 1mm
-  //   G4double x0 =-dist;
-  //   G4double x0 = 0;
-  // G4double y0 = -dist;
-       // G4double y0 = 0;
-
-
-  ////////////////////// Eliptic Beam: //////////////////////////
-  //////////////////////////////////////////////////////////////
-
-  //G4double x0 = (G4UniformRand()-0.5)*dist*3;
- // G4double y0 = (G4UniformRand()-0.5)*dist*6*std::sqrt(1-pow(x0*pow(dist*1.5,-1),2));
- // G4double y0 =	(G4UniformRand()-0.5)*dist*6*std::sqrt(1-pow(x0/dist*1.5,2));
-
-
- ////////////////////// Rectangular Beam: ///////////////////////
-//////////////////////////////////////////////////////////////
-  // G4double x0 =	(G4UniformRand()-0.5)*dist*14;
-  // G4double y0 =	(G4UniformRand()-0.5)*dist*7;
-  // G4double z0 = -0.5 * envSizeZ;
-
-  // // std::cout << "_________________" <<	std::endl;
-  // // std::cout << "_________________" <<	std::endl;
-  // // std::cout << x0 << std::endl;
-  // // std::cout << y0 << std::endl;
-  // // std::cout << "_________________" << std::endl;
-  // // std::cout << "_________________" <<	std::endl;
-  
-  // fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
-  // //fParticleGun->SetParticleEnergy(36);
-  // fParticleGun->GeneratePrimaryVertex(anEvent);
-
-      for (int ind=0; ind<1; ind++){
-        G4double x0 =   (G4UniformRand()-0.5)*dist*20;
-        G4double y0 =   (G4UniformRand()-0.5)*dist*10;
-        G4double z0 = -0.5 * envSizeZ;
-
-        // std::cout << "_________________" <<  std::endl;
-        // std::cout << "_________________" <<  std::endl;
-        // std::cout << x0 << std::endl;
-        // std::cout << y0 << std::endl;
-        // std::cout << "_________________" << std::endl;
-        // std::cout << "_________________" <<  std::endl;
-
-        fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
-        //fParticleGun->SetParticleEnergy(36 + (G4UniformRand()*(194.)));
-        fParticleGun->SetParticleEnergy(180);
-        fParticleGun->GeneratePrimaryVertex(anEvent);
+    if (!fEnvelopeBox){
+        G4LogicalVolume* envLV  = G4LogicalVolumeStore::GetInstance()->GetVolume("Envelope");
+        if ( envLV ) fEnvelopeBox = dynamic_cast<G4Box*>(envLV->GetSolid());
     }
+
+    if ( fEnvelopeBox ) {
+        envSizeXY = fEnvelopeBox->GetXHalfLength()*2.;
+        envSizeZ  = fEnvelopeBox->GetZHalfLength()*2.;
+    }
+
+    else  {
+        G4ExceptionDescription msg;
+        msg << "Envelope volume of box shape not found.\n"; 
+        msg << "Perhaps you have changed geometry.\n";
+        msg << "The gun will be place at the center.";
+        G4Exception("pCTPrimaryGeneratorAction::GeneratePrimaries()",
+        "MyCode0002",JustWarning,msg);
+    }
+
+    pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
+    pCTXMLInput = InputPersistencyManager->GetXMLInput();
+
+    double iniEnergy = -999;
+
+    for (int ind=0; ind<pCTXMLInput->GetNProtons(); ind++){
+        if(pCTXMLInput->GetBeamType() == "Rectangular"){
+            G4double x0 =   (G4UniformRand()-0.5)*pCTXMLInput->GetPlaneColumns()*0.04;
+            G4double y0 =   (G4UniformRand()-0.5)*pCTXMLInput->GetPlaneColumns()*0.036;
+            G4double z0 =   pCTXMLInput->GetPosZ0()-5;
+            fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+        }
+        iniEnergy = pCTXMLInput->GetIniPGUNEnergy();
+        if(pCTXMLInput->UseEnergyWide()){
+            iniEnergy = 36 + (G4UniformRand()*194.);
+        }
+    }
+
+    fParticleGun->SetParticleEnergy(iniEnergy);
+    fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

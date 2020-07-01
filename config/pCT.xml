@@ -23,36 +23,52 @@
   </UseCMOS>
 
   <Use4thCMOS>
-    False
+    True
   </Use4thCMOS>
   
   <UsePhantom>  
-    False
+    True
   </UsePhantom>
 
 <!-- ............ -->
 
+<!-- PGUN info -->
 
+<BeamType>
+  Rectangular
+</BeamType>
 
+<NProtons>
+  1
+</NProtons>
 
+<IniPGUNEnergy>
+  180
+</IniPGUNEnergy>
+
+<UseEnergyWide>
+  True
+</UseEnergyWide>
+
+<!-- ......... -->
 
 
 <!-- SciDet Geometry -->
 
   <SciDetNBars>
-    10
+    12
   </SciDetNBars>
 
   <SciDetNLayers>
-    200
+    120
   </SciDetNLayers>
 
   <SciDetBarX>
-    3
+    10
   </SciDetBarX>
 
   <SciDetBarY>
-    30
+    120
   </SciDetBarY>
 
   <SciDetBarZ>

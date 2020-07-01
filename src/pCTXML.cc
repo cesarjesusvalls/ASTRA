@@ -38,6 +38,8 @@ void pCTXML::SetInputs(){
     if(myfile.is_open()){    
       
         XML2String  ("Example",fExample);
+        XML2String  ("BeamType",fBeamType);
+        XML2Int     ("NProtons",fNProtons);
         XML2Int     ("SciDetNBars",fSciDetNBars);
         XML2Int     ("SciDetNLayers",fSciDetNLayers);
         XML2Double  ("SciDetBarX",fSciDetBarX);  
@@ -46,26 +48,23 @@ void pCTXML::SetInputs(){
         XML2Double  ("SciDetX",fSciDetX);
         XML2Double  ("SciDetY",fSciDetY);
         XML2Double  ("SciDetZ",fSciDetZ);
+        XML2Double  ("IniPGUNEnergy",fIniPGUNEnergy);
         XML2Bool    ("UseSciDet",fUseSciDet);
         XML2Bool    ("UseCMOS",fUseCMOS);
-	XML2Bool    ("Use4thCMOS",fUse4thCMOS);
+        XML2Bool    ("Use4thCMOS",fUse4thCMOS);
         XML2Bool    ("UsePhantom",fUsePhantom);
+        XML2Bool    ("UseEnergyWide",fUseEnergyWide);
+        XML2Double  ("PosX", fPosX);
+        XML2Double  ("PosY", fPosY);
+        XML2Double  ("PosZ0",fPosZ0);
+        XML2Double  ("PosZ1",fPosZ1);
+        XML2Double  ("PosZ2",fPosZ2);
+        XML2Double  ("PosZ3",fPosZ3);
+        XML2Double  ("PlaneColumns", fPlaneColumns);
+        XML2Double  ("PlaneRows", fPlaneRows);
+        XML2Double  ("EpiThickness", fEpiThickness);
+        XML2Double  ("SubThickness", fSubThickness);
 
-
-
-	XML2Double ("PosX", fPosX);
-	XML2Double ("PosY", fPosY);
-	XML2Double ("PosZ0",fPosZ0);
-	XML2Double ("PosZ1",fPosZ1);
-	XML2Double ("PosZ2",fPosZ2);
-	XML2Double ("PosZ3",fPosZ3);
-	XML2Double ("PlaneColumns", fPlaneColumns);
-     	XML2Double ("PlaneRows", fPlaneRows);
-
-	XML2Double ("EpiThickness", fEpiThickness);
-	XML2Double ("SubThickness", fSubThickness);
-
-	
     }
     else cout << "Unable to open file"; 
     myfile.close();

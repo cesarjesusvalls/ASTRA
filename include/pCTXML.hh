@@ -33,6 +33,7 @@ public :
       
     G4String GetXMLFileName()   {return fXMLFile;};
     G4String GetXMLExample()    {return fExample;};
+    G4String GetBeamType()      {return fBeamType;};
     
     G4int GetSciDetNBars()      {return fSciDetNBars;};
     G4int GetSciDetNLayers()    {return fSciDetNLayers;};
@@ -45,34 +46,40 @@ public :
     G4double GetSciDetY()          {return fSciDetY;};
     G4double GetSciDetZ()          {return fSciDetZ;};
 
+    G4double GetIniPGUNEnergy()    {return fIniPGUNEnergy;}
+    G4int    GetNProtons()         {return fNProtons; }
 
-  G4double GetPosX()               {return fPosX;};
-  G4double GetPosY() {return fPosY;};
-  G4double GetPosZ0() {return fPosZ0;};
-  G4double GetPosZ1() {return fPosZ1;};
-  G4double GetPosZ2() {return fPosZ2;};
-  G4double GetPosZ3() {return fPosZ3;};
-  G4double GetPlaneColumns()     {return fPlaneColumns;}
-  G4double GetPlaneRows()     {return fPlaneRows;}
-  G4double GetEpiThickness()     {return fEpiThickness;}
-  G4double GetSubThickness()     {return fSubThickness;}
+    G4double GetPosX()               {return fPosX;};
+    G4double GetPosY()               {return fPosY;};
+    G4double GetPosZ0()              {return fPosZ0;};
+    G4double GetPosZ1()              {return fPosZ1;};
+    G4double GetPosZ2()              {return fPosZ2;};
+    G4double GetPosZ3()              {return fPosZ3;};
+    G4double GetPlaneColumns()       {return fPlaneColumns;}
+    G4double GetPlaneRows()          {return fPlaneRows;}
+    G4double GetEpiThickness()       {return fEpiThickness;}
+    G4double GetSubThickness()       {return fSubThickness;}
+    
+    G4bool GetUseSciDet()          {return fUseSciDet;};
+    G4bool GetUseCMOS()            {return fUseCMOS;};
+    G4bool GetUse4thCMOS()         {return fUse4thCMOS;};
+    G4bool GetUsePhatom()          {return fUsePhantom;};
   
-  G4bool GetUseSciDet()          {return fUseSciDet;};
-  G4bool GetUseCMOS()            {return fUseCMOS;};
-  G4bool GetUse4thCMOS()         {return fUse4thCMOS;};
-  G4bool GetUsePhatom()          {return fUsePhantom;};
+    G4bool UseEnergyWide()    {return fUseEnergyWide;};
 
-  
     void SetInputs();
 
 private :
 
     G4String fXMLFile;
     G4String fExample;
+    G4String fBeamType;
 
     G4int    fSciDetNBars;
     G4int    fSciDetNLayers;
+    G4int    fNProtons;
 
+    G4double fIniPGUNEnergy;
     G4double fSciDetBarX;
     G4double fSciDetBarY;
     G4double fSciDetBarZ;
@@ -81,22 +88,22 @@ private :
     G4double fSciDetY;
     G4double fSciDetZ;
 
-  G4double fPosX;
-  G4double fPosY;
-  G4double fPosZ0;
-  G4double fPosZ1;
-  G4double fPosZ2;
-  G4double fPosZ3;
-  G4double fPlaneColumns;
-  G4double fPlaneRows;
-  G4double fEpiThickness;
-  G4double fSubThickness;
-
+    G4double fPosX;
+    G4double fPosY;
+    G4double fPosZ0;
+    G4double fPosZ1;
+    G4double fPosZ2;
+    G4double fPosZ3;
+    G4double fPlaneColumns;
+    G4double fPlaneRows;
+    G4double fEpiThickness;
+    G4double fSubThickness;
   
     G4bool   fUseSciDet;
     G4bool   fUseCMOS;
     G4bool   fUse4thCMOS;
     G4bool   fUsePhantom;
+    G4bool   fUseEnergyWide;
 
     void XML2String(string tmp_app,string &dest);
     void XML2Double(string tmp_app,double &dest);
