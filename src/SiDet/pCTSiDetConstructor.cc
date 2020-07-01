@@ -115,16 +115,12 @@ G4Box* subShape =
 G4LogicalVolume* subLogic = new G4LogicalVolume(subShape,Silicon, "sub");
  new G4PVPlacement(0, posSub, subLogic, "sub", planeLogic, false, GetCopyNum(),checkOverlaps);
 
-
-
-
 G4SDManager* SDman      = G4SDManager::GetSDMpointer();
 CMOSSD*      aTrackerSD = (CMOSSD*)SDman->FindSensitiveDetector("CMOS");
 
 epiLogic->SetSensitiveDetector( aTrackerSD );
-planeLogic->SetVisAttributes(G4VisAttributes::Invisible);
-
- 
+epiLogic->SetVisAttributes(G4Colour(0.6, 0.2, 0.6));
+planeLogic->SetVisAttributes(G4Colour(0.2, 0.6, 0.2));
 
 return planeLogic;
 }

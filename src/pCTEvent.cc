@@ -151,6 +151,99 @@ void pCTEvent::DrawCMOSHits(pCTXML* config){
 
 }
 
+std::vector< pCTTrack* > pCTEvent::Reconstruct(pCTXML* config){
+
+    // concept (for 1 proton):
+    // for the time being, just check that the track is continuous both in XZ and YZ and the deflection is ~small.
+
+    bool IsSelected = true;
+    if (fGunEnergy.size()>1) {cout << "pCTEvent::TrackSelection || Selection relays on single proton assumptions!" << endl; exit(0);}
+
+    // in the future use this to add more than 1 proton...
+    std::vector< pCTTrack* > recoTracks;
+    pCTTrack* recoProt = new pCTTrack();
+
+    std::vector< SciDetHit* > listOfSciHits = this->GetSciDetHits();
+    std::vector< SciDetHit* >::iterator sciHit;
+
+    double ini[3] = {0};
+    double fin[3] = {0};
+
+    double pos[3] = {0};
+
+    int nbars(config->GetSciDetNBars());
+
+    double maxEdep[config->GetSciDetNLayers()];
+    memset( maxEdep, 0, config->GetSciDetNLayers()*sizeof(double) );
+
+    std::vector<TVector3> listOf3Dhits;
+
+
+    double accumRng = 0;
+    int    prelayerID = -999;
+    for(sciHit=listOfSciHits.begin(); sciHit!=listOfSciHits.end(); sciHit++){
+        if ((*sciHit)->GetLayerID() < prelayerID) {cout << "pCTEvent::TrackSelection || LAYERS ARE NOT ORDERED! required assumption not fullfilled." << endl; exit(0);}
+        if ((*sciHit)->GetEnergyDeposited() > maxEdep[(*sciHit)->GetLayerID()]){
+            maxEdep[(*sciHit)->GetLayerID()] = (*sciHit)->GetEnergyDeposited();      
+            // if (!(*sciHit)->GetLayerID()){
+            //     (*sciHit)->GetOrientation() ? ini[0] = (*sciHit)->GetBarID() : ini[1] = (*sciHit)->GetBarID(); 
+            //     ini[2] = (*sciHit)->GetLayerID();  
+            // }
+            // else if((*sciHit)->GetLayerID()==1){
+            //     (*sciHit)->GetOrientation() ? ini[0] = (*sciHit)->GetBarID() : ini[1] = (*sciHit)->GetBarID();
+            //     (*sciHit)->GetOrientation() ? fin[0] = (*sciHit)->GetBarID() : fin[1] = (*sciHit)->GetBarID();
+            //     ini[2] = (*sciHit)->GetLayerID();
+            //     listOf3Dhits.push_back(TVector3(ini[0],ini[1],ini[2]-0.5));
+            // }
+            // else{
+            //     (*sciHit)->GetOrientation() ? fin[0] = (*sciHit)->GetBarID() : fin[1] = (*sciHit)->GetBarID();
+            //     fin[2] = (*sciHit)->GetLayerID();
+            //     listOf3Dhits.push_back(TVector3(fin[0],fin[1],fin[2]-0.5));
+            // }
+
+            if(!(*sciHit)->GetBarID() or (*sciHit)->GetBarID() == nbars-1)  IsSelected = false;
+
+            (*sciHit)->GetOrientation() ? pos[0] = (*sciHit)->GetBarID() : pos[1] = (*sciHit)->GetBarID();
+            pos[2] = (*sciHit)->GetLayerID();
+            if ((*sciHit)->GetLayerID()){
+                listOf3Dhits.push_back(TVector3(pos[0],pos[1],pos[2]-0.5));
+                if(listOf3Dhits.size()>1) accumRng += (*(listOf3Dhits.end()-2)-*(listOf3Dhits.end()-1)).Mag();
+            }
+        }
+        // reject if there are holes!
+        if((*sciHit)->GetLayerID()) if((*sciHit)->GetLayerID() - prelayerID > 1) IsSelected = false;
+        prelayerID = (*sciHit)->GetLayerID();
+    }
+
+    //if(maxEdep[prelayerID] < maxEdep[prelayerID-1]) IsSelected = false;
+
+    double rng_corr = 0.5*(maxEdep[prelayerID]-maxEdep[prelayerID-1])/(maxEdep[prelayerID]+maxEdep[prelayerID-1]);
+    //cout << maxEdep[prelayerID-1]/maxEdep[prelayerID] << "," << rng_corr << endl;
+
+    // for(int lyr(0); lyr<=prelayerID; lyr++)
+    //     if(lyr) if(maxEdep[lyr] < maxEdep[lyr-1]) IsSelected = false; 
+    //for (auto vect3:listOf3Dhits) cout << vect3.X() << "," << vect3.Y() << "," << vect3.Z() << endl;
+
+    if(listOf3Dhits.size()){
+        recoProt->Set3DHits(listOf3Dhits);
+        recoProt->SetRecoRange(((*listOf3Dhits.begin())-*(listOf3Dhits.end()-1)).Mag()+0.5);
+        recoProt->SetRngCorr(rng_corr);
+
+        double straightness = (accumRng-recoProt->GetRecoRange())/accumRng;
+        //cout << straightness << endl;
+        if (IsSelected) recoTracks.push_back(recoProt);
+        //recoTracks.push_back(recoProt);
+        // cout << "range: " << ((*listOf3Dhits.begin())-*(listOf3Dhits.end()-1)).Mag() << endl;
+        // cout << "accumRng: " << accumRng << endl;
+        // cout << straightness << endl;
+        //this->SetRecoProtons(recoTracks);
+    }
+
+    return recoTracks;
+}
+
+double pCTEvent::FindRange(pCTXML* config){;}
+
 // double pCTEvent::RecoEnergyByRange(pCTXML* config){
 
 //     double range = -999;

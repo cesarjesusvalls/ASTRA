@@ -81,14 +81,34 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     //_____ PHANTOM _____
     G4ThreeVector phantomPos      = G4ThreeVector(0,0,-3*cm);            // TODO: get from XML.
     G4Material*   phantom_mat     = nist->FindOrBuildMaterial("G4_Cu");
-    G4Ellipsoid*  solidEllipsoid  = new G4Ellipsoid ("ellipsoid", 1.5*mm, 2.5*mm , 0.6*mm,0,0); 
-    G4Tubs*       solidCylinder   = new G4Tubs("cylinder", 0, 4.*mm, 0.6*mm, 0,2*M_PI);
-    G4Box*        solidBox        = new G4Box("box",4,4,0.25);
-    G4VSolid* solidUnion_EC       = new G4UnionSolid("ellipsoid+cylinder",  solidEllipsoid,solidCylinder,0,G4ThreeVector(0,0.,0.7*mm));
-    G4VSolid* solidIntersec_BC    = new G4IntersectionSolid("boc+cylinder", solidCylinder,solidBox,0,G4ThreeVector(4*mm,2.*mm,0.05*mm));
-    G4VSolid* solidUnion          = new G4UnionSolid("phantomShape",        solidUnion_EC,solidIntersec_BC,0,G4ThreeVector(0,0.,1.25*mm));
-    G4LogicalVolume* logicPhantom = new G4LogicalVolume(solidUnion, phantom_mat,"Phantom"); 
-    new G4PVPlacement(0,phantomPos,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
+    // G4Ellipsoid*  solidEllipsoid  = new G4Ellipsoid ("ellipsoid", 1.5*mm, 2.5*mm , 0.6*mm,0,0); 
+    // G4Tubs*       solidCylinder   = new G4Tubs("cylinder", 0, 4.*mm, 0.6*mm, 0,2*M_PI);    
+    // G4Box*        solidBox        = new G4Box("box",4,4,0.25);
+    // G4VSolid* solidUnion_EC       = new G4UnionSolid("ellipsoid+cylinder",  solidEllipsoid,solidCylinder,0,G4ThreeVector(0,0.,0.7*mm));
+    // G4VSolid* solidIntersec_BC    = new G4IntersectionSolid("boc+cylinder", solidCylinder,solidBox,0,G4ThreeVector(4*mm,2.*mm,0.05*mm));
+    // G4VSolid* solidUnion          = new G4UnionSolid("phantomShape",        solidUnion_EC,solidIntersec_BC,0,G4ThreeVector(0,0.,1.25*mm));
+
+    // G4Ellipsoid*  solidEllipsoid  = new G4Ellipsoid ("ellipsoid", 1.5*mm, 2.5*mm , 6.4*mm,0,0); 
+    // G4Tubs*       solidCylinder   = new G4Tubs("cylinder", 0, 4.*mm, 4.6*mm, 0,2*M_PI);    
+    // G4Box*        solidBox        = new G4Box("box",10,10,0.25);
+    // G4VSolid* solidUnion_EC       = new G4UnionSolid("ellipsoid+cylinder",  solidEllipsoid,solidCylinder,0,G4ThreeVector(0,0.,0.*mm));
+    // G4VSolid* solidIntersec_BC    = new G4IntersectionSolid("boc+cylinder", solidCylinder,solidBox,0,G4ThreeVector(4.*mm,4.*mm,4.*mm));
+    // G4VSolid* solidUnion          = new G4UnionSolid("phantomShape",        solidUnion_EC,solidIntersec_BC,0,G4ThreeVector(0,0.,1.25*mm));
+    // G4LogicalVolume* logicPhantom = new G4LogicalVolume(solidUnion, phantom_mat,"Phantom"); 
+
+    G4Box*        solidBox1        = new G4Box("box",1.2*mm,0.3*mm,5*mm);
+    G4Box*        solidBox2        = new G4Box("box",0.3*mm, 1.2*mm,5*mm);
+    G4VSolid*     crossSolid       = new G4UnionSolid("boc+cylinder", solidBox1,solidBox2,0,G4ThreeVector(0.*mm,0.*mm,0.*mm));
+    G4LogicalVolume* logicPhantom  = new G4LogicalVolume(crossSolid, phantom_mat,"Phantom"); 
+
+    logicPhantom->SetVisAttributes(G4Colour(0.6, 0.6, 0.0));
+    if(pCTXMLInput->GetUsePhatom()){
+        new G4PVPlacement(0,G4ThreeVector(0.2*cm,0.2*cm,-3*cm)  ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
+        new G4PVPlacement(0,G4ThreeVector(-0.2*cm,0.2*cm,-3*cm) ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
+        new G4PVPlacement(0,G4ThreeVector(0.2*cm,-0.2*cm,-3*cm) ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
+        new G4PVPlacement(0,G4ThreeVector(-0.2*cm,-0.2*cm,-3*cm),logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
+        new G4PVPlacement(0,G4ThreeVector(0.*cm,0.*cm,-3*cm)    ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
+    }
     //___________________
 
     pCTSiDetConstructor* fSiDetConstructor = new pCTSiDetConstructor("SiliconDet");
@@ -102,11 +122,13 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4ThreeVector pos0   = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ0())*cm);
     G4ThreeVector pos1   = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ1())*cm);
     G4ThreeVector pos2   = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ2())*cm);
-    G4ThreeVector SciDet = G4ThreeVector(0, 0,pos2.Z + 0.5*cm + pCTXMLInput->GetSciDetNLayers()*pCTXMLInput->GetSciDetBarZ()*mm/2);
+    G4ThreeVector SciDet = G4ThreeVector(0, 0,pos2.getZ() + 0.5*cm + pCTXMLInput->GetSciDetNLayers()*pCTXMLInput->GetSciDetBarZ()*mm/2);
 
-    new G4PVPlacement(0,pos0,logicPlane,nameSiliconDet,logicEnv,false,0,checkOverlaps);
-    new G4PVPlacement(0,pos1,logicPlane,nameSiliconDet,logicEnv,false,1,checkOverlaps);
-    new G4PVPlacement(0,pos2,logicPlane,nameSiliconDet,logicEnv,false,2,checkOverlaps);
+    if(pCTXMLInput->GetUseCMOS()){
+        new G4PVPlacement(0,pos0,logicPlane,nameSiliconDet,logicEnv,false,0,checkOverlaps);
+        new G4PVPlacement(0,pos1,logicPlane,nameSiliconDet,logicEnv,false,1,checkOverlaps);
+        new G4PVPlacement(0,pos2,logicPlane,nameSiliconDet,logicEnv,false,2,checkOverlaps);
+    }
 
     //______ SciDet ______
     pCTSciDetConstructor* fSciDetConstructor = new pCTSciDetConstructor("SciDet");
@@ -117,7 +139,9 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     fSciDetConstructor->SetBarY(pCTXMLInput->GetSciDetBarY()*mm);
     fSciDetConstructor->SetBarZ(pCTXMLInput->GetSciDetBarZ()*mm);
     logicSciDet = fSciDetConstructor->GetPiece(); 
-    new G4PVPlacement(0,SciDet,logicSciDet,nameSciDet,logicEnv,false,0,checkOverlaps);
+    if(pCTXMLInput->GetUseSciDet()){
+        new G4PVPlacement(0,SciDet,logicSciDet,nameSciDet,logicEnv,false,0,checkOverlaps);
+    }
     //_____________________
 
     return physWorld;
