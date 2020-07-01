@@ -119,6 +119,7 @@ G4bool pCTRootPersistencyManager::Store(const G4Event* anEvent) {
 
   fOutput->cd(); 
   fpCTEvent->SetEvtId(anEvent->GetEventID());
+  //G4cout << trackIdToGunEnergy.size() << G4endl;
   fpCTEvent->SetGunEnergyMap(trackIdToGunEnergy);
   fEventTree->Fill();
   if(anEvent->GetEventID()%10==0) G4cout << "STATUS: ...Processing Event " << anEvent->GetEventID() << G4endl;

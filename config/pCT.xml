@@ -23,11 +23,11 @@
   </UseCMOS>
 
   <Use4thCMOS>
-    True
+    False
   </Use4thCMOS>
   
   <UsePhantom>  
-    True
+    False
   </UsePhantom>
 
 <!-- ............ -->

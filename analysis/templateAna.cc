@@ -13,7 +13,7 @@ int main(int argc,char** argv){
 
     std::cout << "Starting Analysis Example..." << std::endl;
 
-    TString inputFileName = "/Users/marc/pCT_Geant4/protonCT/output/outputFile.root";
+    TString inputFileName = "/Users/cjesus/Dev/protonCT/output/simulation_file.root";
     TFile* inputFile = new TFile(inputFileName.Data(),"update");
     if(!inputFile) {std::cout << "no output file! exit." << std::endl; exit(1);}
     
@@ -56,6 +56,9 @@ int main(int argc,char** argv){
         std::cout << "# SciHits: " << listOfSciHits.size() << std::endl;
         std::vector< SciDetHit* >::iterator sciHit;
         for(sciHit=listOfSciHits.begin(); sciHit!=listOfSciHits.end(); sciHit++) std::cout << "Edep: " <<  (*sciHit)->GetEnergyDeposited() << endl;
+    
+        event->DrawSciDetHits(config);
+        event->DrawCMOSHits(config);
     }
     //_____________________
 

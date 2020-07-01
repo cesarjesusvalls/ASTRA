@@ -18,4 +18,7 @@
 #pragma link C++ class SciDetHit+;
 #pragma link C++ class std::vector< SciDetHit >+;
 
+#pragma link C++ class pCTTrack+;
+#pragma link C++ class std::vector< pCTTrack >+;
+
 #endif // __CINT__
