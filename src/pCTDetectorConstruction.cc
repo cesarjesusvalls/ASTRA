@@ -96,7 +96,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     // G4VSolid* solidUnion          = new G4UnionSolid("phantomShape",        solidUnion_EC,solidIntersec_BC,0,G4ThreeVector(0,0.,1.25*mm));
     // G4LogicalVolume* logicPhantom = new G4LogicalVolume(solidUnion, phantom_mat,"Phantom"); 
 
-    if(pCTXMLInput->GetUsePhatom()){
+    if(pCTXMLInput->GetUsePhantom()){
         for(int star(0); star<9; star++){
             // G4Box*        solidBox1        = new G4Box("box",2*mm,   0.5*mm,  1*(star+1)*mm);
             // G4Box*        solidBox2        = new G4Box("box",0.5*mm, 2*mm, 1*(star+1)*mm);

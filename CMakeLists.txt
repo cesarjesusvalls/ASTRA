@@ -60,6 +60,7 @@ message(STATUS "Linker flags : " ${CMAKE_EXE_LINKER_FLAGS}\n)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/analysis)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plotters)
 
 ADD_EXECUTABLE(pCTsim                             pCTsimulation.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
 TARGET_LINK_LIBRARIES(pCTsim                      Evtdict ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})

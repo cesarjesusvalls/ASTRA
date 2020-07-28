@@ -38,6 +38,7 @@
 
 #include "G4UImanager.hh"
 #include "QBBC.hh"
+#include "QGSP_BERT_HP.hh"
 
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
@@ -69,7 +70,7 @@ int main(int argc,char** argv)
   G4String    macroname    = "../mac/wrl_vis.mac";
 
   G4UIExecutive* ui = 0;
-  if ( argc != 4 ) {
+  if ( argc < 4 ) {
     ui = new G4UIExecutive(argc, argv);
   }
   else{
@@ -87,7 +88,6 @@ int main(int argc,char** argv)
   // Create ROOT the persistency manager.                                              
   pCTRootPersistencyManager* persistencyManager = pCTRootPersistencyManager::GetInstance();
     
-   
   persistencyManager->Open(rootfilename); 
   if(persistencyManager->IsOpen()){
     G4cout << "The output ROOT file is open" << G4endl;
@@ -102,13 +102,62 @@ int main(int argc,char** argv)
   persistencyManager->OpenXML(xmlfilename);
   pCTXML *pCTXMLInput = persistencyManager->GetXMLInput();
 
+  if(argc > 4){
+      for (int iarg=0; iarg<argc; iarg++){
+          if (string( argv[iarg]) =="-h" || string(argv[iarg])=="--help" ){
+                cout << "**************************************" << endl;
+                cout << "Macros run options:" << endl;
+                cout << "   -h || --help      print help info." << endl;
+                cout << "   -o || --output    output file name, including the path." << endl;
+                cout << endl;
+                cout << "   --Nlay              SciDet # of layers.    " << endl;
+                cout << "   --barZ             Layer's thickness (mm)." << endl;
+                cout << "   --NOTusePhantom     do not place phantom." << endl;
+                cout << "   --NOTuseCMOS        do not place CMOS (including 4th plane)." << endl;
+                cout << "**************************************" << endl;
+            }
+            else if (string(argv[iarg])=="--NOTusePhantom"){
+                pCTXMLInput->SetUsePhantom(false);
+            }
+            else if (string(argv[iarg])=="--NOTuseCMOS"){
+                pCTXMLInput->SetUseCMOS(false);
+                pCTXMLInput->SetUse4thCMOS(false);
+            }
+            else if (string(argv[iarg])=="--barCoat"){
+                iarg++;
+                cout << "New coating thickness: " << atof(string(argv[iarg]).c_str()) << endl;
+                pCTXMLInput->SetBarCoatThick(atof(string(argv[iarg]).c_str()));
+            }
+            else if (string(argv[iarg])=="--barZ"){
+                iarg++;
+                cout << "New bar Z thickness: " << atof(string(argv[iarg]).c_str()) << endl;
+                pCTXMLInput->SetSciDetBarZ(atof(string(argv[iarg]).c_str()));
+            }
+            else if (string(argv[iarg])=="--Nlay"){
+                iarg++;
+                cout << "New number of SciDet layers: " << atof(string(argv[iarg]).c_str()) << endl;
+                pCTXMLInput->SetSciDetNLayers(atoi(string(argv[iarg]).c_str()));
+            }
+            else if (string(argv[iarg])=="--DoSquareSec"){
+                cout << "Forcing Squared Bar Xsec" << endl;
+                pCTXMLInput->SetSciDetBarX(pCTXMLInput->GetSciDetBarZ());
+                int nBars = pCTXMLInput->GetSciDetBarY()/pCTXMLInput->GetSciDetBarX();
+                pCTXMLInput->SetSciDetNBars(nBars);
+                cout << "New number of bars: " << pCTXMLInput->GetSciDetNBars() << endl;
+                cout << "Bar Width:  " << pCTXMLInput->GetSciDetBarX() << endl;
+                cout << "Bar Height: " << pCTXMLInput->GetSciDetBarY() << endl;
+                cout << "Bar Depth:  " << pCTXMLInput->GetSciDetBarZ() << endl;
+            }
+      }
+  }
+
   // Set mandatory initialization classes
   //
   // Detector construction
   runManager->SetUserInitialization(new pCTDetectorConstruction());
 
   // Physics list
-  G4VModularPhysicsList* physicsList = new QBBC;
+  G4VModularPhysicsList* physicsList = new QGSP_BERT_HP();
   physicsList->SetVerboseLevel(0);
   runManager->SetUserInitialization(physicsList);
     

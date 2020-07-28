@@ -12,6 +12,10 @@
     SomethingHere
   </Example>
 
+  <OutFileName>
+    ../output/simulation_file
+  </OutFileName>
+
 <!-- Use Detector -->
 
   <UseSciDet>  
@@ -19,15 +23,15 @@
   </UseSciDet>
 
   <UseCMOS>  
-    True
+    False
   </UseCMOS>
 
   <Use4thCMOS>
-    True
+    False
   </Use4thCMOS>
   
   <UsePhantom>  
-    True
+    False
   </UsePhantom>
 
 <!-- ............ -->
@@ -74,6 +78,10 @@
   <SciDetBarZ>
     3
   </SciDetBarZ>
+
+  <BarCoatThick>
+    0.01
+  </BarCoatThick>
 
 <!-- .............. -->
 

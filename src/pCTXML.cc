@@ -45,6 +45,7 @@ void pCTXML::SetInputs(){
         XML2Double  ("SciDetBarX",fSciDetBarX);  
         XML2Double  ("SciDetBarY",fSciDetBarY);
         XML2Double  ("SciDetBarZ",fSciDetBarZ);
+        XML2Double  ("BarCoatThick",fBarCoat);
         XML2Double  ("SciDetX",fSciDetX);
         XML2Double  ("SciDetY",fSciDetY);
         XML2Double  ("SciDetZ",fSciDetZ);

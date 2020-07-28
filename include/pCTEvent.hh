@@ -10,6 +10,7 @@
 #define _PCT_EVENT_H_ 1
 
 #include <TObject.h>
+#include <TRandom3.h>
 #include "CMOSPixel.hh"
 #include "pCTXML.hh"
 #include "SciDetHit.hh"
@@ -23,6 +24,7 @@ private:
     std::vector< SciDetHit* >                       fSciDetHits;
     std::vector< pCTTrack* >                        fRecoProtons;
     std::map <int, double >                         fGunEnergy;   // map from track ID to pgun true kin energy.
+    TRandom3 * fRndm;
 
 public:
 
@@ -32,11 +34,10 @@ public:
         this->ResetEvent();
     };
 
-
-    double FindRange(pCTXML* config);
     std::vector< pCTTrack* >  Reconstruct(pCTXML* config);
 
     void Init(){
+        fRndm = new TRandom3(0);
     };
 
     void DrawSciDetHits (pCTXML* config);

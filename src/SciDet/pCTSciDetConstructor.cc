@@ -97,7 +97,7 @@ G4LogicalVolume *pCTSciDetConstructor::GetPiece(void) {
   G4LogicalVolume *coatingVolume   = new G4LogicalVolume(coatingSolid,FindMaterial("PlasticScintillator"),"coatingLV");
 
   scintVolume->SetSensitiveDetector( SciDetSensDet ); 
-  coatingVolume->SetSensitiveDetector( SciDetSensDet ); 
+  //coatingVolume->SetSensitiveDetector( SciDetSensDet ); 
   scintVolume->SetVisAttributes(G4Color(0.0,0.8,0.8,0.));
   //coatingVolume->SetVisAttributes(G4Color(0.0,0.0,0.8,0.));
   coatingVolume->SetVisAttributes(G4VisAttributes::Invisible);

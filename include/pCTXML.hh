@@ -20,6 +20,10 @@
 #include <vector>
 #include <TXMLEngine.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 //#include "G4SystemOfUnits.hh" // NEW GLOBAL
 
 using namespace std;
@@ -42,6 +46,8 @@ public :
     G4double GetSciDetBarY()       {return fSciDetBarY;};
     G4double GetSciDetBarZ()       {return fSciDetBarZ;};
 
+    G4double GetBarCoatThick()      {return fBarCoat;};
+
     G4double GetSciDetX()          {return fSciDetX;};
     G4double GetSciDetY()          {return fSciDetY;};
     G4double GetSciDetZ()          {return fSciDetZ;};
@@ -63,9 +69,39 @@ public :
     G4bool GetUseSciDet()          {return fUseSciDet;};
     G4bool GetUseCMOS()            {return fUseCMOS;};
     G4bool GetUse4thCMOS()         {return fUse4thCMOS;};
-    G4bool GetUsePhatom()          {return fUsePhantom;};
+    G4bool GetUsePhantom()          {return fUsePhantom;};
   
     G4bool UseEnergyWide()    {return fUseEnergyWide;};
+
+    void SetXMLFileName(G4String val)       {fXMLFile           = val;}
+    void SetXMLExample(G4String val)        {fExample           = val;}
+    void SetBeamType(G4String val)          {fBeamType          = val;}
+    void SetSciDetNBars(G4int val)          {fSciDetNBars       = val;}
+    void SetSciDetNLayers(G4int val)        {fSciDetNLayers     = val;}
+    void SetSciDetBarX(G4double val)        {fSciDetBarX        = val;}
+    void SetSciDetBarY(G4double val)        {fSciDetBarY        = val;}
+    void SetSciDetBarZ(G4double val)        {fSciDetBarZ        = val;}
+    void SetBarCoatThick(G4double val)      {fBarCoat           = val;}
+    void SetSciDetX(G4double val)           {fSciDetX           = val;}
+    void SetSciDetY(G4double val)           {fSciDetY           = val;}
+    void SetSciDetZ(G4double val)           {fSciDetZ           = val;}
+    void SetIniPGUNEnergy(G4double val)     {fIniPGUNEnergy     = val;}
+    void SetNProtons(G4int val)             {fNProtons          = val;}
+    void SetPosX(G4double val)              {fPosX              = val;}
+    void SetPosY(G4double val)              {fPosY              = val;}
+    void SetPosZ0(G4double val)             {fPosZ0             = val;}
+    void SetPosZ1(G4double val)             {fPosZ1             = val;}
+    void SetPosZ2(G4double val)             {fPosZ2             = val;}
+    void SetPosZ3(G4double val)             {fPosZ3             = val;}
+    void SetPlaneColumns(G4double val)      {fPlaneColumns      = val;}
+    void SetPlaneRows(G4double val)         {fPlaneRows         = val;}
+    void SetEpiThickness(G4double val)      {fEpiThickness      = val;}
+    void SetSubThickness(G4double val)      {fSubThickness      = val;}
+    void SetUseSciDet(G4bool val)           {fUseSciDet         = val;}
+    void SetUseCMOS(G4bool val)             {fUseCMOS           = val;}
+    void SetUse4thCMOS(G4bool val)          {fUse4thCMOS        = val;}
+    void SetUsePhantom(G4bool val)           {fUsePhantom        = val;}
+    void SetUseEnergyWide(G4bool val)          {fUseEnergyWide     = val;}
 
     void SetInputs();
 
@@ -87,6 +123,7 @@ private :
     G4double fSciDetX;
     G4double fSciDetY;
     G4double fSciDetZ;
+    G4double fBarCoat;
 
     G4double fPosX;
     G4double fPosY;

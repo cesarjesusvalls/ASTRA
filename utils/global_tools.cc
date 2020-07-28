@@ -23,24 +23,23 @@ TStyle* SetpCTStyle(Int_t WhichStyle, TString styleName = "pCT") {
     Float_t FontSizeTitle;// = 0.05;
     Float_t YOffsetTitle;// = 1.3;
 
-    std::cout << "WhichStyle: " << WhichStyle << std::endl;
     switch(WhichStyle) {
     case 1:
-        std::cout << "Setting Presentation Style 1." << std::endl;
+        //std::cout << "Setting Presentation Style 1." << std::endl;
         FontStyle = 42;
         FontSizeLabel = 0.055;
         FontSizeTitle = 0.055;
         YOffsetTitle = 1.19;
         break;
     case 2:
-        std::cout << "Setting Presentation Style 2." << std::endl;
+        //std::cout << "Setting Presentation Style 2." << std::endl;
         FontStyle = 42;
         FontSizeLabel = 0.045;
         FontSizeTitle = 0.045;
         YOffsetTitle = 0.9;
         break;
     case 3:
-        std::cout << "Setting Publication Style." << std::endl;
+        //std::cout << "Setting Publication Style." << std::endl;
         FontStyle = 132;
         FontSizeLabel = 0.055;
         FontSizeTitle = 0.055;

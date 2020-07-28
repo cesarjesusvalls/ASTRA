@@ -79,7 +79,7 @@ bool pCTRootPersistencyManager::Open(G4String filename) {
     G4cout << "pCTRootPersistencyManager::Open " << GetFilename() << G4endl;
     fOutput    = new TFile(GetFilename().c_str(),"RECREATE");
     fEventTree = new TTree("pCT_Events","pCT Tree of Events");  
-    fpCTEvent = new pCTEvent();
+    fpCTEvent  = new pCTEvent();
     fEventTree->Branch("Event",&fpCTEvent,128000,0);
     fEventsNotSaved = 0;
     return true;
@@ -117,7 +117,6 @@ G4bool pCTRootPersistencyManager::Store(const G4Event* anEvent) {
       vtx = vtx->GetNext();
   }
 
-  fOutput->cd(); 
   fpCTEvent->SetEvtId(anEvent->GetEventID());
   //G4cout << trackIdToGunEnergy.size() << G4endl;
   fpCTEvent->SetGunEnergyMap(trackIdToGunEnergy);

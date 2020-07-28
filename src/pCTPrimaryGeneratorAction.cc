@@ -97,6 +97,22 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
     pCTXMLInput = InputPersistencyManager->GetXMLInput();
 
+    // G4double particlerandom = 3*G4UniformRand();
+    // G4String particlename;
+    // if(particlerandom < 1)                       particlename = "proton";
+    // if(particlerandom >=1 && particlerandom <2)  particlename = "pi+";
+    // if(particlerandom >=2 && particlerandom <3)  particlename = "e+";
+ 
+    // fParticleGun->SetParticleMomentum(800*CLHEP::MeV);
+    // G4ParticleDefinition* particleDefinition 
+    // = G4ParticleTable::GetParticleTable()->FindParticle(particlename);
+    // fParticleGun->SetParticleDefinition(particleDefinition);
+
+    // G4double x0 =   (G4UniformRand()-0.5)*pCTXMLInput->GetPlaneColumns()*0.04;
+    // G4double y0 =   (G4UniformRand()-0.5)*pCTXMLInput->GetPlaneColumns()*0.036;
+    // G4double z0 =   pCTXMLInput->GetPosZ0()-5;
+    // fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+
     double iniEnergy = -999;
 
     for (int ind=0; ind<pCTXMLInput->GetNProtons(); ind++){

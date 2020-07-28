@@ -9,3 +9,7 @@ TARGET_LINK_LIBRARIES(templateAna   Evtdict ${ROOT_LIBRARIES})
 
 ADD_EXECUTABLE(energyRes          energyRes.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
 TARGET_LINK_LIBRARIES(energyRes   Evtdict ${ROOT_LIBRARIES})
+
+
+ADD_EXECUTABLE(pipos_test          pipos_test.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
+TARGET_LINK_LIBRARIES(pipos_test   Evtdict ${ROOT_LIBRARIES})
