@@ -23,11 +23,11 @@
   </UseSciDet>
 
   <UseCMOS>  
-    False
+    True
   </UseCMOS>
 
   <Use4thCMOS>
-    False
+    True
   </Use4thCMOS>
   
   <UsePhantom>  

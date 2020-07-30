@@ -7,6 +7,7 @@
 ///class RunAction;
 
 #include "CMOSHit.hh"              // <<- the hit "format" we define
+#include "pCTXML.hh"   
 class G4HCofThisEvent;           // <<- means "H(it) C(ollections) of This Event"
 
 //#include "HistoManager.hh"
@@ -49,6 +50,7 @@ private:
   G4int pEvtID;
 	std::ofstream fout;
 	G4String fname;
+  pCTXML*                   pCTXMLInput;
   //HistoManager* fHistoManager;
 };
 

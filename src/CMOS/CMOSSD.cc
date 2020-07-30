@@ -46,12 +46,9 @@ G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   G4double edep = step->GetTotalEnergyDeposit();
 
   G4int planeCopyNo =touchable->GetReplicaNumber(1);
-  // G4cout << "plane: " << planeCopyNo << ", volName: " << touchable->GetVolume()->GetName() << G4endl;
-  //G4cout << "momName: " << touchable->GetVolume()->GetMotherLogical()->GetName() << G4endl;
-  //G4cout << "momCopyNum: " << touchable->GetReplicaNumber(1)<< G4endl;
   G4ThreeVector point1 = step->GetPreStepPoint()->GetPosition();
   G4ThreeVector point2 = step->GetPostStepPoint()->GetPosition();
-    G4ThreeVector worldPosition = point1 + G4UniformRand()*(point2 - point1);   
+  G4ThreeVector worldPosition = point1 + G4UniformRand()*(point2 - point1);   
     // convert this to local position within the strip
   G4ThreeVector localPosition = touchable->GetHistory()->GetTopTransform().TransformPoint(worldPosition);  
         
@@ -62,7 +59,7 @@ G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   // finally store the hit in the collection
   //electron filter
   //if(particle_id != 11)
-    hitCollection->insert(hit);
+  hitCollection->insert(hit);
   
   return true;
 }
@@ -94,6 +91,10 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
 {
     G4Timer* timer = new G4Timer();
     timer->Start();
+    pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
+    pCTXMLInput = InputPersistencyManager->GetXMLInput();
+    G4int rows = pCTXMLInput->GetPlaneRows();
+    G4int cols = pCTXMLInput->GetPlaneColumns();
     
     G4int nHits = hitCollection->entries(); 
     if(nHits==0) return;
@@ -127,15 +128,15 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
             //////// test for a single flavour detector
             ////////
             
-            G4int xPixel = (int) ((particle_pos.getX()+4*2.240*mm) / pitchX);
-            G4int yPixel = (int) ((particle_pos.getY()+4.032*mm) / pitchY);  
+            G4int xPixel = (int) ((particle_pos.getX()+cols*pitchX*0.5) / pitchX);
+            G4int yPixel = (int) ((particle_pos.getY()+rows*pitchY*0.5) / pitchY);  
             G4int particleID = hit->GetParticleID();
-            
+            /*
             if(planeNumber==3){
             xPixel =0;
             yPixel =0;
             }
-            
+            */
             std::pair<G4int,G4int> Pixel(xPixel,yPixel);
             std::pair<G4int, std::pair<G4int, G4int> > hit_key(planeNumber, Pixel); // make a pair of layer number and strip number
             std::map<std::pair<G4int, std::pair<G4int,G4int> >, G4double>::iterator it = Digits.find(hit_key);
@@ -194,7 +195,7 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
         unsigned short int Plane = (*it2).first;
         unsigned short int nHitsInPlane = (*it2).second.size();
             //G4cout << "Plane " << Plane << " has " << nHitsInPlane << " pixels above threshold (" << threshold << "e-)" << G4endl;
-
+  /*
         for(unsigned index(0); index<nHitsInPlane; index++)
         {
           unsigned short int X = (*it2).second.at(index)->GetX();
@@ -202,7 +203,8 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
           unsigned int e = (*it2).second.at(index)->GetElectronsLiberated();
           
           //fout << X << ", " << Y << ", "<< Plane <<", " << e <<"," <<G4endl;
-        }
+    }
+  */
     }
 
     timer->Stop();

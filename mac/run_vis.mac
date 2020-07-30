@@ -1,5 +1,5 @@
 
 /run/initialize
 /gun/particle proton
-/gun/energy 100 MeV
+/gun/energy 180 MeV
 /run/beamOn 10000
