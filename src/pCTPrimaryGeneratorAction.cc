@@ -129,7 +129,7 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         }
     }
 
-    // fParticleGun->SetParticleEnergy(iniEnergy);
+    fParticleGun->SetParticleEnergy(iniEnergy);
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
