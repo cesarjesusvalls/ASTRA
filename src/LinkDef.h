@@ -21,4 +21,6 @@
 #pragma link C++ class pCTTrack+;
 #pragma link C++ class std::vector< pCTTrack >+;
 
+#pragma link C++ class EvNavHandler+;
+
 #endif // __CINT__

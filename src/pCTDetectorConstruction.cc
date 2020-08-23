@@ -26,6 +26,8 @@
 #include "G4IntersectionSolid.hh"
 #include <G4VisAttributes.hh>
 
+#include "ND280RootGeometryManager.cc"
+
 #include "pCTRootPersistencyManager.hh"
 #include "pCTSciDetConstructor.hh"
 #include "pCTSiDetConstructor.hh"
@@ -147,6 +149,9 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     if(pCTXMLInput->GetUseSciDet()){
         new G4PVPlacement(0,SciDet,logicSciDet,nameSciDet,logicEnv,false,0,checkOverlaps);
     }
+
+    ND280RootGeometryManager::Get()->Update(physWorld, true);
+    ND280RootGeometryManager::Get()->Export("geometry.root");
     //_____________________
 
     return physWorld;

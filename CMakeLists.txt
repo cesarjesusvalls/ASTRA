@@ -46,7 +46,7 @@ INCLUDE_DIRECTORIES(. ${CMAKE_CURRENT_SOURCE_DIR}/src)
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )
 MESSAGE(STATUS ${PROJECT_SOURCE_DIR}/cmake)
 
-find_package (ROOT COMPONENTS MathCoreProut RIO Hist Tree Net TreePlayer Geom)
+find_package (ROOT COMPONENTS MathCoreProut Core Cint Graf Graf3d Gpad Rint Postscript Matrix Physics MathCore Thread Gui pthread Wl RIO Hist Tree Net TreePlayer Geom Eve Ged RGL EG)
 if (ROOT_FOUND)
     message(STATUS "${ROOT_LIBRARIES}")
 else (ROOT_FOUND)
