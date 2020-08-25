@@ -26,7 +26,7 @@
 #include "G4IntersectionSolid.hh"
 #include <G4VisAttributes.hh>
 
-#include "ND280RootGeometryManager.cc"
+#include "ND280RootGeometryManager.hh"
 
 #include "pCTRootPersistencyManager.hh"
 #include "pCTSciDetConstructor.hh"

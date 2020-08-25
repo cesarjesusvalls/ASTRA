@@ -65,6 +65,8 @@ public:
 
     //------------------
 
+    std::vector< pCTTrack* > DoTracking();
+
     //ClassDef(pCTTrackingManager,1) 
 };
 

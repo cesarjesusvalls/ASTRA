@@ -74,3 +74,73 @@ void pCTTrackingManager::DrawGeometry(){
    gEve->Redraw3D(kTRUE);
 */
 }
+
+
+std::vector< pCTTrack* > DoTracking(){
+
+    bool DEBUG = true;
+    if (DEBUG) cout << "# of true tracks: " << event->GetGunEnergyMap().size() << endl;
+
+    // cointainer for the output
+    std::vector< pCTTrack* > recoTracks;
+
+    // input info from SciDet
+    std::vector< SciDetHit* > listOfSciHits = this->GetSciDetHits();
+    std::vector< SciDetHit* >::iterator sciHit;
+
+    int nbars(config->GetSciDetNBars());
+
+    double min_dist = 2;
+    for (int s(0); s<seedPoints.size(); ++s){
+        
+        // steps
+        // for each seed, compute a prediction in the first SciDet layer.
+
+        TVector3 seed_pos = seedPoints[s];
+        TVector3 seed_vec = seedVecs[s];
+        TVector3 pred(seed_pos.GetX()+seed_vec.GetX()*delta, seed_pos.GetY()+seed_vec.GetY()*delta, seed_pos.GetZ()+seed_vec.GetZ()*delta);
+
+        // compute 3D candidates from 2D hits in the first 2 layers.
+        std::vector<TVector3> candidates;
+        for(std::vector< SciDetHit* >::hit2d_1=listOfSciHits.begin(); hit2d_1!=listOfSciHits.begin(); hit2d_1++){
+            if (hit2d_1->GetLayerID() != 0) continue;
+            double pos[2] = {0};
+            hit2d_1->GetOrientation() ? pos[0] = hit2d_1->GetBarID() : pos[1] = hit2d_1->GetBarID();
+            for(std::vector< SciDetHit* >::hit2d_2=listOfSciHits.begin(); hit2d_2!=listOfSciHits.begin(); hit2d_2++){
+                if (hit2d_2->GetLayerID() != 1) continue;
+                hit2d_2->GetOrientation() ? pos[0] = hit2d_2->GetBarID() : pos[1] = hit2d_2->GetBarID();
+                candidates.push_back(TVector3(pos[0],pos[1],hit2d_2->GetLayerID()-0.5));
+            }
+        }
+        // break the ambiguities comparing seed predictions to the 3D candidates.
+        int Naccepted = 0;
+        std::vector<TVector3> listOf3Dhits;
+        for (std::vector< TVector3>::iterator candidate=candidates.begin(); candidate!=candidates.end(); candidate++){
+            if ((pred-candidate).Mag() < min_dist){
+                ++Naccepted;
+                listOf3Dhits.push_back(candidate);
+            }
+        }
+
+        if (!Naccepted) continue;
+
+        for(std::vector< SciDetHit* >::hit2d=listOfSciHits.begin(); hit2d!=listOfSciHits.end(); hit2d++){
+            
+
+        }
+
+
+
+        return recoTracks;
+    }
+
+
+
+
+
+
+
+
+
+
+

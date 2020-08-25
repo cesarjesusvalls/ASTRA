@@ -103,6 +103,9 @@ int main(int argc,char** argv){
 
     double Z_pos[4] = {0.,5.,10.,15.};
 
+    pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
+
+    /*
     TEveManager::Create();
     // { // Simple geometry
     // //TFile::SetCacheFileDir(".");
@@ -124,7 +127,7 @@ int main(int argc,char** argv){
    TGeoNode* node3 = node2-> GetDaughter(1);
    node3->GetMotherVolume()->SetVisibility(0);
    node3->InspectNode ();
-   TEveGeoTopNode* inn = new TEveGeoTopNode(gGeoManager, node1);
+   TEveGeoTopNode* inn = new TEveGeoTopNode(gGeoManager, node3);
    std::cout << "transparency: " << inn->GetMainTransparency() << std::endl;
    inn->SetMainColor(1);
    inn->SetMainTransparency (50);
@@ -244,6 +247,8 @@ int main(int argc,char** argv){
     // c1->WaitPrimitive();
 
     // inputFile->Close();
+
+    */
     theApp->Run();
 
     return 0;
