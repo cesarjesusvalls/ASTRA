@@ -21,7 +21,7 @@
 
 #include "EvNavHandler.hh"
 
-//#include "pCTTrackingManager.cc"
+#include "pCTTrackingManager.cc"
 
 
 #include <TSystem.h>
@@ -37,6 +37,7 @@
 #include "TQObject.h"
 #include "TQConnection.h"
 
+#include <TEveElement.h>
 #include <TEvePlot3D.h>
 #include <TEveArrow.h>
 #include <TGeoManager.h>
@@ -50,10 +51,12 @@
 
 TTree*   data;
 pCTEvent* event;
+TGeoNode* SciDet;
+pCTXML* config;
 int event_id = 0;
 
 //___________________________________________________________________________
-void make_gui()
+inline void make_gui()
 {
    // Create minimal GUI for event navigation.
    TEveBrowser* browser = gEve->GetBrowser();
@@ -63,15 +66,16 @@ void make_gui()
    frmMain->SetCleanup(kDeepCleanup);
    TGHorizontalFrame* hf = new TGHorizontalFrame(frmMain);
    {
-      TString icondir( Form("%s/icons/", gSystem->Getenv("ROOTSYS")) );
-      TGPictureButton* b = 0;
-      EvNavHandler    *fh = new EvNavHandler(data,&event_id);
-      b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoBack.gif"));
-      hf->AddFrame(b);
-      b->Connect("Clicked()", "EvNavHandler", fh, "Bck()");
-      b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoForward.gif"));
-      hf->AddFrame(b);
-      b->Connect("Clicked()", "EvNavHandler", fh, "Fwd()");
+        TString icondir( Form("%s/icons/", gSystem->Getenv("ROOTSYS")) );
+        TGPictureButton* b = 0;
+        EvNavHandler    *fh = new EvNavHandler(data,&event_id,event,config,SciDet);
+        b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoBack.gif"));
+        hf->AddFrame(b);
+        b->Connect("Clicked()", "EvNavHandler", fh, "Bck()");
+        b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoForward.gif"));
+        hf->AddFrame(b);
+        b->Connect("Clicked()", "EvNavHandler", fh, "Fwd()");
+        fh->Fwd();
    }
    frmMain->AddFrame(hf);
    frmMain->MapSubwindows();
@@ -81,6 +85,86 @@ void make_gui()
    browser->SetTabTitle("Event Control", 0);
 }
 
+//___________________________________________________________________________
+inline void make_display(pCTXML* cfg)
+{
+    TEveManager::Create();
+    TFile::SetCacheFileDir(".");
+    auto gGeoManager = gEve->GetGeometry("geometry.root");
+    gGeoManager->DefaultColors();
+
+    TGLViewer *v = gEve->GetDefaultGLViewer();
+    v->ColorSet().Background().SetColor(kMagenta+4);
+    
+    TGeoNode* topNode = gGeoManager->GetTopVolume()->FindNode("Envelope_0");
+
+    int nCMOS = 4;
+    if (!cfg->GetUse4thCMOS()) nCMOS = 3;
+
+    TGeoNode* CMOS[nCMOS];
+    TGeoNode* CMOSepi[nCMOS];
+    TGeoNode* CMOSsub[nCMOS];
+    for (int it(0); it<nCMOS; ++it){
+        CMOS[it] = topNode->GetDaughter(it);
+        CMOSepi[it] = CMOS[it]->GetDaughter(0);
+        CMOSsub[it] = CMOS[it]->GetDaughter(1);
+    }
+    SciDet = topNode->GetDaughter(nCMOS);
+
+    int nbars(cfg->GetSciDetNBars());
+    int nlayers(cfg->GetSciDetNLayers());
+
+    TGeoNode* SciDetbar[nbars*nlayers*2];
+    for (int it(0); it<nbars*nlayers; ++it){
+        SciDetbar[it] = SciDet->GetDaughter(it);
+        TEveGeoNode* tmpEve = new TEveGeoNode(SciDetbar[it]);
+        // tmpEve->SetMainColor(3);
+        //tmpEve->SetMainTransparency (100);
+        tmpEve->SetRnrSelf(0);
+        if((it%20)==0){
+            tmpEve->SetRnrSelf(1);
+            tmpEve->SetMainColor(2);
+        }
+        tmpEve->SetMainTransparency (10);
+        // else{
+        //     tmpEve->SetMainColor(3);
+        //     tmpEve->SetMainTransparency (100);       
+        // }
+    }
+
+    TEveGeoTopNode* tmpEve = new TEveGeoTopNode(gGeoManager, SciDet);
+    // tmpEve->SetMainColor(2);
+    // tmpEve->SetMainTransparency (50);
+    gEve->AddElement(tmpEve);
+
+
+    // TEveGeoTopNode* tmpEve = new TEveGeoTopNode(gGeoManager, SciDet);
+    // tmpEve->SetMainColor(2);
+    // tmpEve->SetMainTransparency (20);
+    // gEve->AddGlobalElement(tmpEve);
+
+    // TGeoNode* node2 = node1-> GetDaughter(4);
+    // TGeoNode* node3 = node2-> GetDaughter(1);
+    
+
+
+    // node3->GetMotherVolume()->SetVisibility(0);
+    // node3->InspectNode ();
+    // TEveGeoTopNode* inn = new TEveGeoTopNode(gGeoManager, node3);
+    // inn->SetMainColor(1);
+    // inn->SetMainTransparency (50);
+    // gEve->AddGlobalElement(inn);
+
+    // TEveArrow* a1 = new TEveArrow(0., 0., 100., 0., 0., 0.);
+    // a1->SetMainColor(kBlue);
+    // a1->SetTubeR(0.1);
+    // a1->SetPickable(kTRUE);
+    // gEve->AddElement(a1);
+
+    gEve->GetBrowser()->GetTabRight()->SetTab(1);
+    gEve->GetBrowser()->GetTabRight()->SetTab(2);
+    make_gui();
+}
 
 int main(int argc,char** argv){
 
@@ -98,14 +182,89 @@ int main(int argc,char** argv){
     event = new pCTEvent();
     dataBranch->SetAddress(&event);
 
-    pCTXML* config = (pCTXML*) inputFile->Get("XMLinput");
-    std::cout << config->GetSciDetNBars()  <<"-------------------------------\n";
+    config = (pCTXML*) inputFile->Get("XMLinput");
 
     double Z_pos[4] = {0.,5.,10.,15.};
 
-    pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
+    // for(int ievt(0); ievt<data->GetEntries(); ievt++){
+    //         data->GetEntry(ievt);
+    
+    //     std::vector<TVector3> points;
+    //     std::vector<TVector3> vecs;
+    
+    //     std::map<G4int, std::vector< CMOSPixel* > > Counter = event->GetPixelHitsMap();
+    //     std::map<G4int, std::vector< CMOSPixel*> >::iterator it;
+    //     for(it=Counter.begin(); it!=Counter.end(); it++){
+    //         ushort Plane = (*it).first;
+    //         if (Plane != 3) continue;
+    //         ushort nHitsInPlane = (*it).second.size();
+    //         for(ushort index(0); index<nHitsInPlane; index++)
+    //         {
+    //             points.push_back(TVector3((*it).second.at(index)->GetX(),(*it).second.at(index)->GetY(),0));
+    //             vecs.push_back(TVector3(0,0,0));
+    //         }
+    //     }
+    
+    //     std::cout << "#seeds: " << points.size() << std::endl;
+    //     if(points.size())
+    //         std::cout <<  points.back().X() << "," << points.back().Y() << "," << points.back().Z() << std::endl;
+    //     pCTTrackingManager* trkMan = new pCTTrackingManager(event,config,points,vecs);
+    //     trkMan->DoTracking();
+    //     delete trkMan;
 
-    /*
+
+    //     event->DrawSciDetHits(config);
+    //     event->DrawCMOSHits(config);
+    // }
+
+    make_display(config);
+
+    theApp->Run();
+
+    return 0;
+}
+
+
+/*
+    // TVector3 CMOS_pos  (config->GetPosX(), config->GetPosY(), config->GetPosZ3());
+    // if(!config->GetUse4thCMOS()) CMOS_pos.SetZ(config->GetPosZ2());
+
+    // TVector3 SciDet_pos(0,0, CMOS_pos.Z()+0.5);
+
+    // std::cout << "CMOS_pos: " << CMOS_pos.X() << "," << CMOS_pos.Y() << "," << CMOS_pos.Z() << std::endl;
+    // std::cout << "SciDet_pos: " << SciDet_pos.X() << "," << SciDet_pos.Y() << "," << SciDet_pos.Z() << std::endl;
+
+    for(int ievt(0); ievt<data->GetEntries(); ievt++){
+            data->GetEntry(ievt);
+    
+        std::vector<TVector3> points;
+        std::vector<TVector3> vecs;
+    
+        std::map<G4int, std::vector< CMOSPixel* > > Counter = event->GetPixelHitsMap();
+        std::map<G4int, std::vector< CMOSPixel*> >::iterator it;
+        for(it=Counter.begin(); it!=Counter.end(); it++){
+            ushort Plane = (*it).first;
+            if (Plane != 3) continue;
+            ushort nHitsInPlane = (*it).second.size();
+            for(ushort index(0); index<nHitsInPlane; index++)
+            {
+                points.push_back(TVector3((*it).second.at(index)->GetX(),(*it).second.at(index)->GetY(),0));
+                vecs.push_back(TVector3(0,0,0));
+            }
+        }
+    
+        std::cout << "#seeds: " << points.size() << std::endl;
+        if(points.size())
+            std::cout <<  points.back().X() << "," << points.back().Y() << "," << points.back().Z() << std::endl;
+        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config,points,vecs);
+        trkMan->DoTracking();
+        delete trkMan;
+
+
+        event->DrawSciDetHits(config);
+        event->DrawCMOSHits(config);
+    }
+    
     TEveManager::Create();
     // { // Simple geometry
     // //TFile::SetCacheFileDir(".");
@@ -248,8 +407,8 @@ int main(int argc,char** argv){
 
     // inputFile->Close();
 
-    */
     theApp->Run();
 
     return 0;
 }
+*/

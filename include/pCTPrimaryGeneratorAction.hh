@@ -34,6 +34,7 @@
 #include "G4ParticleGun.hh"
 #include "pCTXML.hh"
 #include "globals.hh"
+#include <TRandom3.h>
 
 class G4ParticleGun;
 class G4Event;
@@ -57,6 +58,7 @@ class pCTPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     const G4ParticleGun* GetParticleGun() const { return fParticleGun; }
   
   private:
+    TRandom3* frndom;
     pCTXML* pCTXMLInput;
     G4ParticleGun*  fParticleGun; // pointer a to G4 gun class
     G4Box* fEnvelopeBox;

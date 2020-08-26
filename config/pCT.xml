@@ -39,7 +39,7 @@
 <!-- PGUN info -->
 
 <BeamType>
-  Rectangular
+  Cercle
 </BeamType>
 
 <NProtons>
@@ -47,11 +47,11 @@
 </NProtons>
 
 <IniPGUNEnergy>
-  180
+  240
 </IniPGUNEnergy>
 
 <UseEnergyWide>
-  True
+  False
 </UseEnergyWide>
 
 <!-- ......... -->
@@ -60,7 +60,7 @@
 <!-- SciDet Geometry -->
 
   <SciDetNBars>
-    12
+    40
   </SciDetNBars>
 
   <SciDetNLayers>
@@ -68,7 +68,7 @@
   </SciDetNLayers>
 
   <SciDetBarX>
-    10
+    3
   </SciDetBarX>
 
   <SciDetBarY>
@@ -80,7 +80,7 @@
   </SciDetBarZ>
 
   <BarCoatThick>
-    0.01
+    0.0
   </BarCoatThick>
 
 <!-- .............. -->

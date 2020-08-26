@@ -24,6 +24,7 @@ private:
     double                                          fRecoMeas[5]; 
     double                                          fStraightness;
 
+
     // array of observables associated to the track
     // 0 : Reco Calorimetry 
     // 1 : Rng [ last layer Z - first layer Z ]
@@ -32,6 +33,7 @@ private:
     //
 
     std::vector<TVector3>                           f3DHits;
+    std::vector<int>                                fBarIDs;
 
 public:
 
@@ -51,7 +53,8 @@ public:
     void SetRecoEnergy(double E)                                           {fRecoEnergy      = E;};
     void SetRecoMeas(int idx, double mes)                                  {fRecoMeas[idx]   = mes;};
     void SetStraightness(double strn)                                      {fStraightness    = strn;};
-    void Set3DHits   (std::vector<TVector3> hits)                          {f3DHits          = hits;};
+    void Set3DHits      (std::vector<TVector3> hits)                       {f3DHits          = hits;}; 
+    void SetBarIDs      (std::vector<int> bids)                       {fBarIDs          = bids;};                       
 
     //------------------
 
@@ -63,6 +66,7 @@ public:
     double                                      GetRecoMeas(int idx)    {return fRecoMeas[idx];};
     double                                      GetStraightness()       {return fStraightness;};
     std::vector<TVector3>                       Get3DHits()             {return f3DHits;};
+    std::vector<int>                            GetBarIDs()             {return fBarIDs;};
 
     //------------------
 

@@ -114,11 +114,11 @@ G4LogicalVolume *pCTSciDetConstructor::GetPiece(void) {
           if(nlayer%2==0){
               rotM.rotateZ(90.0 * CLHEP::deg);
               new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector(0, (GetNBars()-nbar*2-1)*fBarX/2, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),scintVolume,  GetName()+barName.Data()+"/Scint",SciDet_logicalV,false,nlayer*GetNBars()+nbar);
-              new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector(0, (GetNBars()-nbar*2-1)*fBarX/2, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),coatingVolume,GetName()+barName.Data()+"/Coating",SciDet_logicalV,false,nlayer*GetNBars()+nbar);
+              //new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector(0, (GetNBars()-nbar*2-1)*fBarX/2, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),coatingVolume,GetName()+barName.Data()+"/Coating",SciDet_logicalV,false,nlayer*GetNBars()+nbar);
           }
           else{
               new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector((GetNBars()-nbar*2-1)*fBarX/2, 0, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),scintVolume,  GetName()+barName.Data()+"/Scint"  ,SciDet_logicalV,false,nlayer*GetNBars()+nbar);
-              new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector((GetNBars()-nbar*2-1)*fBarX/2, 0, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),coatingVolume,GetName()+barName.Data()+"/Coating",SciDet_logicalV,false,nlayer*GetNBars()+nbar);
+              //new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector((GetNBars()-nbar*2-1)*fBarX/2, 0, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),coatingVolume,GetName()+barName.Data()+"/Coating",SciDet_logicalV,false,nlayer*GetNBars()+nbar);
           }
       }
   }

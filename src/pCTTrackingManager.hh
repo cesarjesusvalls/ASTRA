@@ -20,8 +20,8 @@ class pCTTrackingManager: public TObject {
 
 private:
 
-    pCTEvent* event;                                 // the event we are managing
-    pCTXML*   config;                                // the configuration used to generate the event.
+    pCTEvent* fevent;                                 // the event we are managing
+    pCTXML*   fconfig;                                // the configuration used to generate the event.
 
     //--------------
     //
@@ -29,9 +29,8 @@ private:
     // 
     // info from CMOS tracker used to disambiguate the XY coordinate at the first SciDet layer:
     //
-    int NCMOSTracks;                                 // number of hits in the last CMOS plane associated to a CMOS track
-    std::map<int, TVector3> seedPoints;              // list of 3D (x,y,z) points at the last CMOS plane (provided as input)
-    std::map<int, TVector3> seedVecs;                // list of 3D unitary vectors from CMOS tracker (provided as input)
+    std::vector<TVector3> seedPoints;              // list of 3D (x,y,z) points at the last CMOS plane (provided as input)
+    std::vector<TVector3> seedVecs;                // list of 3D unitary vectors from CMOS tracker (provided as input)
 
     // info filled by the TrackingManager Class algorithms:
     //           
@@ -44,7 +43,7 @@ private:
 public:
 
     pCTTrackingManager(pCTEvent* evt, pCTXML* cnf);
-    pCTTrackingManager(pCTEvent* evt, pCTXML* cnf, int ntrks, std::map<int, TVector3> pnts, std::map<int, TVector3> vecs);
+    pCTTrackingManager(pCTEvent* evt, pCTXML* cnf, std::vector<TVector3> pnts, std::vector<TVector3> vecs);
 
     pCTTrackingManager(){
         Init();
@@ -54,7 +53,6 @@ public:
     };
 
     void Init(){
-        NCMOSTracks = 0;
         NrecoTracks = 0;
     };
 
