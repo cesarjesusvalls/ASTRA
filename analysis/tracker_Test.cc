@@ -186,8 +186,9 @@ int main(int argc,char** argv){
 
     double Z_pos[4] = {0.,5.,10.,15.};
 
-    // for(int ievt(0); ievt<data->GetEntries(); ievt++){
-    //         data->GetEntry(ievt);
+    /*
+    for(int ievt(0); ievt<data->GetEntries(); ievt++){
+            data->GetEntry(ievt);
     
     //     std::vector<TVector3> points;
     //     std::vector<TVector3> vecs;
@@ -213,10 +214,10 @@ int main(int argc,char** argv){
     //     delete trkMan;
 
 
-    //     event->DrawSciDetHits(config);
+         event->DrawSciDetHits(config);
     //     event->DrawCMOSHits(config);
-    // }
-
+    }
+    */
     make_display(config);
 
     theApp->Run();

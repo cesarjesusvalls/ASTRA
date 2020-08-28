@@ -97,7 +97,8 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
     double pitchX = 0.040; // 40 microns in mm
     double pitchY = 0.036; // 36 microns in mm
 
-    double min_dist = 10;
+    double max_dist = 8;
+    std::map<int, int> track_to_id;
     for (int s(0); s<seedPoints.size(); ++s){
 
         // set true by default and make it false if the track building fails.
@@ -110,9 +111,9 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
         TVector3 seed_pos = seedPoints[s];
         TVector3 seed_vec = seedVecs[s];
 
-        TVector3 pred((seed_pos.X()-n_xpixels/2)*pitchX+seed_vec.X()*delta, (seed_pos.Y()-n_ypixels/2)*pitchY+seed_vec.Y()*delta, 0.5);
+        TVector3 pred((seed_pos.X()-n_xpixels/2)*pitchX+seed_vec.X()*delta, (seed_pos.Y()-n_ypixels/2)*pitchY+seed_vec.Y()*delta, 0);
         //std::cout << "seed: " << seed_pos.X() << "," << seed_pos.Y() << "," << seed_pos.Z() << std::endl;
-        //std::cout << "pred: " << pred.X() << "," << pred.Y() << "," << pred.Z() << std::endl;
+        std::cout << "pred: " << pred.X() << "," << pred.Y() << "," << pred.Z() << std::endl;
 
         // compute 3D candidates from 2D hits in the first 2 layers.
         std::vector<TVector3> candidates;
@@ -128,7 +129,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
                 (*hit2d_2)->GetOrientation() ? pos[0] = (-(*hit2d_2)->GetBarID()+nbars/2)*barWidth : pos[1] = (-(*hit2d_2)->GetBarID()+nbars/2)*barWidth;
 
                 TVector3 new_point(pos[0],pos[1],(*hit2d_2)->GetLayerID()*barWidth);
-                //std::cout << "new_point : " << new_point.X() << "," << new_point.Y() << "," << new_point.Z() << std::endl;
+                std::cout << "new candidate: " << new_point.X() << "," << new_point.Y() << "," << new_point.Z() << std::endl;
                 candidates.push_back(new_point);
                 pair_barIDs.push_back(((*hit2d_2)->GetLayerID())*nbars+(*hit2d_2)->GetBarID());
                 candidates_barIDs.push_back(pair_barIDs);
@@ -141,12 +142,15 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
         int counter = 0;
         for (std::vector< TVector3>::iterator candidate=candidates.begin(); candidate!=candidates.end(); candidate++){
             double dist = (pred-(*candidate)).Mag();
-            std::cout << "dist: " << dist << std::endl;
-            if ((pred-(*candidate)).Mag() < min_dist){
+
+            std::cout << "dist: " << dist << " to candidate: " << (*candidate).X() << "," << (*candidate).Y() << "," << (*candidate).Z() << std::endl;
+            if ((pred-(*candidate)).Mag() < max_dist){
                 ++Naccepted;
                 listOf3Dhits.push_back((*candidate));
                 listOfBarIDs.push_back(candidates_barIDs[counter][0]);
                 listOfBarIDs.push_back(candidates_barIDs[counter][1]);
+                track_to_id[candidates_barIDs[counter][0]]=s;
+                track_to_id[candidates_barIDs[counter][1]]=s;
                 //std::cout << "ini bar ids: " << candidates_barIDs[counter][0] << ", " << candidates_barIDs[counter][1] << std::endl;
             }
             counter++;
@@ -162,8 +166,45 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
 
         // process iteratively layer after layer.
         // for each layer generate a list of candidates and evaluate how many are
-        // closer than 'min_dist' to the previous layer 3D point for the track being built.
+        // closer than 'max_dist' to the previous layer 3D point for the track being built.
+        // for (int layerNum(2); layerNum<nlayers; layerNum++){
+        //     std::vector<TVector3> layer_candidates;
+        //     std::vector<int> layer_barIDs;
+        //     for(std::vector< SciDetHit* >::iterator hit2d=listOfSciHits.begin(); hit2d!=listOfSciHits.end(); hit2d++){
+        //         if ((*hit2d)->GetLayerID() != layerNum) continue;
+        //         double pos[2] = {0};
+        //         (*hit2d)->GetOrientation() ? pos[0] = (-(*hit2d)->GetBarID()+nbars/2)*barWidth : pos[1] = (-(*hit2d)->GetBarID()+nbars/2)*barWidth;
+        //         (*hit2d)->GetOrientation() ? pos[1] = listOf3Dhits.back().Y() : pos[0] = listOf3Dhits.back().X();
+        //         TVector3 step_candidate(pos[0],pos[1],(*hit2d)->GetLayerID()*barWidth);
+
+        //         double dist = (listOf3Dhits.back()-step_candidate).Mag();
+        //         std::cout << "dist: " << dist << std::endl;
+        //         if(dist < max_dist){
+        //             layer_candidates.push_back(step_candidate);
+        //             layer_barIDs.push_back(((*hit2d)->GetLayerID())*nbars+(*hit2d)->GetBarID());
+        //         }
+        //     }
+        //     if     (layer_candidates.size()==1){
+        //         listOf3Dhits.push_back(layer_candidates.back());
+        //         std::cout << "adding bar ids: " << layer_barIDs.back() << std::endl;
+        //         listOfBarIDs.push_back(layer_barIDs.back());
+        //     }
+        //     else if(layer_candidates.size() >1){
+        //         std::cout << "there is more than 1 candidate." << layer_barIDs.back() << std::endl;
+        //         // if there is more than one candidate the info can not be separated and the track is not reconstructed.
+        //         isReco[s] = false;
+        //         break;
+        //     }
+        //     else if(!layer_candidates.size()){
+        //         // either the track is successfully finished (and there is another track with longer range)
+        //         // or the track has a hole (situation we need to address).
+        //         break;
+        //     }
+        // }
+
         for (int layerNum(2); layerNum<nlayers; layerNum++){
+            int min_dist = 1000;
+            double costh    = 1000;
             std::vector<TVector3> layer_candidates;
             std::vector<int> layer_barIDs;
             for(std::vector< SciDetHit* >::iterator hit2d=listOfSciHits.begin(); hit2d!=listOfSciHits.end(); hit2d++){
@@ -174,22 +215,30 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
                 TVector3 step_candidate(pos[0],pos[1],(*hit2d)->GetLayerID()*barWidth);
 
                 double dist = (listOf3Dhits.back()-step_candidate).Mag();
-                std::cout << "dist: " << dist << std::endl;
-                if(dist < min_dist){
+                //std::cout << "dist: " << dist << std::endl;
+                if(dist < max_dist and dist < min_dist){
+                    costh = abs((listOf3Dhits.back()-step_candidate).CosTheta());
+                    min_dist = dist;
                     layer_candidates.push_back(step_candidate);
-                    layer_barIDs.push_back(((*hit2d)->GetLayerID()+1)*nbars+(*hit2d)->GetBarID());
+                    layer_barIDs.push_back(((*hit2d)->GetLayerID())*nbars+(*hit2d)->GetBarID());
                 }
             }
-            if     (layer_candidates.size()==1){
+            if (layer_candidates.size()){
+                std::cout << "costh: " << costh << std::endl;
                 listOf3Dhits.push_back(layer_candidates.back());
-                std::cout << "adding bar ids: " << layer_barIDs.back() << std::endl;
+                //std::cout << "adding bar ids: " << layer_barIDs.back() << std::endl;
+                if(track_to_id.count(layer_barIDs.back())){
+                    isReco[track_to_id[layer_barIDs.back()]] = false;
+                }
+                track_to_id[layer_barIDs.back()]=s;
                 listOfBarIDs.push_back(layer_barIDs.back());
             }
-            else if(layer_candidates.size() >1){
-                // if there is more than one candidate the info can not be separated and the track is not reconstructed.
-                isReco[s] = false;
-                break;
-            }
+            // else if(layer_candidates.size() >1){
+            //     std::cout << "there is more than 1 candidate." << layer_barIDs.back() << std::endl;
+            //     // if there is more than one candidate the info can not be separated and the track is not reconstructed.
+            //     isReco[s] = false;
+            //     break;
+            // }
             else if(!layer_candidates.size()){
                 // either the track is successfully finished (and there is another track with longer range)
                 // or the track has a hole (situation we need to address).

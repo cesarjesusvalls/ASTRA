@@ -61,9 +61,7 @@ public:
         
         std::vector<TVector3> points;
         std::vector<TVector3> vecs;
-        printf("Yes\n");
         std::map<int, std::vector< CMOSPixel* > > Counter = event->GetPixelHitsMap();
-        printf("No\n");
         std::map<int, std::vector< CMOSPixel*> >::iterator it;
         for(it=Counter.begin(); it!=Counter.end(); it++){
             ushort Plane = (*it).first;
@@ -75,7 +73,7 @@ public:
                 vecs.push_back(TVector3(0,0,0));
             }
         }
-        std::cout << "#seeds: " << points.size() << std::endl;
+        //std::cout << "#seeds: " << points.size() << std::endl;
         if(points.size())
             std::cout <<  points.back().X() << "," << points.back().Y() << "," << points.back().Z() << std::endl;
         pCTTrackingManager* trkMan = new pCTTrackingManager(event,config,points,vecs);
@@ -91,16 +89,29 @@ public:
             //delete tmpEve;
         }
 
-        event->DrawSciDetHits(config);
+        std::vector< SciDetHit* > listOfSciHits = event->GetSciDetHits();
+        for(std::vector< SciDetHit* >::iterator sciHit=listOfSciHits.begin(); sciHit!=listOfSciHits.end(); sciHit++){
+            int node_id = (*sciHit)->GetLayerID()*nbars+(*sciHit)->GetBarID();
+            TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter(node_id));
+            tmpEve->SetRnrSelf(1);
+            tmpEve->SetMainColor(0);
+            delete tmpEve;
+        }
+
+        //event->DrawSciDetHits(config);
 
         int trkCnt = 0;
         for(auto trk=recoTracks.begin(); trk != recoTracks.end(); trk++){
+            if (!trkMan->GetIsReco()[trkCnt]){
+                std::cout << "trk: " << trkCnt << " is not reconstructed" << std::endl;
+                continue;
+            }
+            else std::cout << "trk: "<< trkCnt << " is reconstructed" << std::endl;
             auto barIds = (*trk)->GetBarIDs();
             for(auto id=barIds.begin(); id!=barIds.end(); id++){
-                std::cout << "id: " << (*id) << std::endl;
                 TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter((*id)));
                 tmpEve->SetRnrSelf(1);
-                tmpEve->SetMainColor(trkCnt);
+                tmpEve->SetMainColor(trkCnt+1);
                 delete tmpEve;
             }
             trkCnt++;

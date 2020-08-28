@@ -39,32 +39,32 @@ public :
     G4String GetXMLExample()    {return fExample;};
     G4String GetBeamType()      {return fBeamType;};
     
-    G4int GetSciDetNBars()      {return fSciDetNBars;};
-    G4int GetSciDetNLayers()    {return fSciDetNLayers;};
+    int GetSciDetNBars()      {return fSciDetNBars;};
+    int GetSciDetNLayers()    {return fSciDetNLayers;};
     
-    G4double GetSciDetBarX()       {return fSciDetBarX;};
-    G4double GetSciDetBarY()       {return fSciDetBarY;};
-    G4double GetSciDetBarZ()       {return fSciDetBarZ;};
+    double GetSciDetBarX()       {return fSciDetBarX;};
+    double GetSciDetBarY()       {return fSciDetBarY;};
+    double GetSciDetBarZ()       {return fSciDetBarZ;};
 
-    G4double GetBarCoatThick()      {return fBarCoat;};
+    double GetBarCoatThick()      {return fBarCoat;};
 
-    G4double GetSciDetX()          {return fSciDetX;};
-    G4double GetSciDetY()          {return fSciDetY;};
-    G4double GetSciDetZ()          {return fSciDetZ;};
+    double GetSciDetX()          {return fSciDetX;};
+    double GetSciDetY()          {return fSciDetY;};
+    double GetSciDetZ()          {return fSciDetZ;};
 
-    G4double GetIniPGUNEnergy()    {return fIniPGUNEnergy;}
-    G4int    GetNProtons()         {return fNProtons; }
+    double GetIniPGUNEnergy()    {return fIniPGUNEnergy;}
+    int    GetNProtons()         {return fNProtons; }
 
-    G4double GetPosX()               {return fPosX;};
-    G4double GetPosY()               {return fPosY;};
-    G4double GetPosZ0()              {return fPosZ0;};
-    G4double GetPosZ1()              {return fPosZ1;};
-    G4double GetPosZ2()              {return fPosZ2;};
-    G4double GetPosZ3()              {return fPosZ3;};
-    G4double GetPlaneColumns()       {return fPlaneColumns;}
-    G4double GetPlaneRows()          {return fPlaneRows;}
-    G4double GetEpiThickness()       {return fEpiThickness;}
-    G4double GetSubThickness()       {return fSubThickness;}
+    double GetPosX()               {return fPosX;};
+    double GetPosY()               {return fPosY;};
+    double GetPosZ0()              {return fPosZ0;};
+    double GetPosZ1()              {return fPosZ1;};
+    double GetPosZ2()              {return fPosZ2;};
+    double GetPosZ3()              {return fPosZ3;};
+    double GetPlaneColumns()       {return fPlaneColumns;}
+    double GetPlaneRows()          {return fPlaneRows;}
+    double GetEpiThickness()       {return fEpiThickness;}
+    double GetSubThickness()       {return fSubThickness;}
     
     G4bool GetUseSciDet()          {return fUseSciDet;};
     G4bool GetUseCMOS()            {return fUseCMOS;};
@@ -76,27 +76,27 @@ public :
     void SetXMLFileName(G4String val)       {fXMLFile           = val;}
     void SetXMLExample(G4String val)        {fExample           = val;}
     void SetBeamType(G4String val)          {fBeamType          = val;}
-    void SetSciDetNBars(G4int val)          {fSciDetNBars       = val;}
-    void SetSciDetNLayers(G4int val)        {fSciDetNLayers     = val;}
-    void SetSciDetBarX(G4double val)        {fSciDetBarX        = val;}
-    void SetSciDetBarY(G4double val)        {fSciDetBarY        = val;}
-    void SetSciDetBarZ(G4double val)        {fSciDetBarZ        = val;}
-    void SetBarCoatThick(G4double val)      {fBarCoat           = val;}
-    void SetSciDetX(G4double val)           {fSciDetX           = val;}
-    void SetSciDetY(G4double val)           {fSciDetY           = val;}
-    void SetSciDetZ(G4double val)           {fSciDetZ           = val;}
-    void SetIniPGUNEnergy(G4double val)     {fIniPGUNEnergy     = val;}
-    void SetNProtons(G4int val)             {fNProtons          = val;}
-    void SetPosX(G4double val)              {fPosX              = val;}
-    void SetPosY(G4double val)              {fPosY              = val;}
-    void SetPosZ0(G4double val)             {fPosZ0             = val;}
-    void SetPosZ1(G4double val)             {fPosZ1             = val;}
-    void SetPosZ2(G4double val)             {fPosZ2             = val;}
-    void SetPosZ3(G4double val)             {fPosZ3             = val;}
-    void SetPlaneColumns(G4double val)      {fPlaneColumns      = val;}
-    void SetPlaneRows(G4double val)         {fPlaneRows         = val;}
-    void SetEpiThickness(G4double val)      {fEpiThickness      = val;}
-    void SetSubThickness(G4double val)      {fSubThickness      = val;}
+    void SetSciDetNBars(int val)          {fSciDetNBars       = val;}
+    void SetSciDetNLayers(int val)        {fSciDetNLayers     = val;}
+    void SetSciDetBarX(double val)        {fSciDetBarX        = val;}
+    void SetSciDetBarY(double val)        {fSciDetBarY        = val;}
+    void SetSciDetBarZ(double val)        {fSciDetBarZ        = val;}
+    void SetBarCoatThick(double val)      {fBarCoat           = val;}
+    void SetSciDetX(double val)           {fSciDetX           = val;}
+    void SetSciDetY(double val)           {fSciDetY           = val;}
+    void SetSciDetZ(double val)           {fSciDetZ           = val;}
+    void SetIniPGUNEnergy(double val)     {fIniPGUNEnergy     = val;}
+    void SetNProtons(int val)             {fNProtons          = val;}
+    void SetPosX(double val)              {fPosX              = val;}
+    void SetPosY(double val)              {fPosY              = val;}
+    void SetPosZ0(double val)             {fPosZ0             = val;}
+    void SetPosZ1(double val)             {fPosZ1             = val;}
+    void SetPosZ2(double val)             {fPosZ2             = val;}
+    void SetPosZ3(double val)             {fPosZ3             = val;}
+    void SetPlaneColumns(double val)      {fPlaneColumns      = val;}
+    void SetPlaneRows(double val)         {fPlaneRows         = val;}
+    void SetEpiThickness(double val)      {fEpiThickness      = val;}
+    void SetSubThickness(double val)      {fSubThickness      = val;}
     void SetUseSciDet(G4bool val)           {fUseSciDet         = val;}
     void SetUseCMOS(G4bool val)             {fUseCMOS           = val;}
     void SetUse4thCMOS(G4bool val)          {fUse4thCMOS        = val;}
@@ -111,30 +111,30 @@ private :
     G4String fExample;
     G4String fBeamType;
 
-    G4int    fSciDetNBars;
-    G4int    fSciDetNLayers;
-    G4int    fNProtons;
+    int    fSciDetNBars;
+    int    fSciDetNLayers;
+    int    fNProtons;
 
-    G4double fIniPGUNEnergy;
-    G4double fSciDetBarX;
-    G4double fSciDetBarY;
-    G4double fSciDetBarZ;
+    double fIniPGUNEnergy;
+    double fSciDetBarX;
+    double fSciDetBarY;
+    double fSciDetBarZ;
 
-    G4double fSciDetX;
-    G4double fSciDetY;
-    G4double fSciDetZ;
-    G4double fBarCoat;
+    double fSciDetX;
+    double fSciDetY;
+    double fSciDetZ;
+    double fBarCoat;
 
-    G4double fPosX;
-    G4double fPosY;
-    G4double fPosZ0;
-    G4double fPosZ1;
-    G4double fPosZ2;
-    G4double fPosZ3;
-    G4double fPlaneColumns;
-    G4double fPlaneRows;
-    G4double fEpiThickness;
-    G4double fSubThickness;
+    double fPosX;
+    double fPosY;
+    double fPosZ0;
+    double fPosZ1;
+    double fPosZ2;
+    double fPosZ3;
+    double fPlaneColumns;
+    double fPlaneRows;
+    double fEpiThickness;
+    double fSubThickness;
   
     G4bool   fUseSciDet;
     G4bool   fUseCMOS;

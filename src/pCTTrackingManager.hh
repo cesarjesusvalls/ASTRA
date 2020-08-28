@@ -58,6 +58,9 @@ public:
 
     //-----Methods------
 
+    std::map<int, bool>   GetIsReco() {return isReco;}
+    void SetIsReco(int i, bool b)     {isReco[i] = i;}
+
     //void DrawRecoEvent();
     void DrawGeometry();
 
