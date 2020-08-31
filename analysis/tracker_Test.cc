@@ -19,7 +19,7 @@
 #include "TApplication.h"
 #include "TGraphErrors.h"
 
-#include "EvNavHandler.hh"
+#include "pCTEventHandler.hh"
 
 #include "pCTTrackingManager.cc"
 
@@ -68,13 +68,13 @@ inline void make_gui()
    {
         TString icondir( Form("%s/icons/", gSystem->Getenv("ROOTSYS")) );
         TGPictureButton* b = 0;
-        EvNavHandler    *fh = new EvNavHandler(data,&event_id,event,config,SciDet);
+        pCTEventHandler    *fh = new pCTEventHandler(data,&event_id,event,config,SciDet);
         b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoBack.gif"));
         hf->AddFrame(b);
-        b->Connect("Clicked()", "EvNavHandler", fh, "Bck()");
+        b->Connect("Clicked()", "pCTEventHandler", fh, "Bck()");
         b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoForward.gif"));
         hf->AddFrame(b);
-        b->Connect("Clicked()", "EvNavHandler", fh, "Fwd()");
+        b->Connect("Clicked()", "pCTEventHandler", fh, "Fwd()");
         fh->Fwd();
    }
    frmMain->AddFrame(hf);
