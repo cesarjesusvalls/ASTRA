@@ -10,4 +10,5 @@ Test_CMOS.txt
 *.dylib
 *#*
 *~*
+*.so
 
