@@ -28,7 +28,7 @@
 class CMOSHit : public G4VHit {
 public:
   /// Constructor
-  CMOSHit(const G4int plane, G4ThreeVector position, G4int particle_ID);
+  CMOSHit(const G4int plane, G4ThreeVector position, G4int particle_ID, G4int track_ID);
   /// Destructor
   ~CMOSHit();
   //! Print on screen a Hit
@@ -46,18 +46,21 @@ public:
   void          SetLocalPosition(const G4ThreeVector & pos)  { localPosition = pos; }
   void		SetPlaneNumber(const G4int plane) {planeNumber = plane; }
   void          SetParticleID(const G4int particle_ID){particleID = particle_ID;}
+  void          SetTrackID(const G4int track_ID){trackID = track_ID;}
   void		SetEnergyDeposited(const G4double E) {edep = E; electrons=(edep/eV)/3.6;}
   void		SetElectronsLiberated(const G4double e) {electrons = e; edep=e*3.6; } // NOTE check the units that this needs
   
   G4ThreeVector GetLocalPosition()    const  { return localPosition; }
   G4int         GetPlaneNumber() const  { return planeNumber; }
   G4int         GetParticleID () const  { return particleID;}
+  G4int         GetTrackID () const  { return trackID;}
   G4double	GetEnergyDeposited() const { return edep; };
   G4double	GetElectronsLiberated() const { return electrons; };
     
 private:
 	G4int   planeNumber;
-        G4int   particleID;
+  G4int   particleID;
+  G4int   trackID;
 	G4ThreeVector localPosition;
 	G4double edep;
 	G4double electrons;

@@ -23,7 +23,7 @@
   </UseCMOS>
 
   <Use4thCMOS>
-    False
+    True
   </Use4thCMOS>
   
   <UsePhantom>  
@@ -44,7 +44,7 @@
   </SciDetNBars>
 
   <SciDetNLayers>
-    200
+    130
   </SciDetNLayers>
 
   <SciDetBarX>

@@ -13,7 +13,9 @@
 #include <TVector3.h>
 #include "pCTXML.hh"
 #include "SciDetHit.hh"
-
+#include "CMOSHit.hh"
+#include "CMOSPixel.hh"
+#include "CMOSSD.hh"
 class pCTTrack : public TObject {
 
 private:

@@ -110,6 +110,7 @@ bool pCTRootPersistencyManager::Close() {
 
 G4bool pCTRootPersistencyManager::Store(const G4Event* anEvent) {
 
+  
   std::map <int, double > trackIdToGunEnergy;
   G4PrimaryVertex* vtx = anEvent->GetPrimaryVertex();
   while(vtx){
@@ -117,11 +118,11 @@ G4bool pCTRootPersistencyManager::Store(const G4Event* anEvent) {
       vtx = vtx->GetNext();
   }
 
-  fOutput->cd(); 
   fpCTEvent->SetEvtId(anEvent->GetEventID());
-  //G4cout << trackIdToGunEnergy.size() << G4endl;
+
   fpCTEvent->SetGunEnergyMap(trackIdToGunEnergy);
   fEventTree->Fill();
+
   if(anEvent->GetEventID()%10==0) G4cout << "STATUS: ...Processing Event " << anEvent->GetEventID() << G4endl;
   fpCTEvent->ResetEvent();
 

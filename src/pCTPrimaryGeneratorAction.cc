@@ -150,9 +150,15 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // //fParticleGun->SetParticleEnergy(36);
   // fParticleGun->GeneratePrimaryVertex(anEvent);
 
-      for (int ind=0; ind<1; ind++){
-        G4double x0 =   (G4UniformRand()-0.5)*dist*20;
-        G4double y0 =   (G4UniformRand()-0.5)*dist*10;
+      for (int ind=0; ind<2; ind++){
+	/*
+	G4double dx = 0.25*dist*20;
+      	if (ind==0) dx=-0.25*dist*20;
+      	G4double x0 = dx;
+        G4double y0 = 0;
+	*/
+	G4double x0 =  (G4UniformRand()-0.5)*dist*20;
+        G4double y0 =  (G4UniformRand()-0.5)*dist*10;
         G4double z0 = -0.5 * envSizeZ;
 
         // std::cout << "_________________" <<  std::endl;
@@ -164,9 +170,29 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
         fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
         //fParticleGun->SetParticleEnergy(36 + (G4UniformRand()*(194.)));
-        fParticleGun->SetParticleEnergy(180);
+	fParticleGun->SetParticleEnergy(180);
         fParticleGun->GeneratePrimaryVertex(anEvent);
     }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+
+/*
+
+    double iniEnergy = -999;
+    for (int ind=0; ind<pCTXMLInput->GetNProtons(); ind++){
+        if(pCTXMLInput->GetBeamType() == "Rectangular"){
+            G4double x0 =   (G4UniformRand()-0.5)*pCTXMLInput->GetPlaneColumns()*0.04;
+            G4double y0 =   (G4UniformRand()-0.5)*pCTXMLInput->GetPlaneColumns()*0.036;
+            G4double z0 =   pCTXMLInput->GetPosZ0()*10-5;
+            fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+        }
+        iniEnergy = pCTXMLInput->GetIniPGUNEnergy();
+        if(pCTXMLInput->UseEnergyWide()){
+            iniEnergy = 36 + (G4UniformRand()*194.);
+        }
+    }
+    fParticleGun->SetParticleEnergy(iniEnergy);
+    fParticleGun->GeneratePrimaryVertex(anEvent)
+ */

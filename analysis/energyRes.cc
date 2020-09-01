@@ -39,7 +39,7 @@ int main(int argc,char** argv){
     gROOT->SetStyle(localStyleName);
 
     TApplication* theApp=new TApplication("App",&argc,argv);
-    TString inputFileName = "/Users/cjesus/Dev/protonCT/output/simulation_file.root";
+    TString inputFileName = "/Users/marc/pCT_Geant4/protonCT/output/outputFile.root";
     //TString inputFileName = "/Users/cjesus/Dev/protonCT/output/simulation_file_1M_ph_ON.root";
     TFile* inputFile = new TFile(inputFileName.Data(),"update");
     if(!inputFile) {std::cout << "no output file! exit." << std::endl; exit(1);}

@@ -1,7 +1,7 @@
 
 #ifndef CMOSSD_h
 #define CMOSSD_h 1
-
+#include "pCTXML.hh"
 #include "G4VSensitiveDetector.hh"
 ///class DetectorConstruction;
 ///class RunAction;
@@ -41,7 +41,7 @@ public:
   void EndOfEvent(G4HCofThisEvent* HCE);
   
   void SetBinaryName(G4String name) { fname = name; };
-
+  pCTXML* pCTXMLInput;
 
 private:
   CMOSHitCollection*      hitCollection;

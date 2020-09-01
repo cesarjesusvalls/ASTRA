@@ -76,7 +76,10 @@ void pCTSteppingAction::UserSteppingAction(const G4Step* step)
 
 G4String volname = volume->GetName();
  G4int planeCopyNo = step->GetPreStepPoint()->GetTouchableHandle()->GetReplicaNumber();
-    
+ G4ThreeVector point1 = step->GetPreStepPoint()->GetPosition();
+ G4ThreeVector point2 = step->GetPostStepPoint()->GetPosition();
+    G4int stepNumber = step->GetTrack()->GetCurrentStepNumber();
+   // std::cout << " Step Number = " <<  stepNumber << std::endl;
 
     if (volname == "epi" and planeCopyNo == 0)
     {
@@ -100,9 +103,13 @@ G4String volname = volume->GetName();
     fEventAction->AddEdep(edepStep_shape3,2);
     }
     
-
-
-
+/*
+if (volname == "epi" and planeCopyNo == 3)
+    {
+      std::cout << "IN Stepping Action Pre pixel point [" << point1.getX() << ", " << point1.getY() << "]" << std::endl;
+      std::cout << "IN Stepping Action Post pixel point [" << point2.getX() << ", " << point2.getY() << "]" << std::endl;
+    }
+*/
 
 
 

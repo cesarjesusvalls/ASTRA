@@ -84,11 +84,11 @@ void pCTEvent::DrawSciDetHits(pCTXML* config){
 void pCTEvent::DrawCMOSHits(pCTXML* config){
 
     //const int nplanes(config->GetCMOSNPlanes());
-    const int    nplanes(3);
+    const int    nplanes(4);
     const double pitchX(40);
     const double pitchY(36);
-    const double nrows(448);
-    const double ncols(224);
+    const double nrows(config->GetPlaneRows());
+    const double ncols(config->GetPlaneColumns());
 
     TCanvas *canv = new TCanvas("canv","canv",1200,400);
     canv->Divide(nplanes,1);

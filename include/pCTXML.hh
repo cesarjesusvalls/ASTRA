@@ -60,7 +60,7 @@ public :
   G4bool GetUseSciDet()          {return fUseSciDet;};
   G4bool GetUseCMOS()            {return fUseCMOS;};
   G4bool GetUse4thCMOS()         {return fUse4thCMOS;};
-  G4bool GetUsePhatom()          {return fUsePhantom;};
+  G4bool GetUsePhantom()          {return fUsePhantom;};
 
   
     void SetInputs();

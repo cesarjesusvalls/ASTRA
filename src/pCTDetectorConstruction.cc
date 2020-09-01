@@ -10,6 +10,7 @@
 #include "G4SDManager.hh"
 #include "CMOSSD.hh"
 #include "SciDetSD.hh"
+#include "phantom.hh"
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -51,7 +52,9 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     fCMOSSD = new CMOSSD("CMOS");
     SDman->AddNewDetector(fCMOSSD);
     SDman->AddNewDetector(new SciDetSD("SciDetSensDet"));
-
+    //fPhantom =new Phantom("Phantom");
+    //SDman->AddNewDetector(fPhantom);
+    SDman->AddNewDetector(new Phantom("PhantomSD"));
     pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
     pCTXMLInput = InputPersistencyManager->GetXMLInput();
 
@@ -95,19 +98,26 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     // G4VSolid* solidIntersec_BC    = new G4IntersectionSolid("boc+cylinder", solidCylinder,solidBox,0,G4ThreeVector(4.*mm,4.*mm,4.*mm));
     // G4VSolid* solidUnion          = new G4UnionSolid("phantomShape",        solidUnion_EC,solidIntersec_BC,0,G4ThreeVector(0,0.,1.25*mm));
     // G4LogicalVolume* logicPhantom = new G4LogicalVolume(solidUnion, phantom_mat,"Phantom"); 
-
+    /*
     G4Box*        solidBox1        = new G4Box("box",1.2*mm,0.3*mm,5*mm);
     G4Box*        solidBox2        = new G4Box("box",0.3*mm, 1.2*mm,5*mm);
-    G4VSolid*     crossSolid       = new G4UnionSolid("boc+cylinder", solidBox1,solidBox2,0,G4ThreeVector(0.*mm,0.*mm,0.*mm));
-    G4LogicalVolume* logicPhantom  = new G4LogicalVolume(crossSolid, phantom_mat,"Phantom"); 
-
+    G4VSolid*     crossSolid       = new G4UnionSolid("crossBox", solidBox1,solidBox2,0,G4ThreeVector(0.*mm,0.*mm,0.*mm));
+    */
+    G4Box* solidBox = new G4Box("box", 10*mm,10*mm,5*mm);
+    G4LogicalVolume* logicPhantom  = new G4LogicalVolume(solidBox, phantom_mat,"Phantom"); 
+    Phantom*      PhantomSD = (Phantom*)SDman->FindSensitiveDetector("PhantomSD");
+    logicPhantom->SetSensitiveDetector(PhantomSD);
     logicPhantom->SetVisAttributes(G4Colour(0.6, 0.6, 0.0));
-    if(pCTXMLInput->GetUsePhatom()){
+    if(pCTXMLInput->GetUsePhantom()){
+      /*
         new G4PVPlacement(0,G4ThreeVector(0.2*cm,0.2*cm,-3*cm)  ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
         new G4PVPlacement(0,G4ThreeVector(-0.2*cm,0.2*cm,-3*cm) ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
         new G4PVPlacement(0,G4ThreeVector(0.2*cm,-0.2*cm,-3*cm) ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
         new G4PVPlacement(0,G4ThreeVector(-0.2*cm,-0.2*cm,-3*cm),logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
         new G4PVPlacement(0,G4ThreeVector(0.*cm,0.*cm,-3*cm)    ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
+      
+      */
+      new G4PVPlacement(0,G4ThreeVector(0.*cm,0.*cm,-3*cm)    ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
     }
     //___________________
 
@@ -130,8 +140,8 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
 
    if(pCTXMLInput->GetUseCMOS()){
 		new G4PVPlacement(0,pos0,logicPlane,nameSiliconDet,logicEnv,false,0,checkOverlaps);
-    	new G4PVPlacement(0,pos1,logicPlane,nameSiliconDet,logicEnv,false,1,checkOverlaps);
-    	new G4PVPlacement(0,pos2,logicPlane,nameSiliconDet,logicEnv,false,2,checkOverlaps);
+		new G4PVPlacement(0,pos1,logicPlane,nameSiliconDet,logicEnv,false,1,checkOverlaps);
+		new G4PVPlacement(0,pos2,logicPlane,nameSiliconDet,logicEnv,false,2,checkOverlaps);
    		if(pCTXMLInput->GetUse4thCMOS()) new G4PVPlacement(0,pos3,logicPlane,nameSiliconDet,logicEnv,false,3,checkOverlaps);
    }
 
