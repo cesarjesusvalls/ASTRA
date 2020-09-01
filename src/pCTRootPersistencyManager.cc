@@ -129,14 +129,14 @@ G4bool pCTRootPersistencyManager::Store(const G4Event* anEvent) {
 
 G4bool pCTRootPersistencyManager::Store(const G4Run* aRun) {
   (void)aRun;
-  //ND280Severe(" -- Run store called without a save method " 
+  //pCTSevere(" -- Run store called without a save method " 
   //<< GetFilename());
   return false;
 }
 
 G4bool pCTRootPersistencyManager::Store(const G4VPhysicalVolume* aWorld) {
   (void)aWorld;
-  //ND280Severe(" -- Geometry store called without a save method " 
+  //pCTSevere(" -- Geometry store called without a save method " 
   //<< GetFilename());
   return false;
 }

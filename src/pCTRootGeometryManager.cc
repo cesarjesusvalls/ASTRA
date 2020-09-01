@@ -47,18 +47,18 @@
 #include <TGeoXtru.h>
 
 //#include <oaEvent_version.h>
-//#include <TND280Log.hxx>
+//#include <TpCTLog.hxx>
 //#include <TOADatabase.hxx>
 //#include <TGeomIdManager.hxx>
 
-#include "ND280RootGeometryManager.hh"
+#include "pCTRootGeometryManager.hh"
 
 //#include "G4SystemOfUnits.hh" // NEW GLOBAL
 #include <CLHEP/Units/SystemOfUnits.h>
 
-ND280RootGeometryManager* ND280RootGeometryManager::fThis = NULL;
+pCTRootGeometryManager* pCTRootGeometryManager::fThis = NULL;
 
-ND280RootGeometryManager::ND280RootGeometryManager() {
+pCTRootGeometryManager::pCTRootGeometryManager() {
   // ShouldPrintMass("/t2k/OA/Magnet");
   // ShouldPrintMass("/t2k/OA/Magnet/Basket/P0D");
   // ShouldPrintMass("/t2k/OA/Magnet/Basket/P0D/USECal");
@@ -136,34 +136,34 @@ ND280RootGeometryManager::ND280RootGeometryManager() {
   ShouldPrintMass("/t2k/OA/Magnet/Basket/SuperFGD2");
 }
 
-ND280RootGeometryManager* ND280RootGeometryManager::Get() {
-    if (!fThis) fThis = new ND280RootGeometryManager();
+pCTRootGeometryManager* pCTRootGeometryManager::Get() {
+    if (!fThis) fThis = new pCTRootGeometryManager();
     return fThis;
 }
 
-ND280RootGeometryManager::~ND280RootGeometryManager() {}
+pCTRootGeometryManager::~pCTRootGeometryManager() {}
 
-void ND280RootGeometryManager::Export(const char *file) {
-  //ND280Log("   *** Export to " << file);
+void pCTRootGeometryManager::Export(const char *file) {
+  //pCTLog("   *** Export to " << file);
   G4cout << "   *** Export to " << file << G4endl;
   gGeoManager->Export(file);
 }
 
-int ND280RootGeometryManager::GetNodeId(const G4ThreeVector& pos) {
+int pCTRootGeometryManager::GetNodeId(const G4ThreeVector& pos) {
   if (!gGeoManager) return -1;
   gGeoManager->FindNode(pos.x(), pos.y(), pos.z());
   return gGeoManager->GetCurrentNodeId();
 }
 
-void ND280RootGeometryManager::Update(const G4VPhysicalVolume* aWorld,
+void pCTRootGeometryManager::Update(const G4VPhysicalVolume* aWorld,
                                       bool validateGeometry) {
-  //ND280Log("%%%%%%%%%%%%%%%%%%%%%%%%%% Update ROOT Geometry "
+  //pCTLog("%%%%%%%%%%%%%%%%%%%%%%%%%% Update ROOT Geometry "
   //<< "%%%%%%%%%%%%%%%%%%%%%%%%%%" );
   G4cout << "%%%%%%%%%%%%%%%%%%%%%%%%%% Update ROOT Geometry "
 	   << "%%%%%%%%%%%%%%%%%%%%%%%%%%" << G4endl;
   
   if (gGeoManager) {
-    //ND280Log("%%%%%%%%%%%%%%% Warning: Replacing ROOT Geometry ");
+    //pCTLog("%%%%%%%%%%%%%%% Warning: Replacing ROOT Geometry ");
     G4cout << "%%%%%%%%%%%%%%% Warning: Replacing ROOT Geometry " << G4endl;
     
     delete gGeoManager;
@@ -188,7 +188,7 @@ void ND280RootGeometryManager::Update(const G4VPhysicalVolume* aWorld,
     }
   }
   // Create the new geometry.
-  gGeoManager = new TGeoManager("ND280Geometry","ND280 Detector Geometry");
+  gGeoManager = new TGeoManager("pCTGeometry","pCT Detector Geometry");
   // Create all of the materials.
   CreateMaterials(aWorld);
   // Create the ROOT geometry definitions.
@@ -214,10 +214,10 @@ void ND280RootGeometryManager::Update(const G4VPhysicalVolume* aWorld,
       overlap->PrintInfo();
     }
     if (count > 0) {
-      //ND280Error("Geometry has overlaps");
+      //pCTError("Geometry has overlaps");
       //G4Exception("Geometry has Overlaps");
       //G4cout << "Geometry has Overlaps" << G4endl;
-      G4Exception("ND280RootGeometryManager::Update",
+      G4Exception("pCTRootGeometryManager::Update",
 		  "MyCode0002",FatalException,
 		  "Geometry has Overlaps");
    }
@@ -234,10 +234,10 @@ void ND280RootGeometryManager::Update(const G4VPhysicalVolume* aWorld,
       overlap->PrintInfo();
     }
     if (count > 0) {
-      //ND280Error("Geometry has overlaps");
+      //pCTError("Geometry has overlaps");
       //G4Exception("Geometry has Overlaps");
       //G4cout << "Geometry has Overlaps" << G4endl;
-      G4Exception("ND280RootGeometryManager::Update",
+      G4Exception("pCTRootGeometryManager::Update",
 		  "MyCode0002",FatalException,
 		  "Geometry has Overlaps");
     }
@@ -245,7 +245,7 @@ void ND280RootGeometryManager::Update(const G4VPhysicalVolume* aWorld,
 
 }
 
-TGeoShape* ND280RootGeometryManager::CreateShape(const G4VSolid* theSolid, 
+TGeoShape* pCTRootGeometryManager::CreateShape(const G4VSolid* theSolid, 
                                                  TGeoMatrix **returnMatrix) {
   const G4String geometryType = theSolid->GetEntityType();
   TGeoShape* theShape = NULL;
@@ -460,7 +460,7 @@ TGeoShape* ND280RootGeometryManager::CreateShape(const G4VSolid* theSolid,
     else {
       //G4Exception("shape not implemented");
       //G4cout << "shape not implemented" << G4endl;
-      G4Exception("ND280RootGeometryManager::Update",
+      G4Exception("pCTRootGeometryManager::Update",
 		  "MyCode0002",FatalException,
 		  "shape not implemented");
    }
@@ -468,7 +468,7 @@ TGeoShape* ND280RootGeometryManager::CreateShape(const G4VSolid* theSolid,
     return theShape;
 }
 
-TGeoVolume* ND280RootGeometryManager::CreateVolume(TGeoManager* theEnvelope, 
+TGeoVolume* pCTRootGeometryManager::CreateVolume(TGeoManager* theEnvelope, 
                                                    const G4VSolid* theSolid, 
                                                    std::string theName,
                                                    TGeoMedium* theMedium) {
@@ -483,7 +483,7 @@ TGeoVolume* ND280RootGeometryManager::CreateVolume(TGeoManager* theEnvelope,
 // Determine if a volume should copied to the ROOT geometry representation.
 // If this returns true, then the volume and all of it's children will not be
 // exported.
-bool ND280RootGeometryManager::IgnoreVolume(const G4VPhysicalVolume* theVol) {
+bool pCTRootGeometryManager::IgnoreVolume(const G4VPhysicalVolume* theVol) {
     std::string theFullName = theVol->GetName();
     std::string theShortName = theFullName;
     theShortName.erase(0,theShortName.rfind("/")+1);
@@ -499,7 +499,7 @@ bool ND280RootGeometryManager::IgnoreVolume(const G4VPhysicalVolume* theVol) {
 }
 
 // Determine if the volume should be printed to the output.
-bool ND280RootGeometryManager::PrintMass(const G4VPhysicalVolume* theVol) {
+bool pCTRootGeometryManager::PrintMass(const G4VPhysicalVolume* theVol) {
     std::string theFullName = theVol->GetName();
 
     for (std::vector<G4String>::iterator n = fPrintMass.begin();
@@ -517,7 +517,7 @@ bool ND280RootGeometryManager::PrintMass(const G4VPhysicalVolume* theVol) {
 
 // Create all of the materials in the detector and make a translation table
 // between material and material name, and element and isotope name.
-void ND280RootGeometryManager::CreateMaterials(
+void pCTRootGeometryManager::CreateMaterials(
     const G4VPhysicalVolume* theG4PhysVol) {
 
     G4LogicalVolume* theLog = theG4PhysVol->GetLogicalVolume();
@@ -528,10 +528,10 @@ void ND280RootGeometryManager::CreateMaterials(
     if (!theMedium) {
         G4Material *mat = theLog->GetMaterial();
         if (mat->GetNumberOfElements()==0) {
-	  //ND280Error("Material without elements " << mat->GetName());
+	  //pCTError("Material without elements " << mat->GetName());
 	  //G4Exception("Material defined without elements");
 	  //G4cout << "Material defined without elements" << G4endl;
-	  G4Exception("ND280RootGeometryManager::CreateMaterials",
+	  G4Exception("pCTRootGeometryManager::CreateMaterials",
 		      "MyCode0002",FatalException,
 		      "Material defined without elements");	  
         }
@@ -600,7 +600,7 @@ void ND280RootGeometryManager::CreateMaterials(
 
 // Method counts how many nodes there are in mother volume with the same name
 // as daughter node.  Will be used in setting index for daughter node.
-int ND280RootGeometryManager::HowManySimilarNodesInVolume(
+int pCTRootGeometryManager::HowManySimilarNodesInVolume(
     TGeoVolume* theMother, std::string daughterName) {
     daughterName = daughterName + "_";
     int ndaughters = theMother->GetNdaughters();
@@ -623,7 +623,7 @@ int ND280RootGeometryManager::HowManySimilarNodesInVolume(
 // entire detector.  The G4 physical volume, theVol, is used to create a
 // new root TGeoVolume which is added to the existing root TGeoVolume,
 // theMother, as a daughter.
-bool ND280RootGeometryManager::CreateEnvelope(
+bool pCTRootGeometryManager::CreateEnvelope(
     const G4VPhysicalVolume* theG4PhysVol,
     TGeoManager* theEnvelope,
     TGeoVolume* theMother) {
@@ -636,7 +636,7 @@ bool ND280RootGeometryManager::CreateEnvelope(
     G4LogicalVolume* theLog = theG4PhysVol->GetLogicalVolume();
 
     if (PrintMass(theG4PhysVol)) {
-      //ND280Log("%%% Mass: " << theLog->GetMass(true)/kg/1000.0 << " ton"
+      //pCTLog("%%% Mass: " << theLog->GetMass(true)/kg/1000.0 << " ton"
       //<< " Volume: " << theG4PhysVol->GetName());
 
       G4cout << "%%% Mass: " << theLog->GetMass(true)/CLHEP::kg/1000.0 << " ton"
@@ -680,16 +680,16 @@ bool ND280RootGeometryManager::CreateEnvelope(
 
     // Check the volume names for validity.
     if (theShortName == theFullName) {
-      //ND280Error("Invalid volume name: " << theFullName);
-      //ND280Error("   Expected name is: " << theVolumeName);
+      //pCTError("Invalid volume name: " << theFullName);
+      //pCTError("   Expected name is: " << theVolumeName);
       G4cout << "Invalid volume name: " << theFullName 
 	     << "   Expected name is: " << theVolumeName << G4endl;
       theFullName = theVolumeName;
     }
     
     if (theFullName.find("//") != std::string::npos) {
-      //ND280Error("Invalid volume name: " << theFullName);
-      //ND280Error("   Expected name is: " << theVolumeName);
+      //pCTError("Invalid volume name: " << theFullName);
+      //pCTError("   Expected name is: " << theVolumeName);
       G4cout << "Invalid volume name: " << theFullName
 	     << "   Expected name is: " << theVolumeName << G4endl;
       theFullName = theVolumeName;
@@ -698,9 +698,9 @@ bool ND280RootGeometryManager::CreateEnvelope(
     std::string::size_type t2kPos = theFullName.find("/t2k");
     if (t2kPos != std::string::npos
         && theFullName.find("/t2k",t2kPos+1) != std::string::npos) {
-      //ND280Error("Invalid volume name: " << theFullName);
-      //ND280Error("   Duplicate '/t2k' prefix");
-      //ND280Error("   Expected name is: " << theVolumeName);
+      //pCTError("Invalid volume name: " << theFullName);
+      //pCTError("   Duplicate '/t2k' prefix");
+      //pCTError("   Expected name is: " << theVolumeName);
       G4cout << "Invalid volume name: " << theFullName
 	     << "   Duplicate '/t2k' prefix"
 	     << "   Expected name is: " << theVolumeName << G4endl;
@@ -711,9 +711,9 @@ bool ND280RootGeometryManager::CreateEnvelope(
     std::string materialName = theLog->GetMaterial()->GetName();
     TGeoMedium *theMedium = fMedium[materialName];
     if (!theMedium) {
-      //ND280Error("MISSING MATERIAL IS " << materialName);
+      //pCTError("MISSING MATERIAL IS " << materialName);
       //G4Exception("Material definition is missing");
-      G4Exception("ND280RootGeometryManager::CreateEnvelope",
+      G4Exception("pCTRootGeometryManager::CreateEnvelope",
 		  "MyCode0002",FatalException,
 		  "Material definition is missing");
     }
@@ -731,7 +731,7 @@ bool ND280RootGeometryManager::CreateEnvelope(
 
     // There is no mother so set this as the top volume.
     if (!theMother) {
-      //ND280Log("Making \"" << theVolume->GetName() << "\" the top\n");
+      //pCTLog("Making \"" << theVolume->GetName() << "\" the top\n");
       G4cout << "Making \"" << theVolume->GetName() << "\" the top\n" << G4endl;
       theEnvelope->SetTopVolume(theVolume);
     }
@@ -762,7 +762,7 @@ bool ND280RootGeometryManager::CreateEnvelope(
         //double totalMass = theLog->GetMass(true);
         //double totalVolume = theLog->GetSolid()->GetCubicVolume();
         //double totalDensity = totalMass/totalVolume;
-        //ND280NamedDebug("ROOTGeom", "Skipping sub-volumes. Correct "
+        //pCTNamedDebug("ROOTGeom", "Skipping sub-volumes. Correct "
 	//<< theMedium->GetName() << " density "
 	//<< theMedium->GetMaterial()->GetDensity()/(g/cm3)
 	//<< " g/cm3 to " << totalDensity/(g/cm3) << " g/cm3");
@@ -803,9 +803,9 @@ bool ND280RootGeometryManager::CreateEnvelope(
             case kYAxis: axis.set(0,1,0); break;
             case kZAxis: axis.set(0,0,1); break;
             default: 
-	      //G4Exception("ND280RootGeometryManager::CreateEnvelope:"
+	      //G4Exception("pCTRootGeometryManager::CreateEnvelope:"
 	      //"Bad replication data.");
-	      G4Exception("ND280RootGeometryManager::CreateEnvelope",
+	      G4Exception("pCTRootGeometryManager::CreateEnvelope",
 			  "MyCode0002",FatalException,
 			  "Bad replication data.");
             }
@@ -836,7 +836,7 @@ bool ND280RootGeometryManager::CreateEnvelope(
     return false;
 }
 
-void ND280RootGeometryManager::SetDrawAtt(G4Material* material,
+void pCTRootGeometryManager::SetDrawAtt(G4Material* material,
                                           int color, double opacity) {
     G4String materialName = material->GetName();    
     fColorMap[materialName].color = color;
@@ -847,7 +847,7 @@ void ND280RootGeometryManager::SetDrawAtt(G4Material* material,
     }
 }
                                           
-int ND280RootGeometryManager::GetFill(const G4VPhysicalVolume* vol) {
+int pCTRootGeometryManager::GetFill(const G4VPhysicalVolume* vol) {
   (void)vol;
 #ifdef USE_FILL
     const G4LogicalVolume* log = vol->GetLogicalVolume();
@@ -858,7 +858,7 @@ int ND280RootGeometryManager::GetFill(const G4VPhysicalVolume* vol) {
         = fColorMap.find(materialName);
 
     if (colorPair == fColorMap.end()) {
-      //ND280Error("Missing color for \"" << materialName << "\""
+      //pCTError("Missing color for \"" << materialName << "\""
       //" in volume " << theFullName);
 	G4cout << "Missing color for \"" << materialName 
 	       << "\""<< " in volume " << theFullName << G4endl;
@@ -874,7 +874,7 @@ int ND280RootGeometryManager::GetFill(const G4VPhysicalVolume* vol) {
 #endif
 }
 
-int ND280RootGeometryManager::GetColor(const G4VPhysicalVolume* vol) {
+int pCTRootGeometryManager::GetColor(const G4VPhysicalVolume* vol) {
     const G4LogicalVolume* log = vol->GetLogicalVolume();
     G4String materialName = log->GetMaterial()->GetName();
     std::string theFullName = vol->GetName();
@@ -885,7 +885,7 @@ int ND280RootGeometryManager::GetColor(const G4VPhysicalVolume* vol) {
         = fColorMap.find(materialName);
     
     if (colorPair == fColorMap.end()) {
-      //ND280Error("Missing color for \"" << materialName << "\""
+      //pCTError("Missing color for \"" << materialName << "\""
       //" in volume " << theFullName);
 	G4cout << "Missing color for \"" << materialName << "\""
 	       << " in volume " << theFullName << G4endl;
@@ -897,7 +897,7 @@ int ND280RootGeometryManager::GetColor(const G4VPhysicalVolume* vol) {
     return colorPair->second.color;
 }
 
-std::string ND280RootGeometryManager::MaterialName(
+std::string pCTRootGeometryManager::MaterialName(
     const G4VPhysicalVolume* thePhys) {
     std::string theFullName = thePhys->GetName();
     G4LogicalVolume* theLog = thePhys->GetLogicalVolume();
@@ -920,7 +920,7 @@ std::string ND280RootGeometryManager::MaterialName(
     return materialName;
 }
 
-TGeoMedium* ND280RootGeometryManager::AverageMaterial(
+TGeoMedium* pCTRootGeometryManager::AverageMaterial(
     const G4VPhysicalVolume* thePhys) {
     G4LogicalVolume* theLog = thePhys->GetLogicalVolume();
     double totalMass = theLog->GetMass(true);

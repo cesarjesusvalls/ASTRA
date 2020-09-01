@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
-// $Id: ND280RootGeometryManager.hh,v 1.13 2011/01/17 02:45:46 mcgrew Exp $
+// $Id: pCTRootGeometryManager.hh,v 1.13 2011/01/17 02:45:46 mcgrew Exp $
 // 
-#ifndef ND280RootGeometryManager_hh_Seen
-#define ND280RootGeometryManager_hh_Seen
+#ifndef pCTRootGeometryManager_hh_Seen
+#define pCTRootGeometryManager_hh_Seen
 
 #include <vector>
 #include <map>
@@ -11,7 +11,7 @@
 #include <G4String.hh>
 #include <G4ThreeVector.hh>
 
-//#include "ND280VolumeID.hh"
+//#include "pCTVolumeID.hh"
 #include <Rtypes.h>
 
 class TGeoManager;
@@ -26,17 +26,17 @@ class G4Material;
 class G4VPhysicalVolume;
 
 /// Provide a root output for the geant 4 events.
-class ND280RootGeometryManager {
+class pCTRootGeometryManager {
     typedef struct {
         int color;
         int fill;
     } DrawAttributes;
 
 public:
-    virtual ~ND280RootGeometryManager();
+    virtual ~pCTRootGeometryManager();
 
     /// If a persistency manager has not been created, create one.
-    static ND280RootGeometryManager* Get(void);
+    static pCTRootGeometryManager* Get(void);
 
     /// Update the root geometry to match the g4 geometry
     void Update(const G4VPhysicalVolume* aWorld, bool validate);
@@ -52,7 +52,7 @@ public:
 
 protected:
     /// use Get() instead
-    ND280RootGeometryManager();
+    pCTRootGeometryManager();
 
     /// Find the right color for a physical volume.  This won't necessarily be
     /// the same color as set in G4, but should be a reasonable choice for a
@@ -65,7 +65,7 @@ protected:
 
 private:
     /// The pointer to the instantiation of this object.
-    static ND280RootGeometryManager* fThis;
+    static pCTRootGeometryManager* fThis;
 
     /// A map between G4 material names and Root Material definitions.
     std::map<G4String,TGeoMedium*> fMedium;

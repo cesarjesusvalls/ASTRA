@@ -6,7 +6,7 @@ AUX_SOURCE_DIRECTORY(/SciDet/     SOURCE_FILES)
 AUX_SOURCE_DIRECTORY(/analysis/     SOURCE_FILES)
 
 set (EVENT_DICT_HEADERFILES
-    ../include/EvNavHandler.hh
+    ../include/pCTEventHandler.hh
     ../include/pCTEvent.hh
     ../include/pCTXML.hh
 )

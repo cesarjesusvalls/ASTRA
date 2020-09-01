@@ -113,7 +113,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
 
         TVector3 pred((seed_pos.X()-n_xpixels/2)*pitchX+seed_vec.X()*delta, (seed_pos.Y()-n_ypixels/2)*pitchY+seed_vec.Y()*delta, 0);
         //std::cout << "seed: " << seed_pos.X() << "," << seed_pos.Y() << "," << seed_pos.Z() << std::endl;
-        std::cout << "pred: " << pred.X() << "," << pred.Y() << "," << pred.Z() << std::endl;
+        //std::cout << "pred: " << pred.X() << "," << pred.Y() << "," << pred.Z() << std::endl;
 
         // compute 3D candidates from 2D hits in the first 2 layers.
         std::vector<TVector3> candidates;
@@ -129,7 +129,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
                 (*hit2d_2)->GetOrientation() ? pos[0] = (-(*hit2d_2)->GetBarID()+nbars/2)*barWidth : pos[1] = (-(*hit2d_2)->GetBarID()+nbars/2)*barWidth;
 
                 TVector3 new_point(pos[0],pos[1],(*hit2d_2)->GetLayerID()*barWidth);
-                std::cout << "new candidate: " << new_point.X() << "," << new_point.Y() << "," << new_point.Z() << std::endl;
+                //std::cout << "new candidate: " << new_point.X() << "," << new_point.Y() << "," << new_point.Z() << std::endl;
                 candidates.push_back(new_point);
                 pair_barIDs.push_back(((*hit2d_2)->GetLayerID())*nbars+(*hit2d_2)->GetBarID());
                 candidates_barIDs.push_back(pair_barIDs);
@@ -143,7 +143,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
         for (std::vector< TVector3>::iterator candidate=candidates.begin(); candidate!=candidates.end(); candidate++){
             double dist = (pred-(*candidate)).Mag();
 
-            std::cout << "dist: " << dist << " to candidate: " << (*candidate).X() << "," << (*candidate).Y() << "," << (*candidate).Z() << std::endl;
+            //std::cout << "dist: " << dist << " to candidate: " << (*candidate).X() << "," << (*candidate).Y() << "," << (*candidate).Z() << std::endl;
             if ((pred-(*candidate)).Mag() < max_dist){
                 ++Naccepted;
                 listOf3Dhits.push_back((*candidate));
@@ -157,9 +157,9 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
         }
 
         //if the seed candidates are too close or if there is not accepted seed candidate, the track is not reconstructed.
-        std::cout << "Naccepted: " << Naccepted << std::endl;
+        //std::cout << "Naccepted: " << Naccepted << std::endl;
         if (Naccepted != 1){
-            std::cout << "breaking!!" << std::endl;
+            //std::cout << "breaking!!" << std::endl;
             isReco[s] = false;
             continue;
         }
@@ -224,7 +224,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
                 }
             }
             if (layer_candidates.size()){
-                std::cout << "costh: " << costh << std::endl;
+                //std::cout << "costh: " << costh << std::endl;
                 listOf3Dhits.push_back(layer_candidates.back());
                 //std::cout << "adding bar ids: " << layer_barIDs.back() << std::endl;
                 if(track_to_id.count(layer_barIDs.back())){

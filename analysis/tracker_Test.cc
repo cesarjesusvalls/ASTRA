@@ -272,7 +272,7 @@ int main(int argc,char** argv){
     //    TFile* geom = TFile::Open("geometry.root", "READ");
     //    if (!geom)
     //       return 0;
-    //    TEveGeoShapeExtract* gse = (TEveGeoShapeExtract*) geom->Get("ND280Geometry");
+    //    TEveGeoShapeExtract* gse = (TEveGeoShapeExtract*) geom->Get("pCTGeometry");
     //    auto gGeomGentle = TEveGeoShape::ImportShapeExtract(gse, 0);
     //    geom->Close();
     //    delete geom;
