@@ -5,9 +5,10 @@
 // -- one more nasty trick for new and delete operator overloading:
 G4ThreadLocal G4Allocator<CMOSHit>* CMOSHitAllocator = 0;
 
-CMOSHit::CMOSHit(const G4int plane, G4ThreeVector position, G4int particle_ID)
-  : planeNumber(plane), localPosition(position), particleID(particleID) // <<-- note BTW this is the only way to initialize a "const" member
+CMOSHit::CMOSHit(const G4int plane, G4ThreeVector position, G4int particle_ID, G4int track_ID)
+  : planeNumber(plane), localPosition(position), particleID(particle_ID), trackID(track_ID) // <<-- note BTW this is the only way to initialize a "const" member
 {
+
 	return;
 
 }

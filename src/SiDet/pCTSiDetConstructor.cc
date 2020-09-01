@@ -1,6 +1,6 @@
 //
-// C. Jesús Valls 
-// cjesus@ifae.es
+// M. Granado González 
+// mmg998@student.bham.ac.uk
 //
 
 #include <globals.hh>

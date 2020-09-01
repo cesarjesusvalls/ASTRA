@@ -92,8 +92,8 @@ void pCTEvent::DrawCMOSHits(pCTXML* config){
     const int    nplanes(4);
     const double pitchX(40);
     const double pitchY(36);
-    const double nrows(2240);
-    const double ncols(2240);
+    const double nrows(config->GetPlaneRows());
+    const double ncols(config->GetPlaneColumns());
 
     TCanvas *canv = new TCanvas("canv","canv",1200,400);
     canv->Divide(nplanes,1);
@@ -138,8 +138,6 @@ void pCTEvent::DrawCMOSHits(pCTXML* config){
                 ushort X = (*it).second.at(index)->GetX();
                 ushort Y = (*it).second.at(index)->GetY();
                 ushort e = (*it).second.at(index)->GetElectronsLiberated();
-
-                //std::cout << Plane << "," << X << "," << Y << "," << e << std::endl;
 
                 TMarker *markHit = new TMarker(X,Y,29);
                 markHit->SetMarkerColor(index+1);

@@ -10,11 +10,11 @@ TARGET_LINK_LIBRARIES(templateAna   Evtdict ${ROOT_LIBRARIES})
 ADD_EXECUTABLE(energyRes          energyRes.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
 TARGET_LINK_LIBRARIES(energyRes   Evtdict ${ROOT_LIBRARIES})
 
-ADD_EXECUTABLE(pipos_test          pipos_test.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
-TARGET_LINK_LIBRARIES(pipos_test   Evtdict ${ROOT_LIBRARIES})
-
 ADD_EXECUTABLE(tracker_Test          tracker_Test.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
 TARGET_LINK_LIBRARIES(tracker_Test   Evtdict ${ROOT_LIBRARIES})
 
 ADD_EXECUTABLE(res_from_tracker_ana          res_from_tracker_ana.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
 TARGET_LINK_LIBRARIES(res_from_tracker_ana   Evtdict ${ROOT_LIBRARIES})
+
+ADD_EXECUTABLE(marcTracker          marcTracker.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
+TARGET_LINK_LIBRARIES(marcTracker   Evtdict ${ROOT_LIBRARIES})

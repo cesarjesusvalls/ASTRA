@@ -15,7 +15,7 @@
 #include "pCTXML.hh"
 #include "SciDetHit.hh"
 #include "pCTTrack.hh"
-
+#include "TVector3.h"
 class pCTEvent : public TObject {
 
 private:
@@ -25,7 +25,7 @@ private:
     std::vector< pCTTrack* >                        fRecoProtons;
     std::map <int, double >                         fGunEnergy;   // map from track ID to pgun true kin energy.
     TRandom3 * fRndm;
-
+    std::map <G4int,std::vector<std::pair<TVector3,double>>> fPhantomHits;
 public:
 
     pCTEvent(){Init();};
@@ -50,8 +50,9 @@ public:
     void SetSciDetHits(std::vector< SciDetHit* > hits)                      {fSciDetHits  = hits;};
     void SetGunEnergyMap(std::map <int, double > gun)                       {fGunEnergy   = gun;};
     void SetRecoProtons(std::vector< pCTTrack* > trks)                      {fRecoProtons = trks;};
+    void SetPhantomHits(std::map<G4int,std::vector<std::pair<TVector3,double>>> phHits) {fPhantomHits = phHits;};
 
-    //------------------
+  //------------------
 
     //-----Getters------
 
@@ -60,14 +61,16 @@ public:
     std::vector< SciDetHit* >                   GetSciDetHits()      {return fSciDetHits;};
     std::map <int, double >                     GetGunEnergyMap()    {return fGunEnergy;};
     std::vector< pCTTrack* >                    GetRecoProtons()     {return fRecoProtons;};
-
-    //------------------
+    std::map<G4int,std::vector<std::pair<TVector3,double>>> GetPhantomHits() {return fPhantomHits;};
+    
+  //------------------
 
     void ResetEvent(Option_t* /*option*/="")
     {
         fEvtId = -999;
         fPixelsMap.clear();
-        fSciDetHits.clear();
+       	fPhantomHits.clear();
+	    fSciDetHits.clear();
         fGunEnergy.clear();
         for (auto prot:fRecoProtons) delete prot;
         fRecoProtons.clear();

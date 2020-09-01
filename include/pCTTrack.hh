@@ -14,6 +14,8 @@
 #include "pCTXML.hh"
 #include "SciDetHit.hh"
 #include "CMOSPixel.hh"
+#include "CMOSHit.hh"
+#include "CMOSSD.hh"
 
 class pCTTrack : public TObject {
 

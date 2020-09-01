@@ -18,18 +18,22 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include/CMOS)
 include_directories(${PROJECT_SOURCE_DIR}/include/SciDet)
 include_directories(${PROJECT_SOURCE_DIR}/include/SiDet)
+include_directories(${PROJECT_SOURCE_DIR}/include/Phantom)
 
 file (GLOB EXTRA_SOURCEFILES 
     ${PROJECT_SOURCE_DIR}/src/CMOS/*.cc
     ${PROJECT_SOURCE_DIR}/src/SciDet/*.cc
     ${PROJECT_SOURCE_DIR}/src/SiDet/*.cc
+    ${PROJECT_SOURCE_DIR}/src/Phantom/*.cc
 )
 
 file (GLOB EXTRA_HEADERFILES 
     ${PROJECT_SOURCE_DIR}/src/CMOS/*.hh
     ${PROJECT_SOURCE_DIR}/src/SciDet/*.hh
     ${PROJECT_SOURCE_DIR}/include/SiDet/*.hh
+    ${PROJECT_SOURCE_DIR}/include/Phantom/*.hh
 )
+
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 

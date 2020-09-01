@@ -70,7 +70,7 @@ public :
     G4bool GetUseCMOS()            {return fUseCMOS;};
     G4bool GetUse4thCMOS()         {return fUse4thCMOS;};
     G4bool GetUsePhantom()          {return fUsePhantom;};
-  
+
     G4bool UseEnergyWide()    {return fUseEnergyWide;};
 
     void SetXMLFileName(G4String val)       {fXMLFile           = val;}

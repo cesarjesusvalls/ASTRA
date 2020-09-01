@@ -23,4 +23,6 @@
 
 #pragma link C++ class pCTEventHandler+;
 
+#pragma link C++ class PhantomHit+;
+
 #endif // __CINT__
