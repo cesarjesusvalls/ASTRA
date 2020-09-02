@@ -42,7 +42,7 @@ public:
   void EndOfEvent(G4HCofThisEvent* HCE);
   
   void SetBinaryName(G4String name) { fname = name; };
-  pCTXML* pCTXMLInput;
+
 
 private:
   CMOSHitCollection*      hitCollection;
