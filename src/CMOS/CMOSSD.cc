@@ -46,7 +46,7 @@ G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   // step is guaranteed to be in Strip volume : no need to check for volume
   
   
-	pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
+    pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
     pCTXMLInput = InputPersistencyManager->GetXMLInput();
     G4int rows = pCTXMLInput->GetPlaneRows();
     G4int cols = pCTXMLInput->GetPlaneColumns();
@@ -161,9 +161,9 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
     G4cout << "\n\t----- Total Energy Deposited -----" << G4endl;
     
 
-	// container to add the edep for multiple hits on a strip (if this happens)
-	// first.first = planeNumber
-	// second.second = total energy deposited
+    // container to add the edep for multiple hits on a strip (if this happens)
+    // first.first = planeNumber
+    // second.second = total energy deposited
 
     std::map<G4int, std::vector< CMOSPixel* > > Counter;
     // now loop through the map and check if above threshold
@@ -199,24 +199,19 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
         }               
     }
 
-//  write out to the text file as used to with old CMOS
-  const int evtID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+    //  write out to the text file as used to with old CMOS
+    const int evtID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   
-  // if pEvtID  ==-1 then no runs have occured before and we need to make the file
-  // if pEVTID > current event ID then a new run has started and we need a new file
-  if(pEvtID>evtID && fout.is_open())
+    // if pEvtID  ==-1 then no runs have occured before and we need to make the file
+    // if pEVTID > current event ID then a new run has started and we need a new file
+    if(pEvtID>evtID && fout.is_open())
     fout.close();
   
-  if(pEvtID==-1 || pEvtID>evtID)
-  {   
-      fname = "Test_"+GetName()+".txt"; 
-      fout.open(fname.c_str(), std::ios::out); //| std::ios::app);  
-  }
-
-
-
-
-
+    if(pEvtID==-1 || pEvtID>evtID)
+    {   
+        fname = "Test_"+GetName()+".txt"; 
+        fout.open(fname.c_str(), std::ios::out); //| std::ios::app);  
+    }
 
     unsigned short int nPlanes = Counter.size();
     
@@ -231,12 +226,20 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
     {
         unsigned short int Plane = (*it2).first;
         unsigned short int nHitsInPlane = (*it2).second.size();
-
+            //G4cout << "Plane " << Plane << " has " << nHitsInPlane << " pixels above threshold (" << threshold << "e-)" << G4endl;
+  
+        for(unsigned index(0); index<nHitsInPlane; index++)
+        {
+          unsigned short int X = (*it2).second.at(index)->GetX();
+          unsigned short int Y = (*it2).second.at(index)->GetY();
+          unsigned int e = (*it2).second.at(index)->GetElectronsLiberated();
+          int tID = (*it2).second.at(index)->GetTrackID();
+          
           fout << X << ", " << Y << ", "<< Plane <<", " << e <<"," <<G4endl;
           std::cout << X << ", " << Y << ", "<< Plane <<", " << e <<", " << tID <<std::endl;
-	  }
+        }
+  
     }
-
     pEvtID = evtID;
     timer->Stop();
     //G4cout << "real time elapsed in CMOSSD::EndOfAction() = " << timer->GetRealElapsed() << G4endl; 

@@ -42,16 +42,22 @@ public:
   void EndOfEvent(G4HCofThisEvent* HCE);
   
   void SetBinaryName(G4String name) { fname = name; };
-  pCTXML* pCTXMLInput;
 
 private:
   CMOSHitCollection*      hitCollection;
-  G4int                 HCID;       //JT
+  G4int                   HCID;       //JT
   G4int pEvtID;
 	std::ofstream fout;
 	G4String fname;
-  pCTXML*                   pCTXMLInput;
+  pCTXML*                 pCTXMLInput;
   //HistoManager* fHistoManager;
 };
 
 #endif
+
+
+
+
+
+
+
