@@ -19,7 +19,7 @@
 <!-- Use Detector -->
 
   <UseSciDet>  
-    True
+    False
   </UseSciDet>
 
   <UseCMOS>  
@@ -43,7 +43,7 @@
 </BeamType>
 
 <NProtons>
-  2
+  5
 </NProtons>
 
 <IniPGUNEnergy>
