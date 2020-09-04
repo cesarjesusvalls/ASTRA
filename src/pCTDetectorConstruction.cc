@@ -117,7 +117,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4Box*        solidBox2        = new G4Box("box",0.3*mm, 1.2*mm,5*mm);
     G4VSolid*     crossSolid       = new G4UnionSolid("crossBox", solidBox1,solidBox2,0,G4ThreeVector(0.*mm,0.*mm,0.*mm));
     */
-    G4Box* solidBox = new G4Box("box", 10*mm,10*mm,5*mm);
+    G4Box* solidBox = new G4Box("box", 100*mm,100*mm,5*mm);
     G4LogicalVolume* logicPhantom  = new G4LogicalVolume(solidBox, phantom_mat,"Phantom"); 
     Phantom*      PhantomSD = (Phantom*)SDman->FindSensitiveDetector("PhantomSD");
     logicPhantom->SetSensitiveDetector(PhantomSD);

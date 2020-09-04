@@ -7,6 +7,10 @@ G4ThreadLocal G4Allocator<CMOSPixel>* CMOSPixelAllocator = 0;
 
 CMOSPixel::CMOSPixel()
 {
+	planeNumber = -999;
+	Pixel = std::make_pair(-999,-999);
+	electrons = -999;
+  	trackID = -999;
 	return;
 }
 

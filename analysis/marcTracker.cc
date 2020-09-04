@@ -26,9 +26,11 @@
 #include "TGraphErrors.h"
 
 
-int nPlanes=4;
-int x[4] = {0,0,0,0};
-int y[4] = {0,0,0,0};
+const int nPlanes= 3;
+int x[nPlanes] = {0};
+int y[nPlanes] = {0};
+int trackID[nPlanes] = {0};
+int goodTracks = 0;
 unsigned short int nTracks = 0;
 
 double chi2(const double *par)
@@ -47,43 +49,84 @@ chi2 += pow((x[i]-XY[0]),2)+pow((y[i]-XY[1]),2);
 return chi2;
 }
 
-
-std::vector<std::pair<Double_t,std::vector<std::pair<int,int>>>> SortTracksByChi2(
+std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>>SortTracksByChi2(
+//std::vector<std::pair<Double_t,std::vector<std::pair<int,int>>>> SortTracksByChi2(
 std::vector< CMOSPixel*> Det1, 
 std::vector< CMOSPixel*> Det2, 
 std::vector< CMOSPixel*> Det3, 
 std::vector< CMOSPixel*> Det4)
 
+
 {   
     std::vector< CMOSPixel*>::iterator it1, it2, it3, it4;
-    std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> chi2Points;
+    //std::vector<std::vector< CMOSPixel*>::iterator> its[4] = {it1,it2,it3,it4};
+
+    //std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> chi2Points;
+    std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> chi2Points;
 
             std::vector<std::pair <int,int>> points;
+            std::vector<std::pair <int,std::pair <int,int>>> pointsTrackID;
+
             for (it1=Det1.begin(); it1!=Det1.end(); it1++)
-            {
+            { 
                 for (it2=Det2.begin(); it2!=Det2.end(); it2++)
-                {
+                {	
                     for (it3=Det3.begin(); it3!=Det3.end(); it3++)
-                    {
-                        for (it4=Det4.begin(); it4!=Det4.end(); it4++)
-                        {
-                         
-//                        
-                            x[0]=(*it1)->GetX();
-                            x[1]=(*it2)->GetX();
-                            x[2]=(*it3)->GetX();
-                            x[3]=(*it4)->GetX();
+                    {	
+                     for (it4=Det4.begin(); it4!=Det4.end(); it4++)
+                        { std::cout<< "Entering detector 4 loop!" << std::endl;
 
-                            y[0]=(*it1)->GetY();
-                            y[1]=(*it2)->GetY();
-                            y[2]=(*it3)->GetY();
-                            y[3]=(*it4)->GetY();
+                     		/*
+								for( uint i(0); i<4; i++)
+								if ((*its[i])->GetTrackID() != -999)
+								{
+									x[i]=(*its[i])->GetX();
+                            		y[i]=(*its[i])->GetY();
+                            		trackID[i]=(*its[i])->GetTrackID();
+								}
 
-                            std::cout<< "X = ["<<x[0]<<", "<<x[1]<<", "<<x[2]<<", "<<x[3]<<"]"<<std::endl;
+								*/
+
+                            if ((*it1)->GetTrackID()!=-999)
+                            	{
+                            		x[0]=(*it1)->GetX();
+                            		y[0]=(*it1)->GetY();
+                            		trackID[0]=(*it1)->GetTrackID();
+                            	}
+
+                            if ((*it2)->GetTrackID()!=-999)
+                            	{
+                            		x[1]=(*it2)->GetX();
+                            		y[1]=(*it2)->GetY();
+                            		trackID[1]=(*it2)->GetTrackID();
+                            	}
+
+                            if ((*it3)->GetTrackID()!=-999)
+                            	{
+                            		x[2]=(*it3)->GetX();
+                            		y[2]=(*it3)->GetY();
+                            		trackID[2]=(*it3)->GetTrackID();
+                            	}
+
+                            if ((*it4)->GetTrackID()!=-999)
+                            	{
+                            		x[3]=(*it4)->GetX();
+                            		y[3]=(*it4)->GetY();
+                            		trackID[3]=(*it4)->GetTrackID();
+                            	}
+                           
                             
                             for (int i =0; i<nPlanes; i++) {
+
+
+
+                            	std::cout<< "XYT= ["<<x[i]<<", "<<y[i]<<", "<<trackID[i]<<"]"<<std::endl;
                                 points.push_back(make_pair(x[i],y[i]));
+                                
+                                std::pair<int,int> XY = make_pair(x[i],y[i]);
+                                pointsTrackID.push_back(make_pair(trackID[i],XY));
                             }
+
                             
                              ROOT::Math::Minimizer* minimum = ROOT::Math::Factory::CreateMinimizer("Minuit2");
                             // set tolerance , etc...
@@ -107,25 +150,11 @@ std::vector< CMOSPixel*> Det4)
                              
                                 // do the minimization
                                 minimum->Minimize();
-                             
-                               //const double *xs = minimum->X();
-                                
-                                //std::cout << "Minimum: f(" << xs[0] << "," << xs[1] << xs[2] << "," << xs[3] <<  "): "
-                                //          << minimum->MinValue()  << std::endl;
                                 Double_t chi2 = minimum->MinValue();
-                                // expected minimum is 0
-                               /* if ( minimum->MinValue()  < 1.E-4  && f(xs) < 1.E-4)
-                                   std::cout << "Minimizer " << minName << " - " << algoName
-                                             << "   converged to the right minimum" << std::endl;
-                                else {
-                                   std::cout << "Minimizer " << minName << " - " << algoName
-                                             << "   failed to converge !!!" << std::endl;
-                                   Error("NumericalMinimization","fail to converge");
-                                }
-                                */
-
-                            chi2Points.push_back(make_pair(chi2,points));
+                      
+                            chi2Points.push_back(make_pair(chi2,pointsTrackID));
                             points.clear();
+                            pointsTrackID.clear();
                            
                         }
                     }
@@ -139,18 +168,25 @@ std::vector< CMOSPixel*> Det4)
 
 
 
-std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> TrackSelector( std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> sortedTracks)
+//std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> TrackSelector( std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> sortedTracks)
+std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> TrackSelector(std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> sortedTracks)
+
 {
 
-std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>>::iterator it,it2; //This iterators run over tracks tracks
-std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> outPut,chi2Points;
+//std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>>::iterator it,it2; //This iterators run over tracks tracks
+//std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> outPut,chi2Points;
+
+std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>>::iterator it,it2;
+std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> outPut,chi2Points;
+
 double bestChi2SUM=0;
 double chi2 = 0;
 unsigned int Try =0;
 for(it=sortedTracks.begin(); it!=sortedTracks.end(); it++) //run over the full set of tracks
         {
                         
-                std::vector<std::pair<int,int>>::iterator itPoint; //this iterator run over pairs (XY points) 
+                //std::vector<std::pair<int,int>>::iterator itPoint; //this iterator run over pairs (XY points) 
+                std::vector<std::pair <int ,std::pair <int,int>>>::iterator itPoint; //this iterator run over pairs (XY points) 
                 std::cout<<"This is the try number " << Try << std::endl;
                 std::cout << "bestChi2 Sum = " << bestChi2SUM << " first chi2 is " << (*it).first << " and the cut is " << float(bestChi2SUM/(nTracks))<< std::endl;
                    if(bestChi2SUM != 0 and (*it).first >= float(bestChi2SUM/(nTracks))) {
@@ -160,6 +196,8 @@ for(it=sortedTracks.begin(); it!=sortedTracks.end(); it++) //run over the full s
 
  
                 std::vector<std::pair<int,int>> points;
+                std::vector<std::pair <int ,std::pair <int,int>>> pointsTrackID;
+
     
                 for(it2=it; it2!=sortedTracks.end(); it2++) //run over the new set of tracks starting from a new point
                 {
@@ -176,14 +214,15 @@ for(it=sortedTracks.begin(); it!=sortedTracks.end(); it++) //run over the full s
                         {
                         for(itPoint=(*it2).second.begin();itPoint!=(*it2).second.end();itPoint++)
                             {
+                            	
                             for (int j = 0; j< int(chi2Points[i].second.size());j++)
                                  {
-                                     int a =(*itPoint).first;
-                                     int b =(*itPoint).second;
+                                     int a =(*itPoint).second.first;
+                                     int b =(*itPoint).second.second;
                                     auto c = chi2Points[i];
 
-                                    int d = c.second[j].first;
-                                    int e = c.second[j].second;
+                                    int d = c.second[j].second.first;
+                                    int e = c.second[j].second.second;
                                      
                                     if (a==d && b==e)
                                         { 
@@ -204,15 +243,14 @@ for(it=sortedTracks.begin(); it!=sortedTracks.end(); it++) //run over the full s
                           }
                 }
                 if ((bestChi2SUM == 0 || chi2 < bestChi2SUM) && int(chi2Points.size())==nTracks)
-                {	if (int(chi2Points.size())==nTracks) std::cout<< "WTF size is not 2!!! it's: " << int(chi2Points.size()) << " and nTracks " << nTracks <<std::endl;
-                    if (int(chi2Points.size())==nTracks) bestChi2SUM = chi2;
+                {   if (int(chi2Points.size())==nTracks) bestChi2SUM = chi2;
 	                if (int(chi2Points.size())==nTracks)    outPut = chi2Points;
                 }
                 Try += 1;
         } 
     if (int(outPut.size())!=nTracks)
         {
-        std::cout<< "Error 0, Not enough tracks were reconstructed!"<<std::endl;
+        std::cout<< "Error 0, Not enough tracks were reconstructed! "<< nTracks << " were expected."<<std::endl;
         return outPut;
          }
 return outPut;
@@ -238,7 +276,7 @@ int main(int argc,char** argv){
     dataBranch->SetAddress(&event);
 
     pCTXML* config = (pCTXML*) inputFile->Get("XMLinput");
-    std::cout << config->GetSciDetNBars()  <<"-------------------------------\n";
+    
 
     //chi2 hist
     TH1F* chi2Hist = new TH1F("chi2Hist","chi2Hist",40,0,60);
@@ -257,10 +295,14 @@ int main(int argc,char** argv){
         std::cout << "Nhits:" << Counter.size() << std::endl;
         std::map<G4int, std::vector< CMOSPixel*> >::iterator it2;
 
-        std::vector< CMOSPixel*>  det1;
-        std::vector< CMOSPixel*>  det2;
-        std::vector< CMOSPixel*>  det3;
-        std::vector< CMOSPixel*>  det4;
+        CMOSPixel* defoult = new CMOSPixel();
+        std::vector< CMOSPixel*>  det1, det2, det3, det4;
+        det1.push_back(defoult);
+        det2.push_back(defoult);
+        det3.push_back(defoult);
+        det4.push_back(defoult);
+
+        std::cout<< "X = " << det1[0]->GetX() << std::endl;
     	nTracks =0;
         for(it2=Counter.begin(); it2!=Counter.end(); it2++)
         {
@@ -275,40 +317,56 @@ int main(int argc,char** argv){
         if (Plane==1)  det2 = (*it2).second;
         if (Plane==2)  det3 = (*it2).second;
         if (Plane==3)  det4 = (*it2).second;
+
+     
   
 		}
 
-		std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> chi2points = SortTracksByChi2(det1,det2,det3,det4);
+		//if (det1.size == 0) det1 =
+		//std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> chi2points = SortTracksByChi2(det1,det2,det3,det4);
+		std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> chi2points = SortTracksByChi2(det1,det2,det3,det4);
         std::cout << "Size of chi2Points: "<< chi2points.size() << std::endl;
-
+        
         std::cout << "Test of imput Tracks" << std::endl;
         for(int i = 0; i < int(chi2points.size()); i++)
                             {
                                  std::cout <<"chi2 = " <<chi2points[i].first <<std::endl;
 
                                  for(int j=0; j< int(chi2points[i].second.size());j++)
-                                 {std::cout << chi2points[i].second[j].first << ", " << chi2points[i].second[j].second <<std::endl;}
-                            }   
-                std::cout << "There is nothing else in the input of TrackSelector" << std::endl;
-        std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> finalTracks = TrackSelector(chi2points);
+                                 {std::cout << chi2points[i].second[j].second.first << ", " << chi2points[i].second[j].second.second << " TrackID = " << chi2points[i].second[j].first <<std::endl;}
+                            }  
 
+                std::cout << "There is nothing else in the input of TrackSelector" << std::endl;
+                
+        //std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> finalTracks = TrackSelector(chi2points);
+        std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> finalTracks = TrackSelector(chi2points);
+
+        
 
         std::cout << "OutputTrackSelector" << std::endl;
-                for(int i = 0; i < int(finalTracks.size()); i++)
+                  for(int i = 0; i < int(finalTracks.size()); i++)
                             {
-                                 std::cout <<"chi2 = " <<finalTracks[i].first <<std::endl;
-                                 chi2Hist->Fill(finalTracks[i].first);
+                                 std::cout <<"chi2 = " <<finalTracks[i].first <<std::endl;	
+                                 std::cout << "Size of the output = " << int(finalTracks[i].second.size()) << std::endl;	
+ 								chi2Hist->Fill(finalTracks[i].first);
+ 								int prevTrackID = 0;
+ 								bool realTrack = true;
                                  for(int j=0; j< int(finalTracks[i].second.size());j++)
-                                    {std::cout << finalTracks[i].second[j].first << ", " << finalTracks[i].second[j].second <<std::endl;}
+                                 {
+                                 	std::cout << finalTracks[i].second[j].second.first << ", " << finalTracks[i].second[j].second.second << " TrackID = " << finalTracks[i].second[j].first <<std::endl;
+                                 	
+                                 	if(j!=0 && finalTracks[i].second[j].first != prevTrackID) {
+                                 		std::cout<< "A false track has been found!"<<std::endl;
+                                 		realTrack = false;}
+                                 	prevTrackID = finalTracks[i].second[j].first;
+                                 }
+                                 if (realTrack) goodTracks++;
                             }   
-
 
 	    
 	    }
 
-
-
-
+/*
 	TCanvas* c1 = new TCanvas("c1","c1",1400,1000);
     gStyle->SetOptStat(0);
     //   gStyle->SetPadRightMargin(1.5);
@@ -323,7 +381,8 @@ int main(int argc,char** argv){
 
 
 
-
+    std::cout << goodTracks << " good tracks were found" << std::endl;
+    */
 	inputFile->Close();
     theApp->Run();
     return 0;

@@ -31,7 +31,7 @@
   </Use4thCMOS>
   
   <UsePhantom>  
-    False
+    True
   </UsePhantom>
 
 <!-- ............ -->
@@ -43,15 +43,15 @@
 </BeamType>
 
 <NProtons>
-  1
+  2
 </NProtons>
 
 <IniPGUNEnergy>
-  200
+  100
 </IniPGUNEnergy>
 
 <UseEnergyWide>
-  True
+  False
 </UseEnergyWide>
 
 <!-- ......... -->
