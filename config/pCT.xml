@@ -43,7 +43,11 @@
 </BeamType>
 
 <NProtons>
+<<<<<<< HEAD
   5
+=======
+  2
+>>>>>>> 22f3ef5c6e21860579a613ea1e6a325cbcee0f16
 </NProtons>
 
 <IniPGUNEnergy>
