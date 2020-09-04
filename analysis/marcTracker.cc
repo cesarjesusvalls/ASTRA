@@ -295,12 +295,12 @@ int main(int argc,char** argv){
         std::cout << "Nhits:" << Counter.size() << std::endl;
         std::map<G4int, std::vector< CMOSPixel*> >::iterator it2;
 
-        CMOSPixel* defoult = new CMOSPixel();
+        CMOSPixel* def = new CMOSPixel();
         std::vector< CMOSPixel*>  det1, det2, det3, det4;
-        det1.push_back(defoult);
-        det2.push_back(defoult);
-        det3.push_back(defoult);
-        det4.push_back(defoult);
+        det1.push_back(def);
+        det2.push_back(def);
+        det3.push_back(def);
+        det4.push_back(def);
 
         std::cout<< "X = " << det1[0]->GetX() << std::endl;
     	nTracks =0;
