@@ -82,8 +82,10 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     //___________________
 
     //_____ PHANTOM _____
-    G4ThreeVector phantomPos      = G4ThreeVector(0,0,-3*cm);            // TODO: get from XML.
-    G4Material*   phantom_mat     = nist->FindOrBuildMaterial("G4_Cu");
+    G4ThreeVector phantomPos      = G4ThreeVector(0,0,-8.5*cm);            // TODO: get from XML.
+    //G4Material*   phantom_mat     = nist->FindOrBuildMaterial("G4_Cu");
+    G4Material*   phantom_mat     = FindMaterial("PlasticScintillator");
+    
     // G4Ellipsoid*  solidEllipsoid  = new G4Ellipsoid ("ellipsoid", 1.5*mm, 2.5*mm , 0.6*mm,0,0); 
     // G4Tubs*       solidCylinder   = new G4Tubs("cylinder", 0, 4.*mm, 0.6*mm, 0,2*M_PI);    
     // G4Box*        solidBox        = new G4Box("box",4,4,0.35);
@@ -117,7 +119,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4Box*        solidBox2        = new G4Box("box",0.3*mm, 1.2*mm,5*mm);
     G4VSolid*     crossSolid       = new G4UnionSolid("crossBox", solidBox1,solidBox2,0,G4ThreeVector(0.*mm,0.*mm,0.*mm));
     */
-    G4Box* solidBox = new G4Box("box", 100*mm,100*mm,5*mm);
+    G4Box* solidBox = new G4Box("box", 100*mm,100*mm,2*cm);
     G4LogicalVolume* logicPhantom  = new G4LogicalVolume(solidBox, phantom_mat,"Phantom"); 
     Phantom*      PhantomSD = (Phantom*)SDman->FindSensitiveDetector("PhantomSD");
     logicPhantom->SetSensitiveDetector(PhantomSD);
@@ -131,7 +133,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
         new G4PVPlacement(0,G4ThreeVector(0.*cm,0.*cm,-3*cm)    ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
       
       */
-      new G4PVPlacement(0,G4ThreeVector(0.*cm,0.*cm,-3*cm)    ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
+      new G4PVPlacement(0,phantomPos    ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
     }
     //___________________
 

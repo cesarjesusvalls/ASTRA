@@ -68,6 +68,20 @@ public:
 
     std::vector< pCTTrack* > DoTracking();
 
+    //double chi2(const double *par);
+
+    std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> SortTracksByChi2(
+        std::vector< CMOSPixel*> Det1, 
+        std::vector< CMOSPixel*> Det2, 
+        std::vector< CMOSPixel*> Det3, 
+        std::vector< CMOSPixel*> Det4);
+
+    std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> TrackSelector(
+                            std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> sortedTracks,int nTracks);
+
+    std::vector<TVector3> SpacePoint (std::vector<std::pair <int ,std::pair <int,int>>> pixelPoint);
+    TVector3 Vd(TVector3 V1,TVector3 V2);
+
     //ClassDef(pCTTrackingManager,1) 
 };
 

@@ -27,7 +27,7 @@
   </UseCMOS>
 
   <Use4thCMOS>
-    True
+    False
   </Use4thCMOS>
   
   <UsePhantom>  
@@ -39,15 +39,11 @@
 <!-- PGUN info -->
 
 <BeamType>
-  Cercle
+  Rectangular
 </BeamType>
 
 <NProtons>
-<<<<<<< HEAD
-  5
-=======
-  2
->>>>>>> 22f3ef5c6e21860579a613ea1e6a325cbcee0f16
+  6
 </NProtons>
 
 <IniPGUNEnergy>
@@ -119,11 +115,11 @@
 </PosZ0>
 
 <PosZ1>
-  -7
+  -5
 </PosZ1>
 
 <PosZ2>
-  -2
+  -1
 </PosZ2>
 
 <PosZ3>

@@ -281,17 +281,18 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
 
 
 
-const int nPlanes= 3;
+const int nPlanes= 4;
 int x[nPlanes] = {0};
 int y[nPlanes] = {0};
 int trackID[nPlanes] = {0};
-int goodTracks = 0;
 unsigned short int nTracks = 0;
 
 double chi2(const double *par)
+//double chi2(const double *par, Double_t zPos[4])
 {
 
-Double_t z[4]= {0,5,10,15};
+//Double_t z[4]= {fconfig->GetPosZ0(),fconfig->GetPosZ1(),fconfig->GetPosZ2(),fconfig->GetPosZ3()};
+Double_t z[4]={0,5,10,15};
 Double_t chi2=0;
 
 for (int i=0; i<nPlanes;i++)
@@ -304,7 +305,36 @@ chi2 += pow((x[i]-XY[0]),2)+pow((y[i]-XY[1]),2);
 return chi2;
 }
 
-std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>>SortTracksByChi2(
+
+std::vector<TVector3> pCTTrackingManager::SpacePoint (std::vector<std::pair <int ,std::pair <int,int>>> pixelPoint)
+{   double zPos[nPlanes] = {fconfig->GetPosZ0(),fconfig->GetPosZ1(),fconfig->GetPosZ2(),fconfig->GetPosZ3()};
+    double pitchY = 0.04;
+    double pitchX = 0.036;
+    int rows = fconfig->GetPlaneRows();
+    int cols = fconfig->GetPlaneColumns();
+    std::vector<TVector3> XYZ;
+    for (int i=0; i<int(pixelPoint.size());i++)
+    {
+    double xPos = pitchX*(pixelPoint[i].second.first-cols*0.5);
+    double yPos =  pitchY*(pixelPoint[i].second.second-rows*0.5);
+    TVector3 xyz(xPos,yPos,zPos[i]);
+     XYZ.push_back(xyz);
+    }
+return XYZ;
+}
+
+
+TVector3 pCTTrackingManager::Vd(TVector3 V1,TVector3 V2)
+{
+double m = (V2-V1).Mag();
+TVector3 V3((V2-V1).x()/m,(V2-V1).y()/m,(V2-V1).z()/m);
+return V3;
+}
+
+
+
+
+std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> pCTTrackingManager::SortTracksByChi2(
 //std::vector<std::pair<Double_t,std::vector<std::pair<int,int>>>> SortTracksByChi2(
 std::vector< CMOSPixel*> Det1, 
 std::vector< CMOSPixel*> Det2, 
@@ -329,8 +359,7 @@ std::vector< CMOSPixel*> Det4)
                     for (it3=Det3.begin(); it3!=Det3.end(); it3++)
                     {   
                      for (it4=Det4.begin(); it4!=Det4.end(); it4++)
-                        { std::cout<< "Entering detector 4 loop!" << std::endl;
-
+                        { 
                             /*
                                 for( uint i(0); i<4; i++)
                                 if ((*its[i])->GetTrackID() != -999)
@@ -430,10 +459,10 @@ std::vector< CMOSPixel*> Det4)
 
         CMOSPixel* defoult = new CMOSPixel();
         std::vector< CMOSPixel*>  det1, det2, det3, det4;
-        det1.push_back(defoult);
-        det2.push_back(defoult);
-        det3.push_back(defoult);
-        det4.push_back(defoult);
+        det1.push_back(default);
+        det2.push_back(default);
+        det3.push_back(default);
+        det4.push_back(default);
 
         nTracks =0;
         for(it2=Counter.begin(); it2!=Counter.end(); it2++)
@@ -448,7 +477,7 @@ std::vector< CMOSPixel*> Det4)
         }
 */
 //std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> TrackSelector( std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> sortedTracks)
-std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> TrackSelector(std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> sortedTracks)
+std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> pCTTrackingManager::TrackSelector(std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> sortedTracks, int nTracks)
 
 {
 
@@ -493,14 +522,8 @@ for(it=sortedTracks.begin(); it!=sortedTracks.end(); it++) //run over the full s
                                 
                             for (int j = 0; j< int(chi2Points[i].second.size());j++)
                                  {
-                                     int a =(*itPoint).second.first;
-                                     int b =(*itPoint).second.second;
-                                    auto c = chi2Points[i];
-
-                                    int d = c.second[j].second.first;
-                                    int e = c.second[j].second.second;
                                      
-                                    if (a==d && b==e)
+                                    if( ((*itPoint).second.first == chi2Points[i].second[j].second.first )  && ((*itPoint).second.second == chi2Points[i].second[j].second.second) )
                                         { 
                                            addTrack = false;
                                            break;

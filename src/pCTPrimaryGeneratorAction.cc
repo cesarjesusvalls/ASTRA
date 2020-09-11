@@ -102,8 +102,8 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     for (int ind=0; ind<pCTXMLInput->GetNProtons(); ind++){
 
         if(pCTXMLInput->GetBeamType() == "Rectangular"){
-            G4double x0 =   (G4UniformRand()-0.5)*pCTXMLInput->GetPlaneColumns()*0.04;
-            G4double y0 =   (G4UniformRand()-0.5)*pCTXMLInput->GetPlaneColumns()*0.036;
+            G4double x0 =   (G4UniformRand()-0.5)*(pCTXMLInput->GetPlaneColumns()*0.04-15);
+            G4double y0 =   (G4UniformRand()-0.5)*(pCTXMLInput->GetPlaneColumns()*0.036-15);
             G4double z0 =   pCTXMLInput->GetPosZ0()*10-5;
             fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
         }
