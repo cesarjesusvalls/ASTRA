@@ -43,11 +43,11 @@
 </BeamType>
 
 <NProtons>
-  6
+  10
 </NProtons>
 
 <IniPGUNEnergy>
-  100
+  200
 </IniPGUNEnergy>
 
 <UseEnergyWide>
@@ -142,11 +142,11 @@
 
 <!-- Silicon shape -->
 <PlaneColumns>
-  2240
+  448
 </PlaneColumns>
 
 <PlaneRows>
-  2240
+  224
 </PlaneRows>
 <!-- ................ -->
 
