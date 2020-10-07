@@ -9,7 +9,6 @@
 #include <TF2.h>
 #include <TH3.h>
 
-
 #include "CMOSPixel.hh"
 #include <iostream>
 #include <fstream>
@@ -20,76 +19,25 @@
 #include "Math/Factory.h"
 #include "Math/Functor.h"
 
+#include <Math/Vector3D.h>
+#include <Fit/Fitter.h>
+using namespace ROOT::Math;
 
+//************************************************************************************************************
+pCTTrackingManager::pCTTrackingManager(pCTEvent* evt, pCTXML* cnf) : fevent(evt), fconfig(cnf) {Init(); return;}
+//************************************************************************************************************
 
-
-pCTTrackingManager::pCTTrackingManager(pCTEvent* evt, pCTXML* cnf)
-	: fevent(evt), fconfig(cnf) {Init(); return;}
-
-pCTTrackingManager::pCTTrackingManager(pCTEvent* evt, pCTXML* cnf, std::vector<TVector3> pnts, std::vector<TVector3> vecs)
-	: fevent(evt), fconfig(cnf), seedPoints(pnts), seedVecs(vecs) {Init(); return;}
-
-// void pCTTrackingManager::DrawRecoEvent(){
-//     std::map<int, std::vector<TVector3> >::iterator it;
-//     for (it=recoTracks.begin(); it<NCMOSTracks; it++){
-//     	// If the current trackID belongs to a track not reconstructed, jump to the next one
-//     	if(!IsReconstructed[(*it).first]) continue;
-//     	// Fill the 3D info in a ROOT drawable object
-//         TNtuple *event3D = new TNtuple("3D_reco_event", "3D_reco_event", "x:y:z:c");
-//     	std::vector<TVector3> points3D = (*it).second;
-//         for (auto p:points3D) event3D->Fill(p.X(),p.Y(),z.X(),(*it).first);        
-//         // Create a canvas and draw the info stored in the TNtuple
-//         TCanvas *canv = new TCanvas("aux_canv", "aux_canv", 800, 600, 800, 600);
-//         canv->cd(1);
-//         event3D->Draw("x:y:z:c","","box2");
-//         // Access to the TNtuple axis limits via its hiden TH3F 
-//         TH3F *htemp = (TH3F*)gPad->GetPrimitive("htemp");
-//         htemp->GetXaxis()->SetLimits(-100,2300);
-//         htemp->GetYaxis()->SetLimits(-100,2300);
-//         htemp->GetZaxis()->SetLimits(-5,20);
-//         htemp->SetTitle("");
-//         // Draw and Wait
-//         canv->Update();
-//         canv->WaitPrimitive();
-//         // Remove the temporal objects created for the display
-//         delete htemp;
-//         delete canv;
-//         delete event3D;
-//     }
-// }
-
-void pCTTrackingManager::DrawGeometry(){
-
-        // TCanvas *canv = new TCanvas("aux_canv", "aux_canv", 800, 600, 800, 600);
-        // canv->cd(1);
-
-        // canv->Update();
-        // canv->WaitPrimitive();
-
-        // delete canv;
-/*
-   TEveManager::Create();
-   gEve->GetDefaultGLViewer()->SetCurrentCamera(TGLViewer::kCameraPerspXOY);
-   TF2 *f2 = new TF2("f2","x**2 + y**2 - x**3 -8*x*y**4", -1., 1.2, -1.5, 1.5);
-   f2->SetFillColor(45);
-   auto x = new TEvePlot3D("EvePlot - TF2");
-   x->SetLogZ(kTRUE);
-   x->SetPlot(f2,"glsurf4");
-   x->RefMainTrans().MoveLF(2, 1);
-   gEve->AddElement(x);
-   TH3F *h31 = new TH3F("h31", "h31", 10, -1, 1, 10, -1, 1, 10, -1, 1);
-   h31->FillRandom("gaus");
-   h31->SetFillColor(2);
-   x = new TEvePlot3D("EvePlot - TH3F");
-   x->SetPlot(h31, "glbox");
-   x->RefMainTrans().MoveLF(2, -1);
-   gEve->AddElement(x);
-   gEve->Redraw3D(kTRUE);
-*/
+//************************************************************************************************************
+bool checkHitsCompatibility(CMOSPixel* hit2, CMOSPixel* hit1, double Z){
+//************************************************************************************************************
+    return TVector3(hit1->GetX()-hit2->GetX(),hit1->GetY()-hit2->GetY(),Z).Theta() <= 1;
 }
 
-
-std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
+//************************************************************************************************************
+std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
+//************************************************************************************************************
+    recoTracks.clear();
+    isReco.clear();
 
     bool DEBUG = true;
 
@@ -107,26 +55,27 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
     int n_ypixels(fconfig->GetPlaneColumns());
     double barWidth(fconfig->GetSciDetBarX());
 
-    double pitchX = 0.040; // 40 microns in mm
-    double pitchY = 0.036; // 36 microns in mm
-
     double max_dist = 8;
     std::map<int, int> track_to_id;
-    for (int s(0); s<seedPoints.size(); ++s){
+    for (int s(0); s<fcmosTracks.size(); ++s){
+
+        if(!isCMOSReco[s]) continue;
+
+        std::cout << "track: " << s << std::endl;
 
         // set true by default and make it false if the track building fails.
         isReco[s] = true;
         
         // steps
         // for each seed, compute a prediction in the first SciDet layer.
-        double delta = 0; // in the future compute distance CMOS to first layer using config...
 
-        TVector3 seed_pos = seedPoints[s];
-        TVector3 seed_vec = seedVecs[s];
+        // this distance is hardcoded... ideally mode to config XML!
+        // last CMOS plane to first layer distance is set to 5mm
+        double delta = 5;
 
-        TVector3 pred((seed_pos.X()-n_xpixels/2)*pitchX+seed_vec.X()*delta, (seed_pos.Y()-n_ypixels/2)*pitchY+seed_vec.Y()*delta, 0);
-        //std::cout << "seed: " << seed_pos.X() << "," << seed_pos.Y() << "," << seed_pos.Z() << std::endl;
-        //std::cout << "pred: " << pred.X() << "," << pred.Y() << "," << pred.Z() << std::endl;
+        TVector3 seed_pos = GetSpacePoint(fcmosTracks[s][4],4);
+        TVector3 seed_vec = (seed_pos-GetSpacePoint(fcmosTracks[s][3],3)).Unit();
+        TVector3 pred(seed_pos.X()+seed_vec.X()*delta,seed_pos.Y()+seed_vec.Y()*delta,0);
 
         // compute 3D candidates from 2D hits in the first 2 layers.
         std::vector<TVector3> candidates;
@@ -170,50 +119,11 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
         }
 
         //if the seed candidates are too close or if there is not accepted seed candidate, the track is not reconstructed.
-        //std::cout << "Naccepted: " << Naccepted << std::endl;
         if (Naccepted != 1){
             //std::cout << "breaking!!" << std::endl;
             isReco[s] = false;
             continue;
         }
-
-        // process iteratively layer after layer.
-        // for each layer generate a list of candidates and evaluate how many are
-        // closer than 'max_dist' to the previous layer 3D point for the track being built.
-        // for (int layerNum(2); layerNum<nlayers; layerNum++){
-        //     std::vector<TVector3> layer_candidates;
-        //     std::vector<int> layer_barIDs;
-        //     for(std::vector< SciDetHit* >::iterator hit2d=listOfSciHits.begin(); hit2d!=listOfSciHits.end(); hit2d++){
-        //         if ((*hit2d)->GetLayerID() != layerNum) continue;
-        //         double pos[2] = {0};
-        //         (*hit2d)->GetOrientation() ? pos[0] = (-(*hit2d)->GetBarID()+nbars/2)*barWidth : pos[1] = (-(*hit2d)->GetBarID()+nbars/2)*barWidth;
-        //         (*hit2d)->GetOrientation() ? pos[1] = listOf3Dhits.back().Y() : pos[0] = listOf3Dhits.back().X();
-        //         TVector3 step_candidate(pos[0],pos[1],(*hit2d)->GetLayerID()*barWidth);
-
-        //         double dist = (listOf3Dhits.back()-step_candidate).Mag();
-        //         std::cout << "dist: " << dist << std::endl;
-        //         if(dist < max_dist){
-        //             layer_candidates.push_back(step_candidate);
-        //             layer_barIDs.push_back(((*hit2d)->GetLayerID())*nbars+(*hit2d)->GetBarID());
-        //         }
-        //     }
-        //     if     (layer_candidates.size()==1){
-        //         listOf3Dhits.push_back(layer_candidates.back());
-        //         std::cout << "adding bar ids: " << layer_barIDs.back() << std::endl;
-        //         listOfBarIDs.push_back(layer_barIDs.back());
-        //     }
-        //     else if(layer_candidates.size() >1){
-        //         std::cout << "there is more than 1 candidate." << layer_barIDs.back() << std::endl;
-        //         // if there is more than one candidate the info can not be separated and the track is not reconstructed.
-        //         isReco[s] = false;
-        //         break;
-        //     }
-        //     else if(!layer_candidates.size()){
-        //         // either the track is successfully finished (and there is another track with longer range)
-        //         // or the track has a hole (situation we need to address).
-        //         break;
-        //     }
-        // }
 
         for (int layerNum(2); layerNum<nlayers; layerNum++){
             int min_dist = 1000;
@@ -259,16 +169,6 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
             }
         }
 
-        // now, if is Reco the listOf3Dhits constitute the reconstructed track
-        // std::cout << "Track " << s << ", is reconstructed: " << isReco[s] << std::endl;
-        // std::cout << "seed: " << pred.X() << "," << pred.Y() << "," << pred.Z() << std::endl;
-        // for (std::vector< TVector3>::iterator point3d=listOf3Dhits.begin(); point3d!=listOf3Dhits.end(); point3d++){
-        //     std::cout << "point3d: " << (*point3d).X() << "," << (*point3d).Y() << "," << (*point3d).Z() << std::endl;
-        // }
-        // for(std::vector<int>::iterator iter=listOfBarIDs.begin(); iter != listOfBarIDs.end(); iter++)
-        //     std::cout << "barID: " << (*iter) << std::endl;
-        // std:cout << "-------------" << std::endl;
-
         auto tmp_trk = new pCTTrack();
         tmp_trk->Set3DHits(listOf3Dhits);
         tmp_trk->SetBarIDs(listOfBarIDs);
@@ -279,286 +179,187 @@ std::vector< pCTTrack* > pCTTrackingManager::DoTracking(){
     return recoTracks;
 }
 
+//************************************************************************************************************
+double pCTTrackingManager::TrackOptimality(vector <CMOSPixel*> inputPixels, pCTXML*  config){
+//************************************************************************************************************
+    // function Object to be minimized
+    struct SumDistance2 {
+        const vector <CMOSPixel*> fPixels;
+        pCTXML* fconfig;
+        SumDistance2(const vector <CMOSPixel*> g, pCTXML*  config) : fPixels(g), fconfig(config) {}
+        // calculate distance line-point
+        double distance2(double x,double y,double z, const double *p) {
+            // distance line point is D= | (xp-x0) cross  ux |
+            // where ux is direction of line and x0 is a point in the line (like t = 0)
+            XYZVector xp(x,y,z);
+            XYZVector x0(p[0], p[1], p[2]);
+            XYZVector x1(p[0] + p[3], p[1] + p[4], p[2]+ p[5]);
+            XYZVector u = (x1-x0).Unit();
+            double d2 = ((xp-x0).Cross(u)).Mag2();
+            return d2;
+        }
+        // implementation of the function to be minimized
+        double operator() (const double *par) {
+            assert(fPixels.size() != 0);
+            double sum = 0;
+            int p_it = 0;
+            for (auto v:fPixels) {
+                sum += distance2(v->GetX(),v->GetY(), fconfig->GetPosZi(p_it),par);
+                p_it++;
+            }
+            return sum;
+        }
+    };
 
+    ROOT::Fit::Fitter  fitter;
+    // make the functor objet
+    SumDistance2 sdist(inputPixels, config);
+    ROOT::Math::Functor fcn(sdist,6);
+    // set the function and the initial parameter values
+    double pStart[6] = {1,1,1,1,1,1};
+    fitter.SetFCN(fcn,pStart);
+    // set step sizes different than default ones (0.3 times parameter values)
+    for (int i = 0; i < 6; ++i) fitter.Config().ParSettings(i).SetStepSize(0.01);
+    std::vector <double> p_result;
+    bool ok = fitter.FitFCN();
+    if (!ok) return 1E6;
 
-const int nPlanes= 4;
-int x[nPlanes] = {0};
-int y[nPlanes] = {0};
-int trackID[nPlanes] = {0};
-unsigned short int nTracks = 0;
-
-double chi2(const double *par)
-//double chi2(const double *par, Double_t zPos[4])
-{
-
-//Double_t z[4]= {fconfig->GetPosZ0(),fconfig->GetPosZ1(),fconfig->GetPosZ2(),fconfig->GetPosZ3()};
-Double_t z[4]={0,5,10,15};
-Double_t chi2=0;
-
-for (int i=0; i<nPlanes;i++)
-{
-double XY[2]={par[2]*z[i]+par[0],par[3]*z[i]+par[1]};
-//std::cout << "This is X and Y values at each point = " << x[i] << " " << y[i] << std::endl;
-chi2 += pow((x[i]-XY[0]),2)+pow((y[i]-XY[1]),2);
-
-}
-return chi2;
-}
-
-
-std::vector<TVector3> pCTTrackingManager::SpacePoint (std::vector<std::pair <int ,std::pair <int,int>>> pixelPoint)
-{   double zPos[nPlanes] = {fconfig->GetPosZ0(),fconfig->GetPosZ1(),fconfig->GetPosZ2(),fconfig->GetPosZ3()};
-    double pitchY = 0.04;
-    double pitchX = 0.036;
-    int rows = fconfig->GetPlaneRows();
-    int cols = fconfig->GetPlaneColumns();
-    std::vector<TVector3> XYZ;
-    for (int i=0; i<int(pixelPoint.size());i++)
-    {
-    double xPos = pitchX*(pixelPoint[i].second.first-cols*0.5);
-    double yPos =  pitchY*(pixelPoint[i].second.second-rows*0.5);
-    TVector3 xyz(xPos,yPos,zPos[i]);
-     XYZ.push_back(xyz);
-    }
-return XYZ;
-}
-
-
-TVector3 pCTTrackingManager::Vd(TVector3 V1,TVector3 V2)
-{
-double m = (V2-V1).Mag();
-TVector3 V3((V2-V1).x()/m,(V2-V1).y()/m,(V2-V1).z()/m);
-return V3;
+    const ROOT::Fit::FitResult & result = fitter.Result();
+    return result.MinFcnValue();
 }
 
+//************************************************************************************************************
+void pCTTrackingManager::DoCMOSTracking(){
+//************************************************************************************************************
 
+    isCMOSReco.clear();
+    fcmosTracks.clear();
 
+    int Nplanes    = 4;
+    int maxTracks  = 10;
+    int Ntracks    = 1000;
+    double zPos[4] = {fconfig->GetPosZ0(),fconfig->GetPosZ1(),fconfig->GetPosZ2(),fconfig->GetPosZ3()};
+    std::map<G4int, std::vector< CMOSPixel* > > planeToHits = fevent->GetPixelHitsMap();
+    std::map<G4int, std::vector< CMOSPixel*> >::iterator plane;
+    std::vector< CMOSPixel*>::iterator cmosHit;
 
-std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> pCTTrackingManager::SortTracksByChi2(
-//std::vector<std::pair<Double_t,std::vector<std::pair<int,int>>>> SortTracksByChi2(
-std::vector< CMOSPixel*> Det1, 
-std::vector< CMOSPixel*> Det2, 
-std::vector< CMOSPixel*> Det3, 
-std::vector< CMOSPixel*> Det4)
+    for(plane=planeToHits.begin(); plane!=planeToHits.end(); plane++) 
+        if ((*plane).second.size() < Ntracks) Ntracks = (*plane).second.size(); 
 
+    if(Ntracks>maxTracks) {return;}
 
-{   
-    std::vector< CMOSPixel*>::iterator it1, it2, it3, it4;
-    //std::vector<std::vector< CMOSPixel*>::iterator> its[4] = {it1,it2,it3,it4};
-
-    //std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> chi2Points;
-    std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> chi2Points;
-
-            std::vector<std::pair <int,int>> points;
-            std::vector<std::pair <int,std::pair <int,int>>> pointsTrackID;
-
-            for (it1=Det1.begin(); it1!=Det1.end(); it1++)
-            { 
-                for (it2=Det2.begin(); it2!=Det2.end(); it2++)
-                {   
-                    for (it3=Det3.begin(); it3!=Det3.end(); it3++)
-                    {   
-                     for (it4=Det4.begin(); it4!=Det4.end(); it4++)
-                        { 
-                            /*
-                                for( uint i(0); i<4; i++)
-                                if ((*its[i])->GetTrackID() != -999)
-                                {
-                                    x[i]=(*its[i])->GetX();
-                                    y[i]=(*its[i])->GetY();
-                                    trackID[i]=(*its[i])->GetTrackID();
-                                }
-
-                                */
-
-                            if ((*it1)->GetTrackID()!=-999)
-                                {
-                                    x[0]=(*it1)->GetX();
-                                    y[0]=(*it1)->GetY();
-                                    trackID[0]=(*it1)->GetTrackID();
-                                }
-
-                            if ((*it2)->GetTrackID()!=-999)
-                                {
-                                    x[1]=(*it2)->GetX();
-                                    y[1]=(*it2)->GetY();
-                                    trackID[1]=(*it2)->GetTrackID();
-                                }
-
-                            if ((*it3)->GetTrackID()!=-999)
-                                {
-                                    x[2]=(*it3)->GetX();
-                                    y[2]=(*it3)->GetY();
-                                    trackID[2]=(*it3)->GetTrackID();
-                                }
-
-                            if ((*it4)->GetTrackID()!=-999)
-                                {
-                                    x[3]=(*it4)->GetX();
-                                    y[3]=(*it4)->GetY();
-                                    trackID[3]=(*it4)->GetTrackID();
-                                }
-                           
-                            
-                            for (int i =0; i<nPlanes; i++) {
-
-
-
-                                std::cout<< "XYT= ["<<x[i]<<", "<<y[i]<<", "<<trackID[i]<<"]"<<std::endl;
-                                points.push_back(make_pair(x[i],y[i]));
-                                
-                                std::pair<int,int> XY = make_pair(x[i],y[i]);
-                                pointsTrackID.push_back(make_pair(trackID[i],XY));
-                            }
-
-                            
-                             ROOT::Math::Minimizer* minimum = ROOT::Math::Factory::CreateMinimizer("Minuit2");
-                            // set tolerance , etc...
-                                minimum->SetMaxFunctionCalls(1000000); // for Minuit/Minuit2
-                                minimum->SetMaxIterations(100000);  // for GSL
-                                minimum->SetTolerance(0.01);
-                                minimum->SetPrintLevel(1);                            //TVirtualFitter* minuit = TVirtualFitter::Fitter(0,nPlanes);
-
-                                // create function wrapper for minimizer
-                                 // a IMultiGenFunction type
-                                  ROOT::Math::Functor f(&chi2,4);
-                                 double step[4] = {0.01,0.01,0.01,0.01};
- 
-                                minimum->SetFunction(f);
- 
-                                // Set the free variables to be minimized !
-                                minimum->SetVariable(0,"x0",x[0], step[0]);
-                                minimum->SetVariable(1,"y0",y[0], step[1]);
-                                minimum->SetVariable(2,"Vx",0, step[2]);
-                                minimum->SetVariable(3,"Vy",0, step[3]);
-                             
-                                // do the minimization
-                                minimum->Minimize();
-                                Double_t chi2 = minimum->MinValue();
-                      
-                            chi2Points.push_back(make_pair(chi2,pointsTrackID));
-                            points.clear();
-                            pointsTrackID.clear();
-                           
-                        }
+    std::map<int, std::vector< std::vector<CMOSPixel*>>> cmos_tracks;
+    // start creating 1 cmos_track per hit in the first plane
+    for(uint i(0); i<planeToHits[0].size(); i++){
+        isCMOSReco[i] = true;
+        std::vector<std::vector<CMOSPixel*>> new_set_of_tracks;
+        std::vector<CMOSPixel*> new_track;
+        new_track.push_back(planeToHits[0][i]);
+        new_set_of_tracks.push_back(new_track);
+        cmos_tracks[i] = new_set_of_tracks;
+        int trks_size = 1;
+        while(isCMOSReco[i] and trks_size<Nplanes){
+            std::vector<std::vector<CMOSPixel*>> tmp_tracks;
+            int tracks_to_rm = (int) cmos_tracks[i].size();
+            for(int trk(0); trk<(int)cmos_tracks[i].size(); trk++){
+                int p_it = (int)cmos_tracks[i][trk].size();
+                int compat_count = 0;
+                for(uint j(0); j<planeToHits[p_it].size(); j++){
+                    if(checkHitsCompatibility(cmos_tracks[i][trk].back(),planeToHits[p_it][j],zPos[p_it]-zPos[p_it-1])){
+                        std::vector<CMOSPixel*> new_tmp_track;
+                        for(auto tmpTrkHit:cmos_tracks[i][trk]) new_tmp_track.push_back(tmpTrkHit);
+                        new_tmp_track.push_back(planeToHits[p_it][j]);
+                        tmp_tracks.push_back(new_tmp_track);
+                        compat_count++;
                     }
                 }
+                if(compat_count==1) for (auto tmpTrk:tmp_tracks) cmos_tracks[i].push_back((tmpTrk));
+                else isCMOSReco[i] = false;
+                cmos_tracks[i].erase(cmos_tracks[i].begin(), cmos_tracks[i].begin() + tracks_to_rm);
             }
-            std::sort(chi2Points.begin(), chi2Points.end()); 
-            
-            return chi2Points;
-
- }
-
-
-
-
-////// The kind of input exected for the TrackSelector is something like this:
-/*
-
-
-        CMOSPixel* defoult = new CMOSPixel();
-        std::vector< CMOSPixel*>  det1, det2, det3, det4;
-        det1.push_back(default);
-        det2.push_back(default);
-        det3.push_back(default);
-        det4.push_back(default);
-
-        nTracks =0;
-        for(it2=Counter.begin(); it2!=Counter.end(); it2++)
-        {
-         unsigned short int Plane = (*it2).first;
-         unsigned short int nHitsInPlane = (*it2).second.size();
-        if (nHitsInPlane < nTracks || nTracks ==0) nTracks = nHitsInPlane;
-        if (Plane==0)  det1 = (*it2).second;
-        if (Plane==1)  det2 = (*it2).second;
-        if (Plane==2)  det3 = (*it2).second;
-        if (Plane==3)  det4 = (*it2).second;
+            trks_size++;
         }
-*/
-//std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> TrackSelector( std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> sortedTracks)
-std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> pCTTrackingManager::TrackSelector(std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> sortedTracks, int nTracks)
+    }
 
-{
+    std::vector<std::vector<CMOSPixel*>> result;
+    for(uint i(0); i<planeToHits[0].size(); i++){
+        if(isCMOSReco[i]){
+            result.push_back(cmos_tracks[i][0]);
+            //for(auto cmoshit:cmos_tracks[i][0]) std::cout << cmoshit->GetX() << "," << cmoshit->GetY() << std::endl;
+        }
+    }
 
-std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>>::iterator it,it2;
-std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> outPut,chi2Points;
+    fcmosTracks = result;
+}
 
-double bestChi2SUM=0;
-double chi2 = 0;
-unsigned int Try =0;
-for(it=sortedTracks.begin(); it!=sortedTracks.end(); it++) //run over the full set of tracks
-        {
-                        
-                //std::vector<std::pair<int,int>>::iterator itPoint; //this iterator run over pairs (XY points) 
-                std::vector<std::pair <int ,std::pair <int,int>>>::iterator itPoint; //this iterator run over pairs (XY points) 
-                std::cout<<"This is the try number " << Try << std::endl;
-                std::cout << "bestChi2 Sum = " << bestChi2SUM << " first chi2 is " << (*it).first << " and the cut is " << float(bestChi2SUM/(nTracks))<< std::endl;
-                   if(bestChi2SUM != 0 and (*it).first >= float(bestChi2SUM/(nTracks))) {
-                    std::cout<<"We get out here! (By chi2 Limit)"<<std::endl;
-                    return outPut;}
-                    
-
- 
-                std::vector<std::pair<int,int>> points;
-                std::vector<std::pair <int ,std::pair <int,int>>> pointsTrackID;
-
-    
-                for(it2=it; it2!=sortedTracks.end(); it2++) //run over the new set of tracks starting from a new point
-                {
-                    if (int(chi2Points.size())==nTracks) break;
-                    if (int(chi2Points.size())==0)
-                    {
-                        chi2+=(*it2).first;
-                        chi2Points.push_back(*it2);
-                        continue;
-                      }
-                     
-                    bool addTrack =true; //this bool will only be true if any of the points pair fo the track is not
-                    for (int i =0; i< int(chi2Points.size()); i++)
-                        {
-                        for(itPoint=(*it2).second.begin();itPoint!=(*it2).second.end();itPoint++)
-                            {
-                                
-                            for (int j = 0; j< int(chi2Points[i].second.size());j++)
-                                 {
-                                     
-                                    if( ((*itPoint).second.first == chi2Points[i].second[j].second.first )  && ((*itPoint).second.second == chi2Points[i].second[j].second.second) )
-                                        { 
-                                           addTrack = false;
-                                           break;
-                                        }
-
-                                    if (!addTrack) break;
-                                }
-                            if (!addTrack) break;
-                            }
-                       } 
-                    if (addTrack)
-                        {
-                         chi2+=(*it2).first;
-                         chi2Points.push_back(*it2);
-                            if (int(chi2Points.size())==nTracks)     break;
-                          }
-                }
-                if ((bestChi2SUM == 0 || chi2 < bestChi2SUM) && int(chi2Points.size())==nTracks)
-                {   if (int(chi2Points.size())==nTracks) bestChi2SUM = chi2;
-                    if (int(chi2Points.size())==nTracks)    outPut = chi2Points;
-                }
-                Try += 1;
-        } 
-    if (int(outPut.size())!=nTracks)
-        {
-        std::cout<< "Error 0, Not enough tracks were reconstructed! "<< nTracks << " were expected."<<std::endl;
-        return outPut;
-         }
-return outPut;
+//************************************************************************************************************
+TVector3 pCTTrackingManager::GetSpacePoint (CMOSPixel* pixel, int plane){
+//************************************************************************************************************
+    double zPos[4] = {fconfig->GetPosZ0(),fconfig->GetPosZ1(),fconfig->GetPosZ2(),fconfig->GetPosZ3()};
+    double xPos = 0.036*(pixel->GetX()-fconfig->GetPlaneColumns()*0.5);
+    double yPos = 0.04*(pixel->GetY()-fconfig->GetPlaneRows()*0.5);
+    return TVector3(xPos,yPos,zPos[plane]);
 }
 
 
+//************************************************************************************************************
+void pCTTrackingManager::DoCMOSChi2Tracking(){
+//************************************************************************************************************
+    isCMOSReco.clear();
+    fcmosTracks.clear();
 
+    // check how many tracks do we have and return if there are too many.
+    int maxTracks  = 10;
+    int Ntracks    = 1000;
+    std::map<G4int, std::vector< CMOSPixel* > > planeToHits = fevent->GetPixelHitsMap();
+    std::map<G4int, std::vector< CMOSPixel*> >::iterator plane;
+    for(plane=planeToHits.begin(); plane!=planeToHits.end(); plane++) 
+        if ((*plane).second.size() < Ntracks) Ntracks = (*plane).second.size(); 
+    if(Ntracks>maxTracks) {return;}
 
+    // form all possible track combinations and sort them by fitness (chi2).
+    int tot_size = 0;
+    for (int p_it(0); p_it<4; p_it++) tot_size += planeToHits[p_it].size();
+    std::vector<std::pair<double,std::vector<CMOSPixel*>>> tracks_fitness;
 
+    for(int i(0); i<(int)planeToHits[0].size(); i++){
+        for(int j(0); j<(int)planeToHits[1].size(); j++){
+            for(int k(0); k<(int)planeToHits[2].size(); k++){
+                for(int l(0); l<(int)planeToHits[3].size(); l++){
+                    std::vector< CMOSPixel* > track;
+                    track.push_back(planeToHits[0][i]);
+                    track.push_back(planeToHits[1][j]);
+                    track.push_back(planeToHits[2][k]);
+                    track.push_back(planeToHits[3][l]);
+                    tracks_fitness.push_back(make_pair(TrackOptimality(track,fconfig),track));
+                }
+            }
+        }
+    }
+    std::sort(tracks_fitness.begin(), tracks_fitness.end()); 
 
+    // select tracks not sharing CMOSPixel*.
+    std::vector<std::vector<CMOSPixel*>> result;
+    std::vector<std::pair<double,std::vector<CMOSPixel*>>>::iterator trk;
+    std::vector<CMOSPixel*> selPixels;
+    int trk_cnt = 0;
+    for(trk=tracks_fitness.begin(); trk_cnt<Ntracks; trk++){
+        bool found = false;
+        for(auto cmoshit:trk->second){
+            std::vector<CMOSPixel*>::iterator it = std::find(selPixels.begin(), selPixels.end(), cmoshit);
+            if(it != selPixels.end()){
+                found = true;
+                break;
+            }
+        }
+        if (!found){
+            for(auto cmoshit:trk->second) selPixels.push_back(cmoshit);
+            result.push_back((trk->second));
+            trk_cnt++;
+        }
+    }
+    std::cout << "# (N) - sel tracks: " << Ntracks << "," << result.size() << std::endl;
 
-
+    // store the outcome as a TrackingManager variable.
+    fcmosTracks = result;
+}

@@ -1,4 +1,4 @@
-//
+//Do
 // C. Jesús Valls 
 // cjesus@ifae.es
 //
@@ -147,23 +147,9 @@ int main(int argc,char** argv){
         if(ievt%10000==0)cout << "Event: " << ievt << endl;
 
         std::map <int, double > trackIdToGunEnergy = event->GetGunEnergyMap();
-        std::vector<TVector3> points;
-        std::vector<TVector3> vecs;
-        std::map<int, std::vector< CMOSPixel* > > Counter = event->GetPixelHitsMap();
-        std::map<int, std::vector< CMOSPixel*> >::iterator it;
-        for(it=Counter.begin(); it!=Counter.end(); it++){
-            ushort Plane = (*it).first;
-            if (Plane != 3) continue;
-            ushort nHitsInPlane = (*it).second.size();
-            for(ushort index(0); index<nHitsInPlane; index++)
-            {
-                points.push_back(TVector3((*it).second.at(index)->GetX(),(*it).second.at(index)->GetY(),0));
-                vecs.push_back(TVector3(0,0,0));
-            }
-        }
-        // if(points.size()) std::cout <<  points.back().X() << "," << points.back().Y() << "," << points.back().Z() << std::endl;
-        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config,points,vecs);
-        auto recoTracks = trkMan->DoTracking();
+        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
+        trkMan->DoCMOSTracking();
+        auto recoTracks = trkMan->DoRTTracking();
 
         for(int i(0); i<recoTracks.size(); i++){
 
@@ -172,7 +158,7 @@ int main(int argc,char** argv){
             //cout << "range: " << range << endl;
             h_trueEvsRng->Fill(range,(*trackIdToGunEnergy.begin()).second);
         }
-        //cout << (*trackIdToGunEnergy.begin()).second << "," << fitval->Eval((*trackIdToGunEnergy.begin()).second) << endl;
+
         if(show_SciDet) event->DrawSciDetHits(config);
         if(show_CMOS)   event->DrawCMOSHits(config);
     }
@@ -228,9 +214,9 @@ int main(int argc,char** argv){
         }
         if(! points.size()) continue;
         
-        //std::cout <<  points.back().X() << "," << points.back().Y() << "," << points.back().Z() << std::endl;
-        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config,points,vecs);
-        auto recoTracks = trkMan->DoTracking();
+        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
+        trkMan->DoCMOSTracking();
+        auto recoTracks = trkMan->DoRTTracking();
         
         for(int i(0); i<recoTracks.size(); i++){
             if(recoTracks.size() != 1) continue;
