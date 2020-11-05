@@ -148,6 +148,11 @@ int main(int argc,char** argv)
                 cout << "Bar Height: " << pCTXMLInput->GetSciDetBarY() << endl;
                 cout << "Bar Depth:  " << pCTXMLInput->GetSciDetBarZ() << endl;
             }
+            else if (string(argv[iarg])=="--NProt"){
+                iarg++;
+                pCTXMLInput->SetNProtons(atof(string(argv[iarg]).c_str()));
+                cout << "New number of protons: " << pCTXMLInput->GetNProtons()<< endl;
+            }
       }
   }
 

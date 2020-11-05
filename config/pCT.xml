@@ -19,7 +19,7 @@
 <!-- Use Detector -->
 
   <UseSciDet>  
-    False
+    True
   </UseSciDet>
 
   <UseCMOS>  
@@ -27,11 +27,11 @@
   </UseCMOS>
 
   <Use4thCMOS>
-    False
+    True
   </Use4thCMOS>
   
   <UsePhantom>  
-    True
+    False
   </UsePhantom>
 
 <!-- ............ -->
@@ -43,11 +43,11 @@
 </BeamType>
 
 <NProtons>
-  10
+  1
 </NProtons>
 
 <IniPGUNEnergy>
-  200
+  250
 </IniPGUNEnergy>
 
 <UseEnergyWide>
@@ -60,11 +60,11 @@
 <!-- SciDet Geometry -->
 
   <SciDetNBars>
-    40
+    32
   </SciDetNBars>
 
   <SciDetNLayers>
-    120
+    130
   </SciDetNLayers>
 
   <SciDetBarX>
@@ -72,7 +72,7 @@
   </SciDetBarX>
 
   <SciDetBarY>
-    120
+    96
   </SciDetBarY>
 
   <SciDetBarZ>
