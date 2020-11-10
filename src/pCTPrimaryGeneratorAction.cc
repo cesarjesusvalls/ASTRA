@@ -100,24 +100,27 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
     double iniEnergy = -999;
     for (int ind=0; ind<pCTXMLInput->GetNProtons(); ind++){
-
         if(pCTXMLInput->GetBeamType() == "Rectangular"){
-            G4double x0 =   (G4UniformRand()-0.5)*(pCTXMLInput->GetPlaneColumns()*0.04-1.5);
-            G4double y0 =   (G4UniformRand()-0.5)*(pCTXMLInput->GetPlaneRows()*0.036-1.5);
+            // This geometry configurations is thought for 96mmx96mm RT (width flat protons in 90x90mm sufrace).
+            G4double x0 =   (G4UniformRand()-0.5)*(pCTXMLInput->GetPlaneColumns()*pCTXMLInput->GetPixelX()*0.001-45);
+            G4double y0 =   (G4UniformRand()-0.5)*(pCTXMLInput->GetPlaneRows()*pCTXMLInput->GetPixelY()*0.001-45);
             G4double z0 =   pCTXMLInput->GetPosZ0()*10-5;
             fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
         }
-        if(pCTXMLInput->GetBeamType() == "Cercle"){
-            G4double x0;   
-            G4double y0;
-            frndom->Circle(x0,y0,35);
-            //G4cout << "protN: " << ind << " x0/y0: " << x0 << "," << y0 << G4endl;
+        if(pCTXMLInput->GetBeamType() == "Gaussian"){
+            // This geometry configurations is thought for 96mmx96mm RT (width flat protons in 90x90mm sufrace).
+            G4double x0 = 999;
+            G4double y0 = 999;
             G4double z0 =   pCTXMLInput->GetPosZ0()*10-5;
+            while (x0 > 90 || x0 < -90 || y0 > 90 || y0 <-90){
+                x0 = frndom->Gaus(0,7);
+                y0 = frndom->Gaus(0,7);
+            }  
             fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
         }
         iniEnergy = pCTXMLInput->GetIniPGUNEnergy();
         if(pCTXMLInput->UseEnergyWide()){
-            iniEnergy = 36 + (G4UniformRand()*194.);
+            iniEnergy = 20 + (G4UniformRand()*220.);
         }
         fParticleGun->SetParticleEnergy(iniEnergy);
         fParticleGun->GeneratePrimaryVertex(anEvent);
@@ -126,23 +129,3 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-
-/*
-
-    double iniEnergy = -999;
-    for (int ind=0; ind<pCTXMLInput->GetNProtons(); ind++){
-        if(pCTXMLInput->GetBeamType() == "Rectangular"){
-            G4double x0 =   (G4UniformRand()-0.5)*pCTXMLInput->GetPlaneColumns()*0.04;
-            G4double y0 =   (G4UniformRand()-0.5)*pCTXMLInput->GetPlaneColumns()*0.036;
-            G4double z0 =   pCTXMLInput->GetPosZ0()*10-5;
-            fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
-        }
-        iniEnergy = pCTXMLInput->GetIniPGUNEnergy();
-        if(pCTXMLInput->UseEnergyWide()){
-            iniEnergy = 36 + (G4UniformRand()*194.);
-        }
-    }
-    fParticleGun->SetParticleEnergy(iniEnergy);
-    fParticleGun->GeneratePrimaryVertex(anEvent)
- */

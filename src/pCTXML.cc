@@ -36,7 +36,6 @@ void pCTXML::SetInputs(){
     string line;
     ifstream myfile (fXMLFile);
     if(myfile.is_open()){    
-      
         XML2String  ("Example",fExample);
         XML2String  ("BeamType",fBeamType);
         XML2Int     ("NProtons",fNProtons);
@@ -63,9 +62,10 @@ void pCTXML::SetInputs(){
         XML2Double  ("PosZ3",fPosZ3);
         XML2Double  ("PlaneColumns", fPlaneColumns);
         XML2Double  ("PlaneRows", fPlaneRows);
+        XML2Double  ("CMOS_PixelX", fPixelX);
+        XML2Double  ("CMOS_PixelY", fPixelY);
         XML2Double  ("EpiThickness", fEpiThickness);
         XML2Double  ("SubThickness", fSubThickness);
-
     }
     else cout << "Unable to open file"; 
     myfile.close();

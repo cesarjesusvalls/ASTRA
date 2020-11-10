@@ -141,8 +141,9 @@ int main(int argc,char** argv)
             else if (string(argv[iarg])=="--DoSquareSec"){
                 cout << "Forcing Squared Bar Xsec" << endl;
                 pCTXMLInput->SetSciDetBarX(pCTXMLInput->GetSciDetBarZ());
-                int nBars = pCTXMLInput->GetSciDetBarY()/pCTXMLInput->GetSciDetBarX();
+                int nBars = pCTXMLInput->GetSciDetBarY()/pCTXMLInput->GetSciDetBarX()+0.5;
                 pCTXMLInput->SetSciDetNBars(nBars);
+                pCTXMLInput->SetSciDetBarY(nBars*pCTXMLInput->GetSciDetBarZ());
                 cout << "New number of bars: " << pCTXMLInput->GetSciDetNBars() << endl;
                 cout << "Bar Width:  " << pCTXMLInput->GetSciDetBarX() << endl;
                 cout << "Bar Height: " << pCTXMLInput->GetSciDetBarY() << endl;
@@ -162,7 +163,7 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(new pCTDetectorConstruction());
 
   // Physics list
-  G4VModularPhysicsList* physicsList = new QGSP_BERT_HP();
+  G4VModularPhysicsList* physicsList = new QBBC;// new QGSP_BERT_HP();
   physicsList->SetVerboseLevel(0);
   runManager->SetUserInitialization(physicsList);
     

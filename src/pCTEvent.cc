@@ -85,13 +85,11 @@ void pCTEvent::DrawSciDetHits(pCTXML* config){
 
 }
 
-
 void pCTEvent::DrawCMOSHits(pCTXML* config){
 
-    //const int nplanes(config->GetCMOSNPlanes());
     const int    nplanes(4);
-    const double pitchX(40);
-    const double pitchY(36);
+    const double pitchX(config->GetPixelX());
+    const double pitchY(config->GetPixelY());
     const double nrows(config->GetPlaneRows());
     const double ncols(config->GetPlaneColumns());
 

@@ -35,9 +35,9 @@ CMOSSD::CMOSSD(G4String SDname)
 CMOSSD::~CMOSSD()
 {
   
-        G4cout << "BLAH" << " deleting SD called "<< GetName() << G4endl;
-        fout.close();
-        rename(fname.c_str(), ("Test_"+GetName()+".txt").c_str()); 
+        //G4cout << "BLAH" << " deleting SD called "<< GetName() << G4endl;
+        //fout.close();
+        //rename(fname.c_str(), ("Test_"+GetName()+".txt").c_str()); 
   //  rename(fname.c_str(), (fHistoManager->GetFileName()+"_"+GetName()+".bin").c_str());
 }
 
@@ -116,8 +116,8 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
     G4int nHits = hitCollection->entries(); 
     if(nHits==0) return;
     
-    G4double pitchX = 40.0*um;
-    G4double pitchY = 36.0*um;
+    G4double pitchX = pCTXMLInput->GetPixelX()*0.001;
+    G4double pitchY = pCTXMLInput->GetPixelY()*0.001;
     G4double threshold = 550;// 3.3*150; //DUT to e- conversion for TPAC = 3.3e. Basic threshold = 150 DUT
     
     float eventID = (float)G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
@@ -158,7 +158,7 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
                 Digits[hit_key] = hit->GetEnergyDeposited() ;
   }
         
-    G4cout << "\n\t----- Total Energy Deposited -----" << G4endl;
+    //G4cout << "\n\t----- Total Energy Deposited -----" << G4endl;
     
 
     // container to add the edep for multiple hits on a strip (if this happens)
@@ -221,25 +221,25 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
 
     //std::cout << "Nhits:" << pCT_Event->GetPixelHitsMap().size() << std::endl;
 
-    std::map<G4int, std::vector< CMOSPixel*> >::iterator it2;
-    for(it2=Counter.begin(); it2!=Counter.end(); it2++)
-    {
-        unsigned short int Plane = (*it2).first;
-        unsigned short int nHitsInPlane = (*it2).second.size();
-            //G4cout << "Plane " << Plane << " has " << nHitsInPlane << " pixels above threshold (" << threshold << "e-)" << G4endl;
+    // std::map<G4int, std::vector< CMOSPixel*> >::iterator it2;
+    // for(it2=Counter.begin(); it2!=Counter.end(); it2++)
+    // {
+    //     unsigned short int Plane = (*it2).first;
+    //     unsigned short int nHitsInPlane = (*it2).second.size();
+    //         //G4cout << "Plane " << Plane << " has " << nHitsInPlane << " pixels above threshold (" << threshold << "e-)" << G4endl;
   
-        for(unsigned index(0); index<nHitsInPlane; index++)
-        {
-          unsigned short int X = (*it2).second.at(index)->GetX();
-          unsigned short int Y = (*it2).second.at(index)->GetY();
-          unsigned int e = (*it2).second.at(index)->GetElectronsLiberated();
-          int tID = (*it2).second.at(index)->GetTrackID();
+    //     for(unsigned index(0); index<nHitsInPlane; index++)
+    //     {
+    //       unsigned short int X = (*it2).second.at(index)->GetX();
+    //       unsigned short int Y = (*it2).second.at(index)->GetY();
+    //       unsigned int e = (*it2).second.at(index)->GetElectronsLiberated();
+    //       int tID = (*it2).second.at(index)->GetTrackID();
           
-          fout << X << ", " << Y << ", "<< Plane <<", " << e <<"," <<G4endl;
-          std::cout << X << ", " << Y << ", "<< Plane <<", " << e <<", " << tID <<std::endl;
-        }
+    //       fout << X << ", " << Y << ", "<< Plane <<", " << e <<"," <<G4endl;
+    //       std::cout << X << ", " << Y << ", "<< Plane <<", " << e <<", " << tID <<std::endl;
+    //     }
   
-    }
+    // }
     pEvtID = evtID;
     timer->Stop();
     //G4cout << "real time elapsed in CMOSSD::EndOfAction() = " << timer->GetRealElapsed() << G4endl; 

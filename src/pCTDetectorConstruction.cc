@@ -139,8 +139,8 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
 
     pCTSiDetConstructor* fSiDetConstructor = new pCTSiDetConstructor("SiliconDet");
     G4String nameSiliconDet = fSiDetConstructor->GetPlaneName();
-    fSiDetConstructor->SetPlaneColumns(pCTXMLInput->GetPlaneColumns()*0.04);
-    fSiDetConstructor->SetPlaneRows(pCTXMLInput->GetPlaneRows()*0.036);
+    fSiDetConstructor->SetPlaneColumns(pCTXMLInput->GetPlaneColumns()*pCTXMLInput->GetPixelX()*0.001);
+    fSiDetConstructor->SetPlaneRows(pCTXMLInput->GetPlaneRows()*pCTXMLInput->GetPixelY()*0.001);
     fSiDetConstructor->SetEpiThickness(pCTXMLInput->GetEpiThickness());
     fSiDetConstructor->SetSubThickness(pCTXMLInput->GetSubThickness());
     logicPlane = fSiDetConstructor->GetPiece();

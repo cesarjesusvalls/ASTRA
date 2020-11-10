@@ -138,10 +138,10 @@ int main(int argc,char** argv){
     TH1F* h_imageDist = new TH1F("h_imageDist","h_imageDist",100,80,240);
 
     const int    nplanes(3);
-    const double pitchX(40);
-    const double pitchY(36);
-    const double nrows(448);
-    const double ncols(224);
+    const double pitchX(pCTXMLInput->GetPixelX());
+    const double pitchY(pCTXMLInput->GetPixelY());
+    const double nrows(config->GetPlaneRows());
+    const double ncols(config->GetPlaneColumns());
 
     TH2F* h_hitsMap     = new TH2F("image","image",100,0,nrows,100,0,ncols);
     TH2F* h_hitsMapNorm = new TH2F("imageNorm","imageNorm",100,0,nrows,100,0,ncols);

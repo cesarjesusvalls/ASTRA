@@ -296,11 +296,10 @@ void pCTTrackingManager::DoCMOSTracking(){
 TVector3 pCTTrackingManager::GetSpacePoint (CMOSPixel* pixel, int plane){
 //************************************************************************************************************
     double zPos[4] = {fconfig->GetPosZ0(),fconfig->GetPosZ1(),fconfig->GetPosZ2(),fconfig->GetPosZ3()};
-    double xPos = 0.036*(pixel->GetX()-fconfig->GetPlaneColumns()*0.5);
-    double yPos = 0.04*(pixel->GetY()-fconfig->GetPlaneRows()*0.5);
+    double xPos =  fconfig->GetPixelX()*0.001*(pixel->GetX()-fconfig->GetPlaneColumns()*0.5);
+    double yPos =  fconfig->GetPixelY()*0.001*(pixel->GetY()-fconfig->GetPlaneRows()*0.5);
     return TVector3(xPos,yPos,zPos[plane]);
 }
-
 
 //************************************************************************************************************
 void pCTTrackingManager::DoCMOSChi2Tracking(){

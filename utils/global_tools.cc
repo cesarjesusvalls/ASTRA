@@ -76,7 +76,7 @@ TStyle* SetpCTStyle(Int_t WhichStyle, TString styleName = "pCT") {
 
     // // Fonts, sizes, offsets
     pCTstyle->SetTextFont(FontStyle);
-    pCTstyle->SetTextSize(0.08);
+    pCTstyle->SetTextSize(0.07);
 
     pCTstyle->SetLabelFont(FontStyle, "x");
     pCTstyle->SetLabelFont(FontStyle, "y");

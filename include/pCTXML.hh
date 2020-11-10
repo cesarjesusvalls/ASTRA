@@ -63,6 +63,8 @@ public :
     double GetPosZ3()              {return fPosZ3;};
     double GetPlaneColumns()       {return fPlaneColumns;}
     double GetPlaneRows()          {return fPlaneRows;}
+    double GetPixelX()             {return fPixelX;}
+    double GetPixelY()             {return fPixelY;}
     double GetEpiThickness()       {return fEpiThickness;}
     double GetSubThickness()       {return fSubThickness;}
 
@@ -85,32 +87,34 @@ public :
     void SetXMLFileName(G4String val)       {fXMLFile           = val;}
     void SetXMLExample(G4String val)        {fExample           = val;}
     void SetBeamType(G4String val)          {fBeamType          = val;}
-    void SetSciDetNBars(int val)          {fSciDetNBars       = val;}
-    void SetSciDetNLayers(int val)        {fSciDetNLayers     = val;}
-    void SetSciDetBarX(double val)        {fSciDetBarX        = val;}
-    void SetSciDetBarY(double val)        {fSciDetBarY        = val;}
-    void SetSciDetBarZ(double val)        {fSciDetBarZ        = val;}
-    void SetBarCoatThick(double val)      {fBarCoat           = val;}
-    void SetSciDetX(double val)           {fSciDetX           = val;}
-    void SetSciDetY(double val)           {fSciDetY           = val;}
-    void SetSciDetZ(double val)           {fSciDetZ           = val;}
-    void SetIniPGUNEnergy(double val)     {fIniPGUNEnergy     = val;}
-    void SetNProtons(int val)             {fNProtons          = val;}
-    void SetPosX(double val)              {fPosX              = val;}
-    void SetPosY(double val)              {fPosY              = val;}
-    void SetPosZ0(double val)             {fPosZ0             = val;}
-    void SetPosZ1(double val)             {fPosZ1             = val;}
-    void SetPosZ2(double val)             {fPosZ2             = val;}
-    void SetPosZ3(double val)             {fPosZ3             = val;}
-    void SetPlaneColumns(double val)      {fPlaneColumns      = val;}
-    void SetPlaneRows(double val)         {fPlaneRows         = val;}
-    void SetEpiThickness(double val)      {fEpiThickness      = val;}
-    void SetSubThickness(double val)      {fSubThickness      = val;}
+    void SetSciDetNBars(int val)            {fSciDetNBars       = val;}
+    void SetSciDetNLayers(int val)          {fSciDetNLayers     = val;}
+    void SetSciDetBarX(double val)          {fSciDetBarX        = val;}
+    void SetSciDetBarY(double val)          {fSciDetBarY        = val;}
+    void SetSciDetBarZ(double val)          {fSciDetBarZ        = val;}
+    void SetBarCoatThick(double val)        {fBarCoat           = val;}
+    void SetSciDetX(double val)             {fSciDetX           = val;}
+    void SetSciDetY(double val)             {fSciDetY           = val;}
+    void SetSciDetZ(double val)             {fSciDetZ           = val;}
+    void SetIniPGUNEnergy(double val)       {fIniPGUNEnergy     = val;}
+    void SetNProtons(int val)               {fNProtons          = val;}
+    void SetPosX(double val)                {fPosX              = val;}
+    void SetPosY(double val)                {fPosY              = val;}
+    void SetPosZ0(double val)               {fPosZ0             = val;}
+    void SetPosZ1(double val)               {fPosZ1             = val;}
+    void SetPosZ2(double val)               {fPosZ2             = val;}
+    void SetPosZ3(double val)               {fPosZ3             = val;}
+    void SetPlaneColumns(double val)        {fPlaneColumns      = val;}
+    void SetPlaneRows(double val)           {fPlaneRows         = val;}
+    void SetPixelX(double val)              {fPixelX            = val;}
+    void SetPixelY(double val)              {fPixelY            = val;}
+    void SetEpiThickness(double val)        {fEpiThickness      = val;}
+    void SetSubThickness(double val)        {fSubThickness      = val;}
     void SetUseSciDet(G4bool val)           {fUseSciDet         = val;}
     void SetUseCMOS(G4bool val)             {fUseCMOS           = val;}
     void SetUse4thCMOS(G4bool val)          {fUse4thCMOS        = val;}
-    void SetUsePhantom(G4bool val)           {fUsePhantom        = val;}
-    void SetUseEnergyWide(G4bool val)          {fUseEnergyWide     = val;}
+    void SetUsePhantom(G4bool val)          {fUsePhantom        = val;}
+    void SetUseEnergyWide(G4bool val)       {fUseEnergyWide     = val;}
 
     void SetInputs();
 
@@ -142,6 +146,8 @@ private :
     double fPosZ3;
     double fPlaneColumns;
     double fPlaneRows;
+    double fPixelX;
+    double fPixelY;
     double fEpiThickness;
     double fSubThickness;
   

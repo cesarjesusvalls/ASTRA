@@ -133,26 +133,26 @@ int main(int argc,char** argv){
     }
 
 
-    TF1* fitval;
-    if(observable) fitval = new TF1("fitval","pol3",0,120);
-    else  fitval = new TF1("fitval","pol3",2000,20000);
-    fitval->SetParameters(34.0868,3.20458,-0.0219488,8.48856e-05); 
+    // TF1* fitval;
+    // if(observable) fitval = new TF1("fitval","pol3",0,120);
+    // else  fitval = new TF1("fitval","pol3",2000,20000);
+    // fitval->SetParameters(34.0868,3.20458,-0.0219488,8.48856e-05); 
 
 
     //_______THE RESULT HITOS_____
 
     TH1F* h_recoE           = new TH1F("h_recoE","h_recoE",100,0,400);
-    TH1F* h_imageDist       = new TH1F("h_imageDist","h_imageDist",100,80,240);
-    TH2F* h_StraightnessVsE = new TH2F("h_StraightnessVsE","h_StraightnessVsE",100,0,240,100,0,1);
+    TH1F* h_imageDist       = new TH1F("h_imageDist","h_imageDist",100,80,250);
+    TH2F* h_StraightnessVsE = new TH2F("h_StraightnessVsE","h_StraightnessVsE",100,0,250,100,0,1);
 
     int    eff_cnt [10] = {0};
     double eff_bin [10] = {1.,0.99,0.98,0.96,0.94,0.92,0.9,0.85,0.8,0.7};
 
-    const int    nplanes(3);
-    const double pitchX(40);
-    const double pitchY(36);
-    const double nrows(448);
-    const double ncols(224);
+    const int    nplanes(4);
+    const double pitchX(config->GetPixelX());
+    const double pitchY(config->GetPixelY());
+    const double nrows(config->GetPlaneRows());
+    const double ncols(config->GetPlaneColumns());
 
     TH2F* h_hitsMap     = new TH2F("image","image",100,0,nrows,100,0,ncols);
     TH2F* h_hitsMapNorm = new TH2F("imageNorm","imageNorm",100,0,nrows,100,0,ncols);
@@ -168,16 +168,20 @@ int main(int argc,char** argv){
     h_hitsMap->GetYaxis()->SetTickLength(0.);
     h_hitsMap->GetYaxis()->SetTitleOffset(1.6);
 
-    int maxE         = 250;
+    int maxE         = 240;
     int nResBinWidth = 10;
     TH2F* h_trueEvsRng;
-    if( observable) h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,250,50,0,maxE);
-    else            h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,20000,50,0,maxE);
-
-    //_______THE ANALYSIS______
 
     const int nbars(config->GetSciDetNBars());
     const int nlayers(config->GetSciDetNLayers());
+
+    if( observable) h_trueEvsRng = new TH2F("h_trueEvsRng","",100,0,nlayers+10,100,0,maxE);
+    else            h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,20000,50,0,maxE);
+
+    TF1* fitval = new TF1("fitval","[0]+[1]*x+[2]*sqrt([3]*x)",0,nlayers+10);
+    fitval->SetParameters(0,1,1,1); 
+
+    //_______THE ANALYSIS______
 
     double hitsMap [nlayers][nbars][2];
     memset( hitsMap, 0, nlayers*nbars*2*sizeof(int) );
@@ -225,14 +229,14 @@ int main(int argc,char** argv){
 
 
     if(GenerateNewRngToEnergyTable){
-        for(int i(0); i<50; i++){
+        for(int i(0); i<100; i++){
             int maxBin      = -1;
             int maxBinCnt   = -1;
-            for(int j(0); j<50; j++)
+            for(int j(0); j<100; j++)
                 if(maxBinCnt < h_trueEvsRng->GetBinContent(i+1,j+1))
                     {maxBin = j; maxBinCnt = h_trueEvsRng->GetBinContent(i+1,j+1);}
-            for(int j(0); j<50; j++)
-                if(h_trueEvsRng->GetBinContent(i+1,j+1) < maxBinCnt) h_trueEvsRng->SetBinContent(i+1,j+1,0);
+            for(int j(0); j<100; j++)
+                if(h_trueEvsRng->GetBinContent(i+1,j+1) < maxBinCnt or maxBinCnt <20) h_trueEvsRng->SetBinContent(i+1,j+1,0);
         }
         h_trueEvsRng->Fit(fitval,"RQ");
     }
@@ -242,7 +246,7 @@ int main(int argc,char** argv){
     for(int bin(0); bin<nResBins; bin++){
         TString hname = "h_EResByRng_";
         hname += bin;
-        h_EResByRng[bin] = new TH1F(hname.Data(),hname.Data(),100,-50,50); // resolution in percentage.
+        h_EResByRng[bin] = new TH1F(hname.Data(),hname.Data(),200,-50,50); // resolution in percentage.
     }
 
     for(int ievt(evtIni); ievt<evtFin; ievt++){
@@ -270,7 +274,7 @@ int main(int argc,char** argv){
         double RngRes = 100*(trueEnergy-recoEnergyByRng)/trueEnergy;
 
         double straightness = (*recoTracks.begin())->GetRecoMeas(2)/(*recoTracks.begin())->GetRecoMeas(3);
-        cout << "straightness: " << straightness << endl;
+        //cout << "straightness: " << straightness << endl;
 
         h_StraightnessVsE->Fill((*trackIdToGunEnergy.begin()).second,straightness);
 
@@ -309,20 +313,23 @@ int main(int argc,char** argv){
         cout << "eff: " << eff_bin[it] << ", " << 1.*eff_cnt[it]/h_StraightnessVsE->GetEntries() << endl;
     }
 
-    TF1* fitRes = new TF1("fitRes","gaus",-20,20);
+    TF1* fitRes = new TF1("fitRes","gaus",-50,50);
     fitRes->SetParameters(100,0,10); 
     TCanvas* c1 = new TCanvas("c1");
     c1->cd();
     TGraphErrors* g_EResByRng = new TGraphErrors();
     g_EResByRng->SetName("EResByRng");
     for(int bin(0); bin<nResBins; bin++){
+        if (bin*nResBinWidth+nResBinWidth/2 < 100) fitRes = new TF1("fitRes","gaus",-10,10);
         if(!h_EResByRng[bin]->GetEntries()) continue;
         fitRes->SetParameters(100,0,10); 
         if(!observable) fitRes->SetParameters(1000,0,1); 
         h_EResByRng[bin]->Fit("fitRes","RQ");
         double fitmean  = fitRes->GetParameter(1);
         double fitsigma = fitRes->GetParameter(2);
-        if (bin*nResBinWidth+nResBinWidth/2 < 40) continue;
+        if (bin*nResBinWidth+nResBinWidth/2 < 40 and fitsigma<3.5) continue;
+        if( bin*nResBinWidth+nResBinWidth/2 < 50 and nlayers < 120) continue;
+        if( bin*nResBinWidth+nResBinWidth/2 < 60 and nlayers < 50) continue;
         g_EResByRng->SetPoint(g_EResByRng->GetN(),bin*nResBinWidth+nResBinWidth/2,fitsigma);
         g_EResByRng->SetPointError(g_EResByRng->GetN()-1,0,fitRes->GetParError(2));
         c1->Update();
@@ -331,7 +338,7 @@ int main(int argc,char** argv){
 
     TCanvas* c2 = new TCanvas("c2");
     c2->cd();
-    h_trueEvsRng->Draw("COLZ");
+    h_trueEvsRng->DrawCopy("COLZ");
     fitval->Draw("same");
     c2->Update();
 
@@ -385,6 +392,7 @@ int main(int argc,char** argv){
     //_____________________
 
     outFile->cd();
+    h_trueEvsRng->Write();
     g_EResByRng->Write();
     outFile->Close();
 

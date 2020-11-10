@@ -47,11 +47,11 @@
 </NProtons>
 
 <IniPGUNEnergy>
-  250
+  200
 </IniPGUNEnergy>
 
 <UseEnergyWide>
-  False
+  True
 </UseEnergyWide>
 
 <!-- ......... -->
@@ -64,7 +64,7 @@
   </SciDetNBars>
 
   <SciDetNLayers>
-    130
+    120
   </SciDetNLayers>
 
   <SciDetBarX>
@@ -80,7 +80,7 @@
   </SciDetBarZ>
 
   <BarCoatThick>
-    0.0
+    0.1
   </BarCoatThick>
 
 <!-- .............. -->
@@ -142,12 +142,20 @@
 
 <!-- Silicon shape -->
 <PlaneColumns>
-  448
+  2500
 </PlaneColumns>
 
 <PlaneRows>
-  224
+  2500
 </PlaneRows>
+
+<CMOS_PixelX>
+  40
+</CMOS_PixelX>
+
+<CMOS_PixelY>
+  40
+</CMOS_PixelY>
 <!-- ................ -->
 
 </Dependency>
