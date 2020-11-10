@@ -47,7 +47,6 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
     // input info from SciDet
     std::vector< SciDetHit* > listOfSciHits = fevent->GetSciDetHits();
     std::vector< SciDetHit* >::iterator sciHit;
-    if (DEBUG) cout << "# of listOfSciHits: " << listOfSciHits.size() << endl;
 
     int nbars(fconfig->GetSciDetNBars());
     int nlayers(fconfig->GetSciDetNLayers());
@@ -61,8 +60,6 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
 
         if(!isCMOSReco[s]) continue;
 
-        std::cout << "track: " << s << std::endl;
-
         // set true by default and make it false if the track building fails.
         isReco[s] = true;
         
@@ -73,7 +70,8 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
         // last CMOS plane to first layer distance is set to 5mm
         double delta = 5;
 
-        TVector3 seed_pos = GetSpacePoint(fcmosTracks[s][4],4);
+        TVector3 seed_pos = GetSpacePoint(fcmosTracks[s][3],3);
+        //cout << seed_pos.X() << "," << seed_pos.Y() << "," << seed_pos.Z() << endl;
         TVector3 seed_vec = (seed_pos-GetSpacePoint(fcmosTracks[s][3],3)).Unit();
         TVector3 pred(seed_pos.X()+seed_vec.X()*delta,seed_pos.Y()+seed_vec.Y()*delta,0);
 
@@ -118,6 +116,8 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
             counter++;
         }
 
+        //cout << "Naccepted: " << Naccepted << endl;
+
         //if the seed candidates are too close or if there is not accepted seed candidate, the track is not reconstructed.
         if (Naccepted != 1){
             //std::cout << "breaking!!" << std::endl;
@@ -125,6 +125,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
             continue;
         }
 
+        int trueTrackID = 999;
         for (int layerNum(2); layerNum<nlayers; layerNum++){
             int min_dist = 1000;
             double costh    = 1000;
@@ -144,6 +145,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
                     min_dist = dist;
                     layer_candidates.push_back(step_candidate);
                     layer_barIDs.push_back(((*hit2d)->GetLayerID())*nbars+(*hit2d)->GetBarID());
+                    if((*hit2d)->GetTrackID() < trueTrackID) trueTrackID = (*hit2d)->GetTrackID();
                 }
             }
             if (layer_candidates.size()){
@@ -172,8 +174,12 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
         auto tmp_trk = new pCTTrack();
         tmp_trk->Set3DHits(listOf3Dhits);
         tmp_trk->SetBarIDs(listOfBarIDs);
-        recoTracks.push_back(tmp_trk);
+        if (trueTrackID<=(int) fevent->GetGunEnergyMap().size())
+            tmp_trk->SetTrueEnergy(fevent->GetGunEnergyMap()[trueTrackID]);
+        else
+            tmp_trk->SetTrueEnergy(-1);
 
+        recoTracks.push_back(tmp_trk);
     }
 
     return recoTracks;
@@ -285,7 +291,7 @@ void pCTTrackingManager::DoCMOSTracking(){
     for(uint i(0); i<planeToHits[0].size(); i++){
         if(isCMOSReco[i]){
             result.push_back(cmos_tracks[i][0]);
-            //for(auto cmoshit:cmos_tracks[i][0]) std::cout << cmoshit->GetX() << "," << cmoshit->GetY() << std::endl;
+            for(auto cmoshit:cmos_tracks[i][0]) std::cout << cmoshit->GetX() << "," << cmoshit->GetY() << std::endl;
         }
     }
 
@@ -342,7 +348,7 @@ void pCTTrackingManager::DoCMOSChi2Tracking(){
     std::vector<std::pair<double,std::vector<CMOSPixel*>>>::iterator trk;
     std::vector<CMOSPixel*> selPixels;
     int trk_cnt = 0;
-    for(trk=tracks_fitness.begin(); trk_cnt<Ntracks; trk++){
+    for(trk=tracks_fitness.begin(); trk!=tracks_fitness.end(); trk++){
         bool found = false;
         for(auto cmoshit:trk->second){
             std::vector<CMOSPixel*>::iterator it = std::find(selPixels.begin(), selPixels.end(), cmoshit);
@@ -352,12 +358,12 @@ void pCTTrackingManager::DoCMOSChi2Tracking(){
             }
         }
         if (!found){
+            isCMOSReco[trk_cnt] = true;
             for(auto cmoshit:trk->second) selPixels.push_back(cmoshit);
             result.push_back((trk->second));
             trk_cnt++;
         }
     }
-    std::cout << "# (N) - sel tracks: " << Ntracks << "," << result.size() << std::endl;
 
     // store the outcome as a TrackingManager variable.
     fcmosTracks = result;

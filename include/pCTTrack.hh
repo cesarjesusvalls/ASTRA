@@ -23,6 +23,7 @@ private:
     std::map <G4int, std::vector< CMOSPixel* >>     fPixelsMap;
     std::vector< SciDetHit* >                       fSciDetHits;
     double                                          fRecoEnergy;
+    double                                          fTrueEnergy;
     double                                          fRecoMeas[5]; 
     double                                          fStraightness;
 
@@ -53,10 +54,11 @@ public:
     void SetPixelHitsMap(std::map<G4int, std::vector< CMOSPixel* >> pxls)  {fPixelsMap       = pxls;};
     void SetSciDetHits(std::vector< SciDetHit* > hits)                     {fSciDetHits      = hits;};
     void SetRecoEnergy(double E)                                           {fRecoEnergy      = E;};
+    void SetTrueEnergy(double E)                                           {fTrueEnergy      = E;};
     void SetRecoMeas(int idx, double mes)                                  {fRecoMeas[idx]   = mes;};
     void SetStraightness(double strn)                                      {fStraightness    = strn;};
     void Set3DHits      (std::vector<TVector3> hits)                       {f3DHits          = hits;}; 
-    void SetBarIDs      (std::vector<int> bids)                       {fBarIDs          = bids;};                       
+    void SetBarIDs      (std::vector<int> bids)                            {fBarIDs          = bids;};                       
 
     //------------------
 
@@ -65,6 +67,7 @@ public:
     std::map<G4int, std::vector< CMOSPixel* >>  GetPixelHitsMap()       {return fPixelsMap;};
     std::vector< SciDetHit* >                   GetSciDetHits()         {return fSciDetHits;};
     double                                      GetRecoEnergy()         {return fRecoEnergy;};
+    double                                      GetTrueEnergy()         {return fTrueEnergy;};
     double                                      GetRecoMeas(int idx)    {return fRecoMeas[idx];};
     double                                      GetStraightness()       {return fStraightness;};
     std::vector<TVector3>                       Get3DHits()             {return f3DHits;};

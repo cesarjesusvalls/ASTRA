@@ -114,6 +114,7 @@ int main(int argc,char** argv)
                 cout << "   --barZ             Layer's thickness (mm)." << endl;
                 cout << "   --NOTusePhantom     do not place phantom." << endl;
                 cout << "   --NOTuseCMOS        do not place CMOS (including 4th plane)." << endl;
+                cout << "   --useCMOS        do not place CMOS (including 4th plane)." << endl;
                 cout << "**************************************" << endl;
             }
             else if (string(argv[iarg])=="--NOTusePhantom"){
@@ -122,6 +123,10 @@ int main(int argc,char** argv)
             else if (string(argv[iarg])=="--NOTuseCMOS"){
                 pCTXMLInput->SetUseCMOS(false);
                 pCTXMLInput->SetUse4thCMOS(false);
+            }
+            else if (string(argv[iarg])=="--useCMOS"){
+                pCTXMLInput->SetUseCMOS(true);
+                pCTXMLInput->SetUse4thCMOS(true);
             }
             else if (string(argv[iarg])=="--barCoat"){
                 iarg++;

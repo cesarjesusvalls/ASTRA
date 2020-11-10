@@ -7,15 +7,15 @@ out_path = "/Users/cjesus/Dev/protonCT/output/energyRes_"
 
 measurements = [2]  
 coating      = [0.05]#[0,0.01,0.02,0.1]
-barZthick    = [3,6,9]  
+barZthick    = [3]#[3,6,9]  
 
 commands = []
 
 for M in measurements:
     for Z in barZthick:
         for C in coating:
-            command = prog + " -b -z 500000 -i " + in_file + str(Z) + "_" + str(C) + ".root "
-            command = command + "-o /Users/cjesus/Dev/protonCT/output/energyRes_" + str(M) + "_" + str(Z) + "_" + str(C) + ".root" + " -m " + str(M) 
+            command = prog + " -z 1000 -i " + in_file + str(Z) + "_" + str(C) + "_CMOS.root "
+            command = command + "-o /Users/cjesus/Dev/protonCT/output/energyRes_" + str(M) + "_" + str(Z) + "_" + str(C) + "_CMOS.root" + " -m " + str(M) 
             commands.append(command)
             print("executing: ", command)
             os.system(command)

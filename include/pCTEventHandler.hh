@@ -82,13 +82,12 @@ public:
         trkMan->DoCMOSChi2Tracking();
         auto recoTracks = trkMan->DoRTTracking();
 
-
         int nbars(config->GetSciDetNBars());
         int nlayers(config->GetSciDetNLayers());
         for (int it(0); it<nbars*nlayers; ++it){
             TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter(it));
-            tmpEve->SetRnrSelf(0);
-            tmpEve->SetMainColor(event_id);
+            tmpEve->SetRnrSelf(1);
+            tmpEve->SetMainColor(0);
             //delete tmpEve;
         }
 
@@ -97,19 +96,20 @@ public:
             int node_id = (*sciHit)->GetLayerID()*nbars+(*sciHit)->GetBarID();
             TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter(node_id));
             tmpEve->SetRnrSelf(1);
-            tmpEve->SetMainColor(0);
+            tmpEve->SetMainColor(1);
             delete tmpEve;
         }
 
         //event->DrawSciDetHits(config);
 
-        int trkCnt = 0;
+        int Nreco  = 0;
+        int trkCnt = 1;
         for(auto trk=recoTracks.begin(); trk != recoTracks.end(); trk++){
             if (!trkMan->GetIsReco()[trkCnt]){
                 std::cout << "trk: " << trkCnt << " is not reconstructed" << std::endl;
                 continue;
             }
-            else std::cout << "trk: "<< trkCnt << " is reconstructed" << std::endl;
+            else {std::cout << "trk: "<< trkCnt << " is reconstructed" << std::endl; Nreco++;}
             auto barIds = (*trk)->GetBarIDs();
             for(auto id=barIds.begin(); id!=barIds.end(); id++){
                 TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter((*id)));
@@ -119,6 +119,8 @@ public:
             }
             trkCnt++;
         }
+
+        if(Nreco < 2) load_event(data,event_id+1);
         
 
 

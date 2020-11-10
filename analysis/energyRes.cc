@@ -10,6 +10,7 @@
 #include "pCTEvent.hh"
 #include "../utils/global_tools.cc"
 #include "pCTXML.hh"
+#include "pCTTrackingManager.hh"
 #include <iostream>
 
 #include "TROOT.h"
@@ -24,6 +25,9 @@
 #include "TF1.h"
 #include "TApplication.h"
 #include "TGraphErrors.h"
+
+int total_reco = 0;
+int total_reco_CMOS = 0;
 
 bool GenerateNewRngToEnergyTable = true;
 int  observable = 0;
@@ -175,7 +179,7 @@ int main(int argc,char** argv){
     const int nbars(config->GetSciDetNBars());
     const int nlayers(config->GetSciDetNLayers());
 
-    if( observable) h_trueEvsRng = new TH2F("h_trueEvsRng","",100,0,nlayers+10,100,0,maxE);
+    if( observable) h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,nlayers+10,50,0,maxE);
     else            h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,20000,50,0,maxE);
 
     TF1* fitval = new TF1("fitval","[0]+[1]*x+[2]*sqrt([3]*x)",0,nlayers+10);
@@ -208,17 +212,33 @@ int main(int argc,char** argv){
         hitsMap[(*sciHit)->GetLayerID()][(*sciHit)->GetBarID()][(*sciHit)->GetOrientation()] 
         = (*sciHit)->GetEnergyDeposited();
 
-        std::vector< pCTTrack* > recoTracks = event->Reconstruct(config);
-        if(recoTracks.size() == 1){
+        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
+        trkMan->DoCMOSChi2Tracking();
+        auto recoTracks = trkMan->DoRTTracking();
+        //cout << "size: " << recoTracks.size() << endl;
 
-                // double straightness = (*recoTracks.begin())->GetRecoMeas(2)/(*recoTracks.begin())->GetRecoMeas(3);
-                // cout << "straightness: " << straightness << endl;
+        total_reco+=recoTracks.size();
 
-                // if(straightness <0.98) continue;
-
-                h_trueEvsRng->Fill((*recoTracks.begin())->GetRecoMeas(observable),(*trackIdToGunEnergy.begin()).second);
-                //cout << (*recoTracks.begin())->GetRecoMeas(observable) << endl;
+        for(int i(0); i<recoTracks.size(); i++){
+            std::vector<TVector3> track3Dhits = recoTracks[i]->Get3DHits(); 
+            if(track3Dhits.size()){
+                double trueEnergy = recoTracks[i]->GetTrueEnergy();
+                double range = (track3Dhits.back()-(*track3Dhits.begin())).Mag();
+                h_trueEvsRng->Fill(range,trueEnergy);
             }
+        }
+
+        // std::vector< pCTTrack* > recoTracks = event->Reconstruct(config);
+        // if(recoTracks.size() == 1){
+
+        //         // double straightness = (*recoTracks.begin())->GetRecoMeas(2)/(*recoTracks.begin())->GetRecoMeas(3);
+        //         // cout << "straightness: " << straightness << endl;
+
+        //         // if(straightness <0.98) continue;
+
+        //         h_trueEvsRng->Fill((*recoTracks.begin())->GetRecoMeas(observable),(*trackIdToGunEnergy.begin()).second);
+        //         //cout << (*recoTracks.begin())->GetRecoMeas(observable) << endl;
+        //     }
 
 
         //cout << (*trackIdToGunEnergy.begin()).second << "," << fitval->Eval((*trackIdToGunEnergy.begin()).second) << endl;
@@ -229,14 +249,14 @@ int main(int argc,char** argv){
 
 
     if(GenerateNewRngToEnergyTable){
-        for(int i(0); i<100; i++){
+        for(int i(0); i<50; i++){
             int maxBin      = -1;
             int maxBinCnt   = -1;
-            for(int j(0); j<100; j++)
+            for(int j(0); j<50; j++)
                 if(maxBinCnt < h_trueEvsRng->GetBinContent(i+1,j+1))
                     {maxBin = j; maxBinCnt = h_trueEvsRng->GetBinContent(i+1,j+1);}
-            for(int j(0); j<100; j++)
-                if(h_trueEvsRng->GetBinContent(i+1,j+1) < maxBinCnt or maxBinCnt <20) h_trueEvsRng->SetBinContent(i+1,j+1,0);
+            for(int j(0); j<50; j++)
+                if(h_trueEvsRng->GetBinContent(i+1,j+1) < maxBinCnt or maxBinCnt <10) h_trueEvsRng->SetBinContent(i+1,j+1,0);
         }
         h_trueEvsRng->Fit(fitval,"RQ");
     }
@@ -264,45 +284,64 @@ int main(int argc,char** argv){
         hitsMap[(*sciHit)->GetLayerID()][(*sciHit)->GetBarID()][(*sciHit)->GetOrientation()] 
         = (*sciHit)->GetEnergyDeposited();
 
-        std::vector< pCTTrack* > recoTracks = event->Reconstruct(config);
-        if(recoTracks.size() != 1) continue;
+        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
+        trkMan->DoCMOSChi2Tracking();
+        auto recoTracks = trkMan->DoRTTracking();
 
-        double trueEnergy      = (*trackIdToGunEnergy.begin()).second;
-
-        double recoEnergyByRng = fitval->Eval((*recoTracks.begin())->GetRecoMeas(observable));
-        int RngResBin = (int) (*trackIdToGunEnergy.begin()).second/nResBinWidth;
-        double RngRes = 100*(trueEnergy-recoEnergyByRng)/trueEnergy;
-
-        double straightness = (*recoTracks.begin())->GetRecoMeas(2)/(*recoTracks.begin())->GetRecoMeas(3);
-        //cout << "straightness: " << straightness << endl;
-
-        h_StraightnessVsE->Fill((*trackIdToGunEnergy.begin()).second,straightness);
-
-        for (int it(0); it<10; it++) if(straightness >= eff_bin[it]) eff_cnt[it]++;
-        if(straightness < straightness_cut) continue;
-
-        h_EResByRng[RngResBin]->Fill(RngRes);
-
-        for (ushort p(0); p<nplanes; p++){
-            if(!p) continue;
-            std::map<G4int, std::vector< CMOSPixel* > > Counter = event->GetPixelHitsMap();
-            std::map<G4int, std::vector< CMOSPixel*> >::iterator it;
-            for(it=Counter.begin(); it!=Counter.end(); it++){
-                ushort Plane = (*it).first;
-                if (Plane != p) continue;
-                ushort nHitsInPlane = (*it).second.size();
-                if(nHitsInPlane>1) continue;
-                for(ushort index(0); index<nHitsInPlane; index++)
-                {
-                    ushort X = (*it).second.at(index)->GetX();
-                    ushort Y = (*it).second.at(index)->GetY();
-                    ushort e = (*it).second.at(index)->GetElectronsLiberated();
-                    h_hitsMap->Fill(X+1,Y+1,recoEnergyByRng);
-                    h_recoE->Fill(recoEnergyByRng);
-                    h_hitsMapNorm->Fill(X+1,Y+1,1);
+        for(int i(0); i<recoTracks.size(); i++){
+            double trueEnergy = recoTracks[i]->GetTrueEnergy();
+            std::vector<TVector3> track3Dhits = recoTracks[i]->Get3DHits(); 
+            if(track3Dhits.size()){
+                double range = (track3Dhits.back()-(*track3Dhits.begin())).Mag();
+                double recoEnergyByRng = fitval->Eval(range);
+                int RngResBin = (int) trueEnergy/nResBinWidth;
+                double RngRes = 100*(trueEnergy-recoEnergyByRng)/trueEnergy;
+                int hit_cnt = 0;
+                double accumRng = 0;
+                for(int j(0); j<track3Dhits.size(); j++){
+                    if (j>0) accumRng += (track3Dhits[j]-track3Dhits[j-1]).Mag();
                 }
+                double straightness = accumRng == 0 ? 1 : range/accumRng;
+                //cout << "straightness: " << straightness << endl;
+                h_StraightnessVsE->Fill(trueEnergy,straightness);
+                for (int it(0); it<10; it++) if(straightness >= eff_bin[it]) eff_cnt[it]++;
+                if(straightness < straightness_cut) continue;
+                h_EResByRng[RngResBin]->Fill(RngRes);
             }
         }
+
+        //std::vector< pCTTrack* > recoTracks = event->Reconstruct(config);
+        // if(recoTracks.size() != 1) continue;
+
+        // double recoEnergyByRng = fitval->Eval((*recoTracks.begin())->GetRecoMeas(observable));
+        // int RngResBin = (int) (*trackIdToGunEnergy.begin()).second/nResBinWidth;
+        // double RngRes = 100*(trueEnergy-recoEnergyByRng)/trueEnergy;
+
+        // double straightness = (*recoTracks.begin())->GetRecoMeas(2)/(*recoTracks.begin())->GetRecoMeas(3);
+        // //cout << "straightness: " << straightness << endl;
+
+        // h_StraightnessVsE->Fill((*trackIdToGunEnergy.begin()).second,straightness);
+
+        // for (ushort p(0); p<nplanes; p++){
+        //     if(!p) continue;
+        //     std::map<G4int, std::vector< CMOSPixel* > > Counter = event->GetPixelHitsMap();
+        //     std::map<G4int, std::vector< CMOSPixel*> >::iterator it;
+        //     for(it=Counter.begin(); it!=Counter.end(); it++){
+        //         ushort Plane = (*it).first;
+        //         if (Plane != p) continue;
+        //         ushort nHitsInPlane = (*it).second.size();
+        //         if(nHitsInPlane>1) continue;
+        //         for(ushort index(0); index<nHitsInPlane; index++)
+        //         {
+        //             ushort X = (*it).second.at(index)->GetX();
+        //             ushort Y = (*it).second.at(index)->GetY();
+        //             ushort e = (*it).second.at(index)->GetElectronsLiberated();
+        //             h_hitsMap->Fill(X+1,Y+1,recoEnergyByRng);
+        //             h_recoE->Fill(recoEnergyByRng);
+        //             h_hitsMapNorm->Fill(X+1,Y+1,1);
+        //         }
+        //     }
+        // }
 
     }
 
@@ -312,6 +351,8 @@ int main(int argc,char** argv){
         g_EffVsStraigness->SetPoint(g_EffVsStraigness->GetN(),eff_bin[it],1.*eff_cnt[it]/h_StraightnessVsE->GetEntries());
         cout << "eff: " << eff_bin[it] << ", " << 1.*eff_cnt[it]/h_StraightnessVsE->GetEntries() << endl;
     }
+
+    cout << "TOTAL RECO:  " << total_reco << endl;
 
     TF1* fitRes = new TF1("fitRes","gaus",-50,50);
     fitRes->SetParameters(100,0,10); 
