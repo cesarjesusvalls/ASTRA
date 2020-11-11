@@ -15,6 +15,9 @@
 #include "pCTXML.hh"
 #include "SciDetHit.hh"
 #include "CMOSPixel.hh"
+#include <TH1.h>
+#include <TGraph.h>
+#include <TH2.h>
 
 class pCTTrackingManager: public TObject {
 
@@ -62,6 +65,7 @@ public:
     std::vector< pCTTrack* > DoRTTracking();
     void DoCMOSTracking();
     void DoCMOSChi2Tracking();
+    std::vector<std::pair<std::pair<double,double>,std::pair<double,double>>> phantomPositions();
     TVector3 GetSpacePoint (CMOSPixel* pixel, int plane);
 
     //ClassDef(pCTTrackingManager,1) 

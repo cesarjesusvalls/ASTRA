@@ -56,6 +56,8 @@ G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   G4double track_id    = step->GetTrack()->GetTrackID ();
   G4int stepNumber = step->GetTrack()->GetCurrentStepNumber();
   G4ThreeVector momentum = step->GetTrack()->GetMomentumDirection();
+
+
   //std::cout << "Track ID = " << track_id << " Particle ID = " << particle_id << " With momentum [" << momentum.getX()<< ", " << momentum.getY() << ", " << momentum.getZ() <<"]"<< std::endl;
    
     // energy deposit in this step 
@@ -64,11 +66,12 @@ G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   G4int planeCopyNo =touchable->GetReplicaNumber(1);
   G4ThreeVector point1 = step->GetPreStepPoint()->GetPosition();
   G4ThreeVector point2 = step->GetPostStepPoint()->GetPosition();
-  G4ThreeVector worldPosition = point1 + G4UniformRand()*(point2 - point1);   
+  G4ThreeVector worldPosition = point1 + G4UniformRand()*(point2 - point1); 
 
+  
     // convert this to local position within the strip
   G4ThreeVector localPosition = touchable->GetHistory()->GetTopTransform().TransformPoint(worldPosition);  
-        
+
   // create a hit and populate it with information
   CMOSHit* hit = new CMOSHit(planeCopyNo,localPosition,particle_id,track_id);
   hit->SetEnergyDeposited(edep);

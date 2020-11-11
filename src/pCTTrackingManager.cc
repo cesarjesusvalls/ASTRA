@@ -1,13 +1,18 @@
 
 #include "pCTTrackingManager.hh"
+#include "phantom.hh"
+
 #include <TCanvas.h>
 
 #include <TEveManager.h>
 #include <TEvePlot3D.h>
 #include <TEveTrans.h>
 #include <TGLViewer.h>
+#include <TH1.h>
+#include <TH2.h>
 #include <TF2.h>
 #include <TH3.h>
+#include <TGraph.h>
 
 #include "CMOSPixel.hh"
 #include <iostream>
@@ -32,6 +37,8 @@ bool checkHitsCompatibility(CMOSPixel* hit2, CMOSPixel* hit1, double Z){
 //************************************************************************************************************
     return TVector3(hit1->GetX()-hit2->GetX(),hit1->GetY()-hit2->GetY(),Z).Theta() <= 1;
 }
+
+
 
 //************************************************************************************************************
 std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
@@ -58,8 +65,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
     std::map<int, int> track_to_id;
     for (int s(0); s<fcmosTracks.size(); ++s){
 
-        if(!isCMOSReco[s]) continue;
-
+         if(!isCMOSReco[s]) continue;
         // set true by default and make it false if the track building fails.
         isReco[s] = true;
         
@@ -135,6 +141,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
         }
 
         int trueTrackID = 999;
+
         for (int layerNum(2); layerNum<nlayers; layerNum++){
             int min_dist = 1000;
             double costh    = 1000;
@@ -161,7 +168,6 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
             if (layer_candidates.size()){
                 listOf3Dhits.push_back(layer_candidates.back());
                 if(track_to_id.count(layer_barIDs.back())){
-                    cout << "track: " << s << " bar being used, not reco!" << endl;
                     isReco[track_to_id[layer_barIDs.back()]] = false;
                     isReco[s] = false;
                 }
@@ -307,7 +313,6 @@ void pCTTrackingManager::DoCMOSTracking(){
     for(uint i(0); i<planeToHits[0].size(); i++){
         if(isCMOSReco[i]){
             result.push_back(cmos_tracks[i][0]);
-            for(auto cmoshit:cmos_tracks[i][0]) std::cout << cmoshit->GetX() << "," << cmoshit->GetY() << std::endl;
         }
     }
 
@@ -364,6 +369,7 @@ void pCTTrackingManager::DoCMOSChi2Tracking(){
     std::vector<std::pair<double,std::vector<CMOSPixel*>>>::iterator trk;
     std::vector<CMOSPixel*> selPixels;
     int trk_cnt = 0;
+
     for(trk=tracks_fitness.begin(); trk!=tracks_fitness.end(); trk++){
         bool found = false;
         for(auto cmoshit:trk->second){
@@ -375,12 +381,85 @@ void pCTTrackingManager::DoCMOSChi2Tracking(){
         }
         if (!found){
             isCMOSReco[trk_cnt] = true;
+
             for(auto cmoshit:trk->second) selPixels.push_back(cmoshit);
             result.push_back((trk->second));
             trk_cnt++;
         }
     }
 
-    // store the outcome as a TrackingManager variable.
     fcmosTracks = result;
+}
+
+
+
+
+//************************************************************************************************************
+//std::pair<TH2F*,TH2F*> pCTTrackingManager::PosResolution(){
+std::vector<std::pair<std::pair<double,double>,std::pair<double,double>>> pCTTrackingManager::phantomPositions(){
+//************************************************************************************************************
+TH1F* resolution = new TH1F("resolution","",100,0,10);
+TH1F* resolutionX = new TH1F("resolutionX","",100,0,10);
+TH1F* resolutionY = new TH1F("resolutionY","",100,0,10);
+//TH2F* realPos = new TH2F("realPos","",500,0,100,500,0,100);
+//TH2F* projPos = new TH2F("projPos","",500,0,100,500,0,100);
+std::vector<std::pair<double,double>>  realPos ;
+std::vector<std::pair<double,double>>  projPos ;
+std::vector<std::pair<std::pair<double,double>,std::pair<double,double>>> res;
+ for (int s(0); s<fcmosTracks.size(); ++s){
+
+            if(!isCMOSReco[s]) continue;
+
+          //back  std::cout << "track: " << s << std::endl;
+
+            // set true by default and make it false if the track building fails.
+            isReco[s] = true;
+            TVector3 phantomHit = fevent->GetPhantomMidPos();
+            std::cout<< "phantom mid pos = " << phantomHit.X() << ", " << phantomHit.Y() << ", " << phantomHit.Z() << std::endl;
+            float phantomPosZ = (fconfig->GetPosZ2()+fconfig->GetPosZ1())*0.5;//phantomHit.Z();//
+            // steps
+            // for each seed, compute a prediction in the first SciDet layer.
+           // TVector3 seed_pos = GetSpacePoint(fcmosTracks[s][3],3);
+            TVector3 front_vec = (GetSpacePoint(fcmosTracks[s][1],1)-GetSpacePoint(fcmosTracks[s][0],0)).Unit();
+            TVector3 back_vec = (GetSpacePoint(fcmosTracks[s][3],3)-GetSpacePoint(fcmosTracks[s][2],2)).Unit();
+
+            double_t frontProjX= front_vec.X()*(phantomPosZ-GetSpacePoint(fcmosTracks[s][1],1).Z())/front_vec.Z()+GetSpacePoint(fcmosTracks[s][1],1).X();
+            double_t frontProjY= front_vec.Y()*(phantomPosZ-GetSpacePoint(fcmosTracks[s][1],1).Z())/front_vec.Z()+GetSpacePoint(fcmosTracks[s][1],1).Y();
+
+            float backProjX= back_vec.X()*(phantomPosZ-GetSpacePoint(fcmosTracks[s][2],2).Z())/back_vec.Z()+GetSpacePoint(fcmosTracks[s][2],2).X();
+            float backProjY= back_vec.Y()*(phantomPosZ-GetSpacePoint(fcmosTracks[s][2],2).Z())/back_vec.Z()+GetSpacePoint(fcmosTracks[s][2],2).Y();
+
+            TVector3 frontProj(frontProjX, frontProjY,phantomPosZ);
+            TVector3 backProj(backProjX,backProjY,phantomPosZ);
+            
+
+            float frontD2 = pow(pow(phantomHit.X() - frontProj.X(),2) + pow(phantomHit.Y() - frontProj.Y(),2),0.5); //+ pow(phantomHit.Z() - frontProj.Z(),2),0.5);
+            float backD2 = pow(pow(phantomHit.X() - backProj.X(),2) + pow(phantomHit.Y() - backProj.Y(),2),0.5); 
+            /*
+            std::cout << "World Position in 1st Tracker (computed): " << GetSpacePoint(fcmosTracks[s][0],0).X() << " " << GetSpacePoint(fcmosTracks[s][0],0).Y() << " " << GetSpacePoint(fcmosTracks[s][0],0).Z() <<std::endl;
+            std::cout << "World Position in 2nd Tracker (computed): " << GetSpacePoint(fcmosTracks[s][1],1).X() << " " << GetSpacePoint(fcmosTracks[s][1],1).Y() << " " << GetSpacePoint(fcmosTracks[s][1],1).Z() <<std::endl;
+            std::cout << "World Position in 3rd Tracker (computed): " << GetSpacePoint(fcmosTracks[s][2],2).X() << " " << GetSpacePoint(fcmosTracks[s][2],2).Y() << " " << GetSpacePoint(fcmosTracks[s][2],2).Z() <<std::endl;
+            std::cout << "World Position in 4th Tracker (computed): " << GetSpacePoint(fcmosTracks[s][3],3).X() << " " << GetSpacePoint(fcmosTracks[s][3],3).Y() << " " << GetSpacePoint(fcmosTracks[s][3],3).Z() <<std::endl;
+            */
+           // std::cout << "Resolution:  " << frontD2 << std::endl;
+            
+            //realPos->Fill(phantomHit.X(),phantomHit.Y());
+            //projPos->Fill(frontProjX,frontProjY);
+            //realPos=make_pair(phantomHit.X(),phantomHit.Y());
+            //projPos=make_pair(frontProjX,frontProjY);
+            res.push_back(make_pair(make_pair(phantomHit.X(),phantomHit.Y()),make_pair(frontProjX,frontProjY)));
+
+            //resolution->Fill(backD2);
+            //resolutionX->Fill(phantomHit.X() - frontProj.X());
+            //resolutionY->Fill(phantomHit.Y() - frontProj.Y());
+
+    }
+    //std::pair<TH1F*,TH1F*> res(resolutionX,resolutionY);
+    //std::pair<TH1F*,TH1F*> res = make_pair(resolutionX,resolutionY);
+    //std::pair<TH2F*,TH2F*> res = make_pair(realPos,projPos);
+    //std::vector<std::pair<std::pair<double,double>>,std::pair<double,double>>> res = make_pair(realPos,projPos);
+    //std::pair<TH1F*,TH1F*> res(resolutionX,resolutionY);
+
+return res ;
+
 }

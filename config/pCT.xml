@@ -13,7 +13,7 @@
   </Example>
 
   <OutFileName>
-    ../output/simulation_file
+    ../output/outputFile
   </OutFileName>
 
 <!-- Use Detector -->
@@ -31,7 +31,7 @@
   </Use4thCMOS>
   
   <UsePhantom>  
-    False
+    True
   </UsePhantom>
 
 <!-- ............ -->
@@ -47,7 +47,7 @@
 </NProtons>
 
 <IniPGUNEnergy>
-  200
+  210
 </IniPGUNEnergy>
 
 <UseEnergyWide>
@@ -111,19 +111,19 @@
 </PosY>
 
 <PosZ0>
-  -12
+  -10
 </PosZ0>
 
 <PosZ1>
-  -5
+   -5
 </PosZ1>
 
 <PosZ2>
-  -1
+   1
 </PosZ2>
 
 <PosZ3>
-  3
+  6
 </PosZ3>
 
 <!-- ................ -->

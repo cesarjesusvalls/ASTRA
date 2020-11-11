@@ -26,6 +26,7 @@ private:
     std::map <int, double >                         fGunEnergy;   // map from track ID to pgun true kin energy.
     TRandom3 * fRndm;
     std::map <G4int,std::vector<std::pair<TVector3,double>>> fPhantomHits;
+    TVector3 fphMidPos;
 public:
 
     pCTEvent(){Init();};
@@ -51,6 +52,7 @@ public:
     void SetGunEnergyMap(std::map <int, double > gun)                       {fGunEnergy   = gun;};
     void SetRecoProtons(std::vector< pCTTrack* > trks)                      {fRecoProtons = trks;};
     void SetPhantomHits(std::map<G4int,std::vector<std::pair<TVector3,double>>> phHits) {fPhantomHits = phHits;};
+    void SetPhantomMidPos(TVector3 phMidPos){fphMidPos = phMidPos;};
 
   //------------------
 
@@ -62,12 +64,14 @@ public:
     std::map <int, double >                     GetGunEnergyMap()    {return fGunEnergy;};
     std::vector< pCTTrack* >                    GetRecoProtons()     {return fRecoProtons;};
     std::map<G4int,std::vector<std::pair<TVector3,double>>> GetPhantomHits() {return fPhantomHits;};
+    TVector3 GetPhantomMidPos(){return fphMidPos;};
     
   //------------------
 
     void ResetEvent(Option_t* /*option*/="")
     {
         fEvtId = -999;
+        fphMidPos.SetXYZ(-999,-999,-999);
         fPixelsMap.clear();
        	fPhantomHits.clear();
 	    fSciDetHits.clear();

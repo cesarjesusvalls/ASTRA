@@ -68,6 +68,9 @@ G4Timer* timer = new G4Timer();
  timer->Start();
 pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
 pCTXMLInput = InputPersistencyManager->GetXMLInput();
+float phantomPosZ = (pCTXMLInput->GetPosZ2()+pCTXMLInput->GetPosZ1())*0.5;
+TVector3 midPos(-999,-999,-999);
+
 G4int nHits = hitCollection->entries();
 if(nHits==0) return;
 
@@ -84,6 +87,9 @@ for ( G4int h = 0 ; (h<nHits) ; ++h )
     G4ThreeVector pos_ = hit->GetLocalPosition();
     TVector3 pos(pos_.getX(),pos_.getY(),pos_.getZ());
 
+    if (abs(midPos.Z() - phantomPosZ) > abs(pos.Z()-phantomPosZ)) midPos=pos;
+    std::cout << "Phantom mid pos =  " << midPos.X() << ", " << midPos.Y() << ", " << midPos.Z()<< std::endl;
+
     // if already exists then add the new point and the edep 
     if(hitsMap.find(trackID) != hitsMap.end()){
       hitsMap[trackID].push_back( make_pair(pos,edep) );
@@ -97,6 +103,7 @@ for ( G4int h = 0 ; (h<nHits) ; ++h )
 pCTRootPersistencyManager* persistencyManager = pCTRootPersistencyManager::GetInstance();
 pCTEvent* pCT_Event = persistencyManager->GetEvent();
 pCT_Event->SetPhantomHits(hitsMap);
+pCT_Event->SetPhantomMidPos(midPos);
  
 }
 }
