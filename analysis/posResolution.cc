@@ -25,14 +25,15 @@
 #include "TApplication.h"
 #include "TGraphErrors.h"
 
+#include "phantom.hh"
+#include "pCTTrackingManager.hh"
 #include "pCTTrackingManager.cc"
+
 
 bool GenerateNewRngToEnergyTable = true;
 double straightness_cut = 0;
 
 int main(int argc,char** argv){
-
-    TApplication* theApp=new TApplication("App",&argc,argv);
 
     TString localStyleName = "pCTstyle";
     // -- WhichStyle --
@@ -54,7 +55,7 @@ int main(int argc,char** argv){
     TString fileOut        = "/Users/marc/pCT_Geant4/protonCT/output/erase_me.root";
     int evtIni             = 0;
     int evtFin             = 0;
-    TH1F* frontRes = new TH1F("frontRes","",50,0,300);
+    
 
     for (int iarg=0; iarg<gApplication->Argc(); iarg++){
         //cout << "iarg: " << iarg << "," << string( gApplication->Argv(iarg)) << endl;
@@ -98,6 +99,7 @@ int main(int argc,char** argv){
         }
     }
 
+
     TFile* outFile = new TFile(fileOut.Data(),"RECREATE");
     TFile* inputFile = new TFile(fileIn.Data(),"read");
 
@@ -126,21 +128,7 @@ int main(int argc,char** argv){
         cerr << "evtFin must be larger than event Ini!" << endl;
     }
 
-    const int nbars(config->GetSciDetNBars());
-    const int nlayers(config->GetSciDetNLayers());
-
-    TF1* fitval = new TF1("fitval","pol3",0,nlayers*3);
-    fitval->SetParameters(34.0868,3.20458,-0.0219488,8.48856e-05); 
-
-    //_______THE RESULT HITOS_____
-    int maxE = 250;
-    int nResBinWidth = 10;
-    TH2F* h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,nlayers*3,50,0,maxE);
-
-    //_______THE ANALYSIS______
-
-
-    cout << "Tot # Events: " << data->GetEntries() << endl;
+ cout << "Tot # Events: " << data->GetEntries() << endl;
     for(int ievt(evtIni); ievt<evtFin; ievt++){
         if(ievt == maxEvents-1 or selEvents >= maxSelEvents) break;
 
@@ -150,21 +138,42 @@ int main(int argc,char** argv){
         std::map <int, double > trackIdToGunEnergy = event->GetGunEnergyMap();
         pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
         trkMan->DoCMOSTracking();
-       // frontRes->Add(trkMan->PosResolution());
-        auto recoTracks = trkMan->DoRTTracking();
 
-        for(int i(0); i<recoTracks.size(); i++){
 
-            std::vector<TVector3> track3Dhits = recoTracks[i]->Get3DHits(); 
-            double range = (track3Dhits.back()-(*track3Dhits.begin())).Mag();
-            //cout << "range: " << range << endl;
-            h_trueEvsRng->Fill(range,(*trackIdToGunEnergy.begin()).second);
-        }
+        for (int s(0); s<fcmosTracks.size(); ++s){
 
-        if(show_SciDet) event->DrawSciDetHits(config);
-        if(show_CMOS)   event->DrawCMOSHits(config);
-    }
+        	if(!isCMOSReco[s]) continue;
 
+        	std::cout << "track: " << s << std::endl;
+
+        	// set true by default and make it false if the track building fails.
+        	isReco[s] = true;
+
+        	float = phantomPosZ= (config->GetPosZ2()+config->GetPosZ1())*0.5;
+        	// steps
+        	// for each seed, compute a prediction in the first SciDet layer.
+       	 	TVector3 seed_pos = GetSpacePoint(fcmosTracks[s][4],4);
+       	 	TVector3 front_vec = (GetSpacePoint(fcmosTracks[s][2],2)-GetSpacePoint(fcmosTracks[s][1],1)).Unit();
+        	TVector3 back_vec = (GetSpacePoint(fcmosTracks[s][4],4)-GetSpacePoint(fcmosTracks[s][3],3)).Unit();
+
+        	float frontProjX= front_vec.X()*(phantomPosZ-GetSpacePoint(fcmosTracks[s][1],1).Z())/back_vec.Z()+GetSpacePoint(fcmosTracks[s][1],1).X();
+        	float frontProjY= front_vec.Y()*(phantomPosZ-GetSpacePoint(fcmosTracks[s][1],1).Z())/back_vec.Z()+GetSpacePoint(fcmosTracks[s][1],1).Y();
+
+        	float backProjX= back_vec.X()*(phantomPosZ-GetSpacePoint(fcmosTracks[s][4],4).Z())/back_vec.Z()+GetSpacePoint(fcmosTracks[s][4],4).X();
+        	float backProjY= back_vec.Y()*(phantomPosZ-GetSpacePoint(fcmosTracks[s][4],4).Z())/back_vec.Z()+GetSpacePoint(fcmosTracks[s][4],4).Y();
+
+        	TVector3 frontProj(frontProjX, frontProjY,phantomPosZ);
+        	TVector3 backProj(backProjX,backProjY,phantomPosZ);
+        	TVector3 phantomHit = event->GetPhantomMidPos();
+
+        	float frontD2 = pow(phantomHit.X() - frontProj.X(),2) + pow(phantomHit.Y() - frontProj.Y(),2) + pow(phantomHit.Z() - frontProj.Z(),2);
+
+        	frontRes->Fill(frontD2);
+
+    	}
+
+    
+/*
     if(GenerateNewRngToEnergyTable){
         for(int i(0); i<50; i++){
             int maxBin      = -1;
@@ -192,7 +201,8 @@ int main(int argc,char** argv){
         hname += bin;
         h_EResByRng[bin] = new TH1F(hname.Data(),hname.Data(),100,-50,50); // resolution in percentage.
     }
-
+*/
+    /*
     for(int ievt(evtIni); ievt<evtFin; ievt++){
         if(ievt == maxEvents-1 or selEvents >= maxSelEvents) break;
         
@@ -264,18 +274,13 @@ int main(int argc,char** argv){
     g_EResByRng->Draw("AP");
     c3->Update();
 
+*/
+
+
     //_____________________
 
-/*
-    TCanvas* cCMOS = new TCanvas("cCMOS");
-    cCMOS->cd();
-    frontRes->SetMarkerStyle(22);
-    frontRes->SetMarkerColor(kBlue);
-    frontRes->Draw("AP");
-    cCMOS->Update();
-*/
-    outFile->cd();
-    g_EResByRng->Write();
+    //outFile->cd();
+    //g_EResByRng->Write();
     outFile->Close();
 
     if(batch) return 0;
@@ -285,3 +290,7 @@ int main(int argc,char** argv){
 
     return 0;
 }
+
+
+
+

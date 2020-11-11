@@ -24,12 +24,13 @@
 #include "TF1.h"
 #include "TApplication.h"
 #include "TGraphErrors.h"
+#include "pCTTrackingManager.cc"
 
 
 
 
 
-const int nPlanes = 3;
+const int nPlanes = 4;
 int x[nPlanes] = {0};
 int y[nPlanes] = {0};
 int trackID[nPlanes] = {0};
@@ -58,8 +59,6 @@ std::vector< CMOSPixel*> Det1,
 std::vector< CMOSPixel*> Det2, 
 std::vector< CMOSPixel*> Det3, 
 std::vector< CMOSPixel*> Det4)
-
-
 {   
     std::vector< CMOSPixel*>::iterator it1, it2, it3, it4;
     //std::vector<std::vector< CMOSPixel*>::iterator> its[4] = {it1,it2,it3,it4};
@@ -79,16 +78,6 @@ std::vector< CMOSPixel*> Det4)
                      for (it4=Det4.begin(); it4!=Det4.end(); it4++)
                         { std::cout<< "Entering detector 4 loop!" << std::endl;
 
-                     		/*
-								for( uint i(0); i<4; i++)
-								if ((*its[i])->GetTrackID() != -999)
-								{
-									x[i]=(*its[i])->GetX();
-                            		y[i]=(*its[i])->GetY();
-                            		trackID[i]=(*its[i])->GetTrackID();
-								}
-
-								*/
 
                             if ((*it1)->GetTrackID()!=-999)
                             	{
@@ -96,6 +85,7 @@ std::vector< CMOSPixel*> Det4)
                             		y[0]=(*it1)->GetY();
                             		trackID[0]=(*it1)->GetTrackID();
                             	}
+                            else break;
 
                             if ((*it2)->GetTrackID()!=-999)
                             	{
@@ -103,6 +93,8 @@ std::vector< CMOSPixel*> Det4)
                             		y[1]=(*it2)->GetY();
                             		trackID[1]=(*it2)->GetTrackID();
                             	}
+                            else break;
+
 
                             if ((*it3)->GetTrackID()!=-999)
                             	{
@@ -110,6 +102,8 @@ std::vector< CMOSPixel*> Det4)
                             		y[2]=(*it3)->GetY();
                             		trackID[2]=(*it3)->GetTrackID();
                             	}
+                            else break;
+
 
                             if ((*it4)->GetTrackID()!=-999)
                             	{
@@ -117,6 +111,8 @@ std::vector< CMOSPixel*> Det4)
                             		y[3]=(*it4)->GetY();
                             		trackID[3]=(*it4)->GetTrackID();
                             	}
+                            else if (nPlanes == 4) break;
+
                            
                             
                             for (int i =0; i<nPlanes; i++) {
@@ -125,12 +121,17 @@ std::vector< CMOSPixel*> Det4)
 
                             	std::cout<< "XYT= ["<<x[i]<<", "<<y[i]<<", "<<trackID[i]<<"]"<<std::endl;
                                 points.push_back(make_pair(x[i],y[i]));
-                                
+                      
                                 std::pair<int,int> XY = make_pair(x[i],y[i]);
                                 pointsTrackID.push_back(make_pair(trackID[i],XY));
                             }
+                            /*
+                            double dist1 = (x[0]-x[1])^2+(y[0]-y[1])^2;
+                            double dist2 = (x[1]-x[2])^2+(y[1]-y[2])^2;
+                            if (nPlanes == 4) dobule dist3 = (x[2]-x[3])^2+(y[2]-y[3])^2;
 
-                            
+                            if (dist1<40 and
+                            */
                              ROOT::Math::Minimizer* minimum = ROOT::Math::Factory::CreateMinimizer("Minuit2");
                             // set tolerance , etc...
                                 minimum->SetMaxFunctionCalls(1000000); // for Minuit/Minuit2
@@ -299,6 +300,13 @@ int main(int argc,char** argv){
 	 int goodTracks = 0;
     //chi2 hist
     TH1F* chi2Hist = new TH1F("chi2Hist","chi2Hist",40,0,60);
+    //TH2F* realPosition = new TH2F("realPosition","",500,0,100,500,0,100);
+    //TH2F* projPosition = new TH2F("projPosition","",500,0,100,500,0,100);
+    //TGraph* realPosition = new TGraph("realPosition","");
+    //TGraph* projPosition = new TGraph("projPosition","");
+    //TH1F* frontRes = new TH1F("frontRes","Front Tracker Resolution",100,0,10);
+    //TH1F* frontResX = new TH1F("frontResX","Front Tracker X Resolution",100,0,10);
+    //TH1F* frontResY = new TH1F("frontResY","Front Tracker Y Resolution",100,0,10);
 
 
 
@@ -321,30 +329,47 @@ int main(int argc,char** argv){
         det3.push_back(def);
         det4.push_back(def);
 
-        std::cout<< "X = " << det1[0]->GetX() << std::endl;
     	int nTracks =0;
-
+/*
         for(it2=Counter.begin(); it2!=Counter.end(); it2++)
         {
          unsigned short int Plane = (*it2).first;
          unsigned short int nHitsInPlane = (*it2).second.size();
 
-                 //std::cout << "Plane " << Plane << " has " << nHitsInPlane << " pixels above threshold" << std::endl;
-        
+        std::cout << "Plane " << Plane << " has " << nHitsInPlane << " pixels above threshold" << std::endl;
+        std::cout<< "nTracks = " << nTracks << "  nHitsInPlane = " << nHitsInPlane << std::endl;
 
-        if (nHitsInPlane < nTracks || nTracks ==0) nTracks = nHitsInPlane;
+        if (nHitsInPlane <= nTracks || nTracks ==0) nTracks = nHitsInPlane;
+         
         if (Plane==0)  det1 = (*it2).second;
         if (Plane==1)  det2 = (*it2).second;
         if (Plane==2)  det3 = (*it2).second;
         if (Plane==3)  det4 = (*it2).second;
-
-     
   
 		}
+*/
+              
+        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
+        trkMan->DoCMOSTracking();
+        std::vector<std::pair<std::pair<double,double>,std::pair<double,double>>> phantomPos = trkMan->phantomPositions();
+        std::vector<std::pair<std::pair<double,double>,std::pair<double,double>>>::iterator phIt;
+        //for(phIt = phantomPos.begin(); phIt != phantomPos.end(); phIt++)
+        for(phIt = phantomPos.begin(); phIt != phantomPos.end(); phIt++)
+        {
+            std::cout<< "Real PhantoPos = " << (*phIt).first.first << ", " << (*phIt).first.second << std::endl;
+            std::cout<< "Projected PhantoPos = " << (*phIt).second.first << ", " << (*phIt).second.second << std::endl;
+
+        }
+
+        //realPosition->SetPoint(trkMan->PosResolution().first,;
+        //projPosition= trkMan->PosResolution().second; 
+        //realPosition->Add(trkMan->PosResolution().first);
+        //projPosition->Add(trkMan->PosResolution().second);
 
 		//if (det1.size == 0) det1 =
 		//std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> chi2points = SortTracksByChi2(det1,det2,det3,det4);
-		std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> chi2points = SortTracksByChi2(det1,det2,det3,det4);
+		
+        //std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> chi2points = SortTracksByChi2(det1,det2,det3,det4);
         //std::cout << "Size of chi2Points: "<< chi2points.size() << std::endl;
         /*
         std::cout << "Test of imput Tracks" << std::endl;
@@ -359,9 +384,9 @@ int main(int argc,char** argv){
                 std::cout << "There is nothing else in the input of TrackSelector" << std::endl;
                 */
         //std::vector<std::pair<Double_t, std::vector<std::pair<int,int>>>> finalTracks = TrackSelector(chi2points);
-        std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> finalTracks = TrackSelector(chi2points,nTracks);
+        // std::vector<std::pair<Double_t, std::vector<std::pair <int ,std::pair <int,int>>>>> finalTracks = TrackSelector(chi2points,nTracks);
 
-        
+        /*
 
         std::cout << "OutputTrackSelector" << std::endl;
                   for(int i = 0; i < int(finalTracks.size()); i++)
@@ -385,27 +410,38 @@ int main(int argc,char** argv){
                                  }
                                  if (realTrack) goodTracks++;
                             }   
-
-	    
+        std::cout<< "Clearing Vectors"<<std::endl;
+        det1.clear();
+        det2.clear();
+        det3.clear();
+        det4.clear();
+	    */
 	    }
 
-/*
-	TCanvas* c1 = new TCanvas("c1","c1",1400,1000);
-    gStyle->SetOptStat(0);
-    //   gStyle->SetPadRightMargin(1.5);
-    //gStyle->SetPadLeftMargin(0.01);
-     c1->cd(1);
-     chi2Hist->SetTitle("#chi^{2} of the reconstructed tracks");
-     chi2Hist->GetXaxis()->SetTitle("#chi^{2} [arb. units]");
-     chi2Hist->GetXaxis()->SetTickLength(0.);
-     chi2Hist->GetYaxis()->SetTickLength(0.);
-     chi2Hist->Draw();
-    c1->Update();
-
-
-
-    std::cout << goodTracks << " good tracks were found" << std::endl;
+    TCanvas* cCMOS = new TCanvas("cCMOS");
+    cCMOS->cd();
+    /*
+    realPosition->GetXaxis()->SetTitle("X pos [mm]");
+    realPosition->GetYaxis()->SetTitle("Y pos [mm]");
+    realPosition->SetMarkerStyle(4);
+    projPosition->SetMarkerStyle(5);
+    realPosition->Draw();
+    projPosition->Draw("same");
     */
+    /*
+    frontResX->GetXaxis()->SetTitle("#sigma [mm]");
+    frontResX->GetYaxis()->SetTitle("Counts");
+    frontResX->SetLineColor(kGreen);
+    frontResX->Draw();
+    frontResY->Draw("same");
+    */
+    /*
+    auto legend = new TLegend(0.1,0.7,0.48,0.9);
+     legend->SetHeader("#phi in X and Y axis","C"); // option "C" allows to center the header
+     legend->AddEntry(realPosition,"Real","f");
+     legend->AddEntry(projPosition,"Projection","f");
+*/
+    cCMOS->Update();
     std::cout << goodTracks << " good tracks were found" << std::endl;
 	inputFile->Close();
     theApp->Run();

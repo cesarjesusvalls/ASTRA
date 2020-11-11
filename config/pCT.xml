@@ -13,7 +13,7 @@
   </Example>
 
   <OutFileName>
-    ../output/simulation_file
+    ../output/outputFile
   </OutFileName>
 
 <!-- Use Detector -->
@@ -27,7 +27,7 @@
   </UseCMOS>
 
   <Use4thCMOS>
-    False
+    True
   </Use4thCMOS>
   
   <UsePhantom>  
@@ -43,11 +43,11 @@
 </BeamType>
 
 <NProtons>
-  10
+  1
 </NProtons>
 
 <IniPGUNEnergy>
-  200
+  210
 </IniPGUNEnergy>
 
 <UseEnergyWide>
@@ -111,19 +111,19 @@
 </PosY>
 
 <PosZ0>
-  -12
+  -10
 </PosZ0>
 
 <PosZ1>
-  -5
+   -5
 </PosZ1>
 
 <PosZ2>
-  -1
+   1
 </PosZ2>
 
 <PosZ3>
-  3
+  6
 </PosZ3>
 
 <!-- ................ -->
@@ -142,11 +142,11 @@
 
 <!-- Silicon shape -->
 <PlaneColumns>
-  448
+  2500
 </PlaneColumns>
 
 <PlaneRows>
-  224
+  2500
 </PlaneRows>
 <!-- ................ -->
 

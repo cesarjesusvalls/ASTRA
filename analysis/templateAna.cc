@@ -26,10 +26,10 @@
 #include "TGraphErrors.h"
 
 
-int nPlanes=4;
+int nPlanes=3;
 int x[4] = {0,0,0,0};
 int y[4] = {0,0,0,0};
-unsigned short int nTracks = 2;
+unsigned short int nTracks = 0;
 /*
 Double_t *lineZ(Double_t z, Double_t *par)
 {
@@ -87,6 +87,8 @@ std::vector< CMOSPixel*> Det4)
                             y[1]=(*it2)->GetY();
                             y[2]=(*it3)->GetY();
                             y[3]=(*it4)->GetY();
+
+                           
 
                             std::cout<< "X = ["<<x[0]<<", "<<x[1]<<", "<<x[2]<<", "<<x[3]<<"]"<<std::endl;
                             //col={(*it1)->GetY(),(*it2)->GetY(),(*it3)->GetY(),(*it4)->GetY()};
@@ -266,9 +268,17 @@ int main(int argc,char** argv){
     TBranch* dataBranch = data->GetBranch("Event");
     pCTEvent* event = new pCTEvent();
     dataBranch->SetAddress(&event);
+   
 
     pCTXML* config = (pCTXML*) inputFile->Get("XMLinput");
     std::cout << config->GetSciDetNBars()  <<"-------------------------------\n";
+
+    TH2F* h_trueEvsEDEP = new TH2F("h_trueEvsEDEP","",100,50,250,75,0,150);
+    TH2F* h_trueEvsEDEP_max = new TH2F("h_trueEvsEDEP","",100,50,250,75,0,150);
+
+    TH1F* trueE = new TH1F("trueE","",50,0,300);
+    TH1F* EDEPCMOS = new TH1F("EDEPCMOS","", 250,0,500);
+
     // 2D angles
     TH1F* chi2Hist = new TH1F("chi2Hist","chi2Hist",100,0,100);
     TH1F* phiX = new TH1F("phiX","phiX",50,-0.05,0.05);
@@ -311,7 +321,7 @@ int main(int argc,char** argv){
     for(int ievt(0); ievt<data->GetEntries(); ievt++)
     {
         data->GetEntry(ievt);
-
+         std::map <int, double > trackIdToGunEnergy = event->GetGunEnergyMap();
         std::cout << "-oOo--oOo--oOo--oOo--oOo--oOo-\n";
         std::cout << "Event: " << ievt << std::endl;
         std::cout << "-------------CMOS-------------" << std::endl;
@@ -345,9 +355,14 @@ int main(int argc,char** argv){
             {
               int X = (*it2).second.at(index)->GetX();
               int Y = (*it2).second.at(index)->GetY();
+              int trackID = (*it2).second.at(index)->GetTrackID();
               unsigned int e = (*it2).second.at(index)->GetElectronsLiberated();
+              double eCMOS = e*0.0036;
+              h_trueEvsEDEP->Fill((*trackIdToGunEnergy.begin()).second,eCMOS);
+              trueE->Fill((*trackIdToGunEnergy.begin()).second);
+              EDEPCMOS->Fill(eCMOS);
 
-             // std::cout << X << ", " << Y << ", "<< Plane <<", " << e <<"," << std::endl;
+              std::cout << "Stats: "<<X << ", " << Y << ", "<< Plane <<", " << e <<", " << (*trackIdToGunEnergy.begin()).second << std::endl;
 	      if (Plane == 0)
 		{
        		 x_=X;
@@ -431,12 +446,13 @@ int main(int argc,char** argv){
     
 	//        event->DrawSciDetHits(config);
 	//        event->DrawCMOSHits(config);
-
+/*
 	std::cout << "----------------Phantom-------------" << std::endl;
-	std::map <G4int,std::vector<std::pair<TVector3,double>>> phantomHitsMap = event->GetPhantomHits();
+	std::map <G4int,std::vector<std::pair<TVector3,double>>> phantomHitsMap = event->GetPhantomHits(); //int= TrackID--pair(Pos,eDep)
 	std::map <G4int,std::vector<std::pair<TVector3,double>>>:: iterator iter;
 	std::cout << "Phantom info " << phantomHitsMap.size() << std::endl;
-	for(iter=phantomHitsMap.begin(); iter!=phantomHitsMap.end(); iter++)
+	
+    for(iter=phantomHitsMap.begin(); iter!=phantomHitsMap.end(); iter++)
 	  {
          int particleID = (*iter).first;
          unsigned short int nHits = (*iter).second.size();
@@ -475,14 +491,14 @@ int main(int argc,char** argv){
 		totalR->Fill(totR);
 	      }
 	  }
-
+*/
 
 
 }//end of event's for
     //_____________________
 
 
-
+/*
 TCanvas* c1 = new TCanvas("c1","c1",1400,1000);
     gStyle->SetOptStat(0);
     //   gStyle->SetPadRightMargin(1.5);
@@ -496,7 +512,7 @@ TCanvas* c1 = new TCanvas("c1","c1",1400,1000);
     c1->Update();
 
     
-/*
+
     TCanvas* c1 = new TCanvas("c1","c1",1400,1000);
     gStyle->SetOptStat(0);
     //   gStyle->SetPadRightMargin(1.5);
@@ -520,6 +536,8 @@ TCanvas* c1 = new TCanvas("c1","c1",1400,1000);
      legend->AddEntry(phiY,"Y Axis","f");
      legend->Draw();
      c1->cd(2);
+
+     
      phi2D->SetTitle("");
      phi2D->GetXaxis()->SetTitle("#phi_x [rad]");
      phi2D->GetYaxis()->SetTitle("#phi_y [rad]");
@@ -583,28 +601,75 @@ TCanvas* c1 = new TCanvas("c1","c1",1400,1000);
      c4->cd(2);
      eDep->Draw();
      c4->Update();
+*/
+
+
+
+       for(int i(0); i<100; i++){
+            int maxBin      = -1;
+            int maxBinCnt   = -1;
+            for(int j(0); j<75; j++)
+                if(maxBinCnt < h_trueEvsEDEP->GetBinContent(i+1,j+1))
+                    {maxBin = j; maxBinCnt = h_trueEvsEDEP->GetBinContent(i+1,j+1);}
+            for(int j(0); j<75; j++)
+                if(h_trueEvsEDEP->GetBinContent(i+1,j+1) < maxBinCnt) h_trueEvsEDEP->SetBinContent(i+1,j+1,0);
+        }
+       // h_trueEvsEDEP->Fit(fitval,"RQ");
+
+
+
+    TFile* outFile = new TFile("energyHistograms.root","RECREATE");
+    TF1* fitval = new TF1("fitval","pol4",50,250);
+    fitval->SetParameters(0,0,0,0);
+    h_trueEvsEDEP->Fit(fitval,"RQ");
 
      TCanvas* c5 = new TCanvas("c5", "c5", 1600,1500);
-     c5->Divide(2,2);
-     c5->cd(1);
-     totalEdep->SetTitle("Total energy deposited");
-     totalEdep->GetXaxis()->SetTitle("Total E Dep [KeV]");
-     totalEdep->Draw();
-     c5->cd(2);
-     edepVsR->SetTitle("Step length");
-     edepVsR->GetXaxis()->SetTitle("Step length [mm]");
-     edepVsR->GetYaxis()->SetTitle("E dep in a step [KeV]");
-     edepVsR->Draw("COLZ");
-     c5->cd(3);
-     totalR->SetTitle("Inside the phantom path length");
-     totalR->GetXaxis()->SetTitle("Total path length [mm]");
-     totalR->Draw();
-     c5->cd(4);
-     trackID->SetTitle("Track ID");
-     trackID->GetXaxis()->SetTitle("Track ID");
-     trackID->Draw();
+     //c5->Divide(2,1);
+     //c5->cd(1);
+     h_trueEvsEDEP->SetTitle("Edep in CMOS vs True Energy");
+     h_trueEvsEDEP->GetXaxis()->SetTitle("True Energy [MeV]");
+     h_trueEvsEDEP->GetYaxis()->SetTitle("EDep in CMOS [KeV]");
+     h_trueEvsEDEP->Draw("COLZ");
      c5->Update();
-*/
+     
+     c5->cd(2);
+     h_trueEvsEDEP_max->SetTitle("Edep in CMOS vs True Energy max bin");
+     h_trueEvsEDEP_max->GetXaxis()->SetTitle("True Energy [MeV]");
+     h_trueEvsEDEP_max->GetYaxis()->SetTitle("EDep in CMOS [KeV]");
+     h_trueEvsEDEP_max->Draw("COLZ");
+     c5->Update();
+     
+     
+     TCanvas* c6 = new TCanvas("c6", "c6", 1600,1500);
+     c6->Divide(2,1);
+     c6->cd(1);
+     EDEPCMOS->Draw();
+     EDEPCMOS->GetXaxis()->SetTitle("Energy Deposited in CMOS [KeV]");
+
+     c6->cd(2);
+     trueE->Draw();
+     trueE->GetXaxis()->SetTitle("True Energy [MeV]");
+     c6->Update();
+
+
+
+
+
+
+
+
+
+
+
+outFile->cd();
+fitval->Write();
+//h_trueEvsEDEP_max->Write();
+h_trueEvsEDEP->Write();
+outFile->Close();
+
+
+
+
     inputFile->Close();
     theApp->Run();
     return 0;

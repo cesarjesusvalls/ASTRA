@@ -65,6 +65,15 @@ public :
     double GetPlaneRows()          {return fPlaneRows;}
     double GetEpiThickness()       {return fEpiThickness;}
     double GetSubThickness()       {return fSubThickness;}
+
+    double GetPosZi(int i){
+        if      (i==0) return GetPosZ0();
+        else if (i==1) return GetPosZ1();
+        else if (i==2) return GetPosZ2();
+        else if (i==3) return GetPosZ3();
+        else {std::cout << "Error in GetPosZi: i Out Of Range!!" << std::endl; exit(0);}
+        return -999;
+    }
     
     G4bool GetUseSciDet()          {return fUseSciDet;};
     G4bool GetUseCMOS()            {return fUseCMOS;};

@@ -56,6 +56,8 @@ G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   G4double track_id    = step->GetTrack()->GetTrackID ();
   G4int stepNumber = step->GetTrack()->GetCurrentStepNumber();
   G4ThreeVector momentum = step->GetTrack()->GetMomentumDirection();
+
+
   //std::cout << "Track ID = " << track_id << " Particle ID = " << particle_id << " With momentum [" << momentum.getX()<< ", " << momentum.getY() << ", " << momentum.getZ() <<"]"<< std::endl;
    
     // energy deposit in this step 
@@ -64,11 +66,20 @@ G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   G4int planeCopyNo =touchable->GetReplicaNumber(1);
   G4ThreeVector point1 = step->GetPreStepPoint()->GetPosition();
   G4ThreeVector point2 = step->GetPostStepPoint()->GetPosition();
-  G4ThreeVector worldPosition = point1 + G4UniformRand()*(point2 - point1);   
+  G4ThreeVector worldPosition = point1 + G4UniformRand()*(point2 - point1); 
 
+  if (planeCopyNo == 0) std::cout << "World Position in 1st Tracker: " << worldPosition.getX() << " " << worldPosition.getY() << " " << worldPosition.getZ() <<std::endl;
+  if (planeCopyNo == 1) std::cout << "World Position in 2nd Tracker: " << worldPosition.getX() << " " << worldPosition.getY() << " " << worldPosition.getZ() <<std::endl;
+
+  
+  
     // convert this to local position within the strip
   G4ThreeVector localPosition = touchable->GetHistory()->GetTopTransform().TransformPoint(worldPosition);  
-        
+  if (planeCopyNo == 0) std::cout << "Local Position in 1st Tracker: " << localPosition.getX() << " " << localPosition.getY() << " " << localPosition.getZ() <<std::endl;
+  if (planeCopyNo == 1) std::cout << "Local Position in 2nd Tracker: " << localPosition.getX() << " " << localPosition.getY() << " " << localPosition.getZ() <<std::endl;
+  
+
+
   // create a hit and populate it with information
   CMOSHit* hit = new CMOSHit(planeCopyNo,localPosition,particle_id,track_id);
   hit->SetEnergyDeposited(edep);
@@ -183,6 +194,7 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
             pixel_temp->SetPlaneNumber(Plane);
             pixel_temp->SetPixelIndex((*it).first.second.second);
             pixel_temp->SetElectronsLiberated(nElectrons);
+            //pixel_temp->SetTrueEnergy();
             pixel_temp->SetTrackID((*it).first.second.first);
 
             std::map<G4int, std::vector< CMOSPixel* > >::iterator it2 = Counter.find(Plane);
@@ -234,9 +246,10 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
           unsigned short int Y = (*it2).second.at(index)->GetY();
           unsigned int e = (*it2).second.at(index)->GetElectronsLiberated();
           int tID = (*it2).second.at(index)->GetTrackID();
-          
+          /*
           fout << X << ", " << Y << ", "<< Plane <<", " << e <<"," <<G4endl;
           std::cout << X << ", " << Y << ", "<< Plane <<", " << e <<", " << tID <<std::endl;
+       */
         }
   
     }

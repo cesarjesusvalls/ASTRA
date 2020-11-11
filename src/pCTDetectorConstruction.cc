@@ -32,6 +32,7 @@
 #include "pCTRootPersistencyManager.hh"
 #include "pCTSciDetConstructor.hh"
 #include "pCTSiDetConstructor.hh"
+#include "phantomConstructor.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -82,7 +83,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     //___________________
 
     //_____ PHANTOM _____
-    G4ThreeVector phantomPos      = G4ThreeVector(0,0,-8.5*cm);            // TODO: get from XML.
+//    G4ThreeVector phantomPos      = G4ThreeVector(0,0,-8.5*cm);            // TODO: get from XML.
     //G4Material*   phantom_mat     = nist->FindOrBuildMaterial("G4_Cu");
     G4Material*   phantom_mat     = FindMaterial("PlasticScintillator");
     
@@ -119,8 +120,12 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4Box*        solidBox2        = new G4Box("box",0.3*mm, 1.2*mm,5*mm);
     G4VSolid*     crossSolid       = new G4UnionSolid("crossBox", solidBox1,solidBox2,0,G4ThreeVector(0.*mm,0.*mm,0.*mm));
     */
-    G4Box* solidBox = new G4Box("box", 100*mm,100*mm,2*cm);
-    G4LogicalVolume* logicPhantom  = new G4LogicalVolume(solidBox, phantom_mat,"Phantom"); 
+    
+    //float phantomThickness = (pCTXMLInput->GetPosZ2()-pCTXMLInput->GetPosZ1())*0.5-1;
+    //G4Box* solidBox = new G4Box("box", 100*mm,100*mm,phantomThickness*cm);
+    phantomConstructor* fphantomConstructor = new phantomConstructor();
+    logicPhantom =   fphantomConstructor->GetPhantom();
+    //G4LogicalVolume* logicPhantom  = new G4LogicalVolume(solidBox, phantom_mat,"Phantom"); 
     Phantom*      PhantomSD = (Phantom*)SDman->FindSensitiveDetector("PhantomSD");
     logicPhantom->SetSensitiveDetector(PhantomSD);
     logicPhantom->SetVisAttributes(G4Colour(0.6, 0.6, 0.0));
@@ -133,6 +138,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
         new G4PVPlacement(0,G4ThreeVector(0.*cm,0.*cm,-3*cm)    ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
       
       */
+    G4ThreeVector phantomPos    = G4ThreeVector(0,0,(pCTXMLInput->GetPosZ2()+pCTXMLInput->GetPosZ1())*0.5*cm);
       new G4PVPlacement(0,phantomPos    ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
     }
     //___________________

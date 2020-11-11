@@ -76,8 +76,11 @@ public:
         //std::cout << "#seeds: " << points.size() << std::endl;
         if(points.size())
             std::cout <<  points.back().X() << "," << points.back().Y() << "," << points.back().Z() << std::endl;
-        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config,points,vecs);
-        auto recoTracks = trkMan->DoTracking();
+        
+        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
+        //trkMan->DoCMOSTracking();
+        trkMan->DoCMOSChi2Tracking();
+        auto recoTracks = trkMan->DoRTTracking();
 
 
         int nbars(config->GetSciDetNBars());
