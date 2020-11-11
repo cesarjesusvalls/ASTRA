@@ -36,6 +36,7 @@ G4bool SciDetSD::ProcessHits(G4Step *step, G4TouchableHistory *)
     pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
     pCTXMLInput = InputPersistencyManager->GetXMLInput();
 
+
     G4TouchableHandle touchable = step->GetPreStepPoint()->GetTouchableHandle();
     G4int particle_id           = step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
     G4int track_id              = step->GetTrack()->GetTrackID ();
@@ -50,7 +51,13 @@ G4bool SciDetSD::ProcessHits(G4Step *step, G4TouchableHistory *)
     // get step points in world coordinate system
     G4ThreeVector point1        = step->GetPreStepPoint()->GetPosition();
     G4ThreeVector point2        = step->GetPostStepPoint()->GetPosition();
-    G4ThreeVector worldPosition = point1 + G4UniformRand()*(point2 - point1);   
+    G4ThreeVector worldPosition = point1 + G4UniformRand()*(point2 - point1); 
+
+    double  t1        = step->GetPreStepPoint()->GetGlobalTime();
+    double  t2        = step->GetPostStepPoint()->GetGlobalTime();
+    double hit_time   = t1 + G4UniformRand()*(t2 - t1); 
+
+    if(edep) InputPersistencyManager->GetTimeVsEdepHisto()->Fill(hit_time,edep);
     G4ThreeVector localPosition = touchable->GetHistory()->GetTopTransform().TransformPoint(worldPosition);  
       
     // create a hit and populate it with information

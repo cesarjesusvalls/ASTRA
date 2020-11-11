@@ -81,9 +81,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
         for(std::vector< SciDetHit* >::iterator hit2d_1=listOfSciHits.begin(); hit2d_1!=listOfSciHits.end(); hit2d_1++){
             if ((*hit2d_1)->GetLayerID() != 0) continue;
             double pos[2] = {0};
-            std::vector<int> pair_barIDs;
             (*hit2d_1)->GetOrientation() ? pos[0] = (-(*hit2d_1)->GetBarID()+nbars/2)*barWidth : pos[1] = (-(*hit2d_1)->GetBarID()+nbars/2)*barWidth;
-            pair_barIDs.push_back(((*hit2d_1)->GetLayerID())*nbars+(*hit2d_1)->GetBarID());
             for(std::vector< SciDetHit* >::iterator hit2d_2=listOfSciHits.begin(); hit2d_2!=listOfSciHits.end(); hit2d_2++){
                 if ((*hit2d_2)->GetLayerID() != 1) continue;
                 (*hit2d_2)->GetOrientation() ? pos[0] = (-(*hit2d_2)->GetBarID()+nbars/2)*barWidth : pos[1] = (-(*hit2d_2)->GetBarID()+nbars/2)*barWidth;
@@ -91,38 +89,49 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
                 TVector3 new_point(pos[0],pos[1],(*hit2d_2)->GetLayerID()*barWidth);
                 //std::cout << "new candidate: " << new_point.X() << "," << new_point.Y() << "," << new_point.Z() << std::endl;
                 candidates.push_back(new_point);
+                std::vector<int> pair_barIDs;
+                pair_barIDs.push_back(((*hit2d_1)->GetLayerID())*nbars+(*hit2d_1)->GetBarID());
                 pair_barIDs.push_back(((*hit2d_2)->GetLayerID())*nbars+(*hit2d_2)->GetBarID());
                 candidates_barIDs.push_back(pair_barIDs);
             }
         }
         // break the ambiguities comparing seed predictions to the 3D candidates.
         int Naccepted = 0;
-        std::vector<TVector3> listOf3Dhits;
-        std::vector<int> listOfBarIDs;
-        int counter = 0;
         for (std::vector< TVector3>::iterator candidate=candidates.begin(); candidate!=candidates.end(); candidate++){
             double dist = (pred-(*candidate)).Mag();
-
-            //std::cout << "dist: " << dist << " to candidate: " << (*candidate).X() << "," << (*candidate).Y() << "," << (*candidate).Z() << std::endl;
             if ((pred-(*candidate)).Mag() < max_dist){
                 ++Naccepted;
-                listOf3Dhits.push_back((*candidate));
-                listOfBarIDs.push_back(candidates_barIDs[counter][0]);
-                listOfBarIDs.push_back(candidates_barIDs[counter][1]);
-                track_to_id[candidates_barIDs[counter][0]]=s;
-                track_to_id[candidates_barIDs[counter][1]]=s;
-                //std::cout << "ini bar ids: " << candidates_barIDs[counter][0] << ", " << candidates_barIDs[counter][1] << std::endl;
             }
-            counter++;
         }
 
-        //cout << "Naccepted: " << Naccepted << endl;
+        std::vector<TVector3> listOf3Dhits;
+        std::vector<int> listOfBarIDs;
+
+        cout << "track: " << s << " | Naccepted: " << Naccepted << endl;
 
         //if the seed candidates are too close or if there is not accepted seed candidate, the track is not reconstructed.
         if (Naccepted != 1){
             //std::cout << "breaking!!" << std::endl;
             isReco[s] = false;
             continue;
+        }
+        else{
+            int counter = 0;
+            for (std::vector< TVector3>::iterator candidate=candidates.begin(); candidate!=candidates.end(); candidate++){
+                double dist = (pred-(*candidate)).Mag();
+
+                //std::cout << "dist: " << dist << " to candidate: " << (*candidate).X() << "," << (*candidate).Y() << "," << (*candidate).Z() << std::endl;
+                if ((pred-(*candidate)).Mag() < max_dist){
+                    ++Naccepted;
+                    listOf3Dhits.push_back((*candidate));
+                    listOfBarIDs.push_back(candidates_barIDs[counter][0]);
+                    listOfBarIDs.push_back(candidates_barIDs[counter][1]);
+                    track_to_id[candidates_barIDs[counter][0]]=s;
+                    track_to_id[candidates_barIDs[counter][1]]=s;
+                    cout << candidates_barIDs[counter][0] << "," << candidates_barIDs[counter][1] << "," << s << endl;
+                }
+                counter++;
+            }
         }
 
         int trueTrackID = 999;
@@ -148,22 +157,27 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
                     if((*hit2d)->GetTrackID() < trueTrackID) trueTrackID = (*hit2d)->GetTrackID();
                 }
             }
+
             if (layer_candidates.size()){
-                //std::cout << "costh: " << costh << std::endl;
                 listOf3Dhits.push_back(layer_candidates.back());
-                //std::cout << "adding bar ids: " << layer_barIDs.back() << std::endl;
                 if(track_to_id.count(layer_barIDs.back())){
+                    cout << "track: " << s << " bar being used, not reco!" << endl;
                     isReco[track_to_id[layer_barIDs.back()]] = false;
+                    isReco[s] = false;
                 }
-                track_to_id[layer_barIDs.back()]=s;
+                else track_to_id[layer_barIDs.back()]=s;
                 listOfBarIDs.push_back(layer_barIDs.back());
             }
+
+
             // else if(layer_candidates.size() >1){
             //     std::cout << "there is more than 1 candidate." << layer_barIDs.back() << std::endl;
             //     // if there is more than one candidate the info can not be separated and the track is not reconstructed.
             //     isReco[s] = false;
             //     break;
             // }
+
+
             else if(!layer_candidates.size()){
                 // either the track is successfully finished (and there is another track with longer range)
                 // or the track has a hole (situation we need to address).
@@ -171,6 +185,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
             }
         }
 
+        if(!isReco[s]) continue;
         auto tmp_trk = new pCTTrack();
         tmp_trk->Set3DHits(listOf3Dhits);
         tmp_trk->SetBarIDs(listOfBarIDs);
@@ -180,6 +195,7 @@ std::vector< pCTTrack* > pCTTrackingManager::DoRTTracking(){
             tmp_trk->SetTrueEnergy(-1);
 
         recoTracks.push_back(tmp_trk);
+        cout << "Reco: " << recoTracks.size() << endl;
     }
 
     return recoTracks;

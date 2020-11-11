@@ -14,7 +14,7 @@ commands = []
 for M in measurements:
     for Z in barZthick:
         for C in coating:
-            command = prog + " -z 1000 -i " + in_file + str(Z) + "_" + str(C) + "_CMOS.root "
+            command = prog + " -z 1000000 -i " + in_file + str(Z) + "_" + str(C) + "_CMOS_tmp.root "
             command = command + "-o /Users/cjesus/Dev/protonCT/output/energyRes_" + str(M) + "_" + str(Z) + "_" + str(C) + "_CMOS.root" + " -m " + str(M) 
             commands.append(command)
             print("executing: ", command)

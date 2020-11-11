@@ -14,6 +14,7 @@
 
 class TFile;
 class TTree;
+class TH2F;
 
 #include "G4VPersistencyManager.hh"
 #include "pCTXML.hh"
@@ -24,7 +25,7 @@ class TTree;
 #include "G4VPhysicalVolume.hh"
 #include "pCTEvent.hh"
 
-//#include <TH2F.h> 
+#include <TH2F.h> 
 
 /// Provide a root output for the geant 4 events.
 class pCTRootPersistencyManager : public G4VPersistencyManager {
@@ -70,6 +71,7 @@ public:
 
     int GetEventFirst(){return fEventFirst;};
     int GetNEvents(){return fNEvents;};  
+    TH2F* GetTimeVsEdepHisto() {return fTimeVsEdep;};
 
 private:
     /// The ROOT output file that events are saved into.
@@ -82,6 +84,7 @@ private:
 
 public:
     pCTXML *fpCTXMLInput;
+    TH2F*  fTimeVsEdep;
     G4int fEventFirst;
     G4int fNEvents;
     int eraseme;

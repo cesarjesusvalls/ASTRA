@@ -44,9 +44,9 @@ int main(int argc,char** argv){
     double  coating  = 0.1;
     int     barZthick[3] = {3,6,9};
 
-    TString fnames          [3];
-    TFile* files            [3];
-    TGraphErrors* h_ERes    [3];
+    TString fnames          [4];
+    TFile* files            [4];
+    TGraphErrors* h_ERes    [4];
 
     TString baseName = "/Users/cjesus/Dev/protonCT/output/energyRes_2_";
     for(uint k(0); k<3; ++k){
@@ -54,6 +54,12 @@ int main(int argc,char** argv){
         files   [k]    = new TFile(fnames[k].Data(), "READ");
         h_ERes  [k]    = (TGraphErrors*) files[k]->Get("EResByRng");
     }
+
+    fnames  [3]    = "/Users/cjesus/Dev/protonCT/output/energyRes_2_3_0.05_CMOS.root"; 
+    files   [3]    = new TFile(fnames[3].Data(), "READ");
+    h_ERes  [3]    = (TGraphErrors*) files[3]->Get("EResByRng");
+
+    cout << "alive\n";
 
     // NO COATING different bar size for different true energy estimators:
 
@@ -70,14 +76,17 @@ int main(int argc,char** argv){
     h_ERes[0]->SetMarkerColor(kOrange+10);
     h_ERes[1]->SetMarkerColor(kBlue);
     h_ERes[2]->SetMarkerColor(8);
+    h_ERes[3]->SetMarkerColor(kBlack);
 
     h_ERes[0]->SetMarkerStyle(20);
     h_ERes[1]->SetMarkerStyle(21);
     h_ERes[2]->SetMarkerStyle(22);
+    h_ERes[3]->SetMarkerStyle(22);
     
     h_ERes[0]->SetMarkerSize(1.4);
     h_ERes[1]->SetMarkerSize(1.4);
     h_ERes[2]->SetMarkerSize(1.4);
+    h_ERes[3]->SetMarkerSize(1.4);
 
     h_ERes[0]->GetYaxis()->SetTitleOffset(1.2);
     h_ERes[0]->GetXaxis()->SetTitle("Proton True Kinetic Energy [MeV]");
@@ -94,18 +103,20 @@ int main(int argc,char** argv){
     h_ERes[0]->Draw("AP");
     h_ERes[1]->Draw("P same");
     h_ERes[2]->Draw("P same");
+    h_ERes[3]->Draw("P same");
 
     auto leg1 = new TLegend(0.75,0.65,0.95,0.9);
     leg1->AddEntry(h_ERes[0], "3  mm ","P");
     leg1->AddEntry(h_ERes[1], "6  mm ","P");
     leg1->AddEntry(h_ERes[2], "9 mm ","P");
+    leg1->AddEntry(h_ERes[3], "3  mm + CMOS ","P");
     //line1pcnt->Draw("same");
 
     leg1->SetBorderSize(0);
     leg1->Draw("same");
 
     c1->Update();
-    c1->SaveAs("/Users/cjesus/Work/plots_pCT/eRes_by_Thickness.pdf");
+    c1->SaveAs("/Users/cjesus/Work/plots_pCT/eRes_by_Thickness_bis.pdf");
     c1->WaitPrimitive();
 
 
@@ -129,17 +140,19 @@ int main(int argc,char** argv){
     h_ERes[0]->Draw("AP");
     h_ERes[1]->Draw("P same");
     h_ERes[2]->Draw("P same");
+    h_ERes[3]->Draw("P same");
 
     auto leg2 = new TLegend(0.15,0.15,0.35,0.4);
     leg2->AddEntry(h_ERes[0], "3  mm ","P");
     leg2->AddEntry(h_ERes[1], "6  mm ","P");
-    leg2->AddEntry(h_ERes[2], "9 mm ","P");
+    leg2->AddEntry(h_ERes[2], "9  mm ","P");
+    leg2->AddEntry(h_ERes[3], "3  mm + CMOS ","P");
 
     leg2->SetBorderSize(0);
     leg2->Draw("same");
 
     c2->Update();
-    c2->SaveAs("/Users/cjesus/Work/plots_pCT/eRes_by_Thickness_detail.pdf");
+    c2->SaveAs("/Users/cjesus/Work/plots_pCT/eRes_by_Thickness_detail_bis.pdf");
     c2->WaitPrimitive();
 
     for(uint k(0); k<3; ++k) files[k]->Close();

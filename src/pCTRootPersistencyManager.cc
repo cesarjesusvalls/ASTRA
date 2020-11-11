@@ -82,6 +82,7 @@ bool pCTRootPersistencyManager::Open(G4String filename) {
     fpCTEvent  = new pCTEvent();
     fEventTree->Branch("Event",&fpCTEvent,128000,0);
     fEventsNotSaved = 0;
+    fTimeVsEdep = new TH2F("fTimeVsEdep","fTimeVsEdep",100,0,20,100,0,4);
     return true;
 }
 
@@ -95,6 +96,7 @@ bool pCTRootPersistencyManager::Close() {
     }
 
     fOutput->cd();
+    fTimeVsEdep->Write();
     fEventTree->Write();
     fpCTXMLInput->Write("XMLinput");
     fOutput->Close();
