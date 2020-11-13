@@ -80,7 +80,8 @@ public:
         pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
         //trkMan->DoCMOSTracking();
         trkMan->DoCMOSChi2Tracking();
-        auto recoTracks = trkMan->DoRTTracking();
+        trkMan->DoRTTracking();
+        auto recoTracks = trkMan->GetRecoTracks(); 
 
         int nbars(config->GetSciDetNBars());
         int nlayers(config->GetSciDetNLayers());

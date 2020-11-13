@@ -4,6 +4,8 @@
 #include "TStyle.h"
 #include "TBox.h"
 #include "TMarker.h"
+#include "TNtuple.h"
+#include "TH3F.h"
 #include <TRandom3.h>
 
 double EdepToNphot = 150;
@@ -224,4 +226,169 @@ std::vector< pCTTrack* > pCTEvent::Reconstruct(pCTXML* config){
     }
 
     return recoTracks;
+}
+
+
+void pCTEvent::DrawRecoTracks(pCTXML* config, std::vector< pCTTrack* > trks){
+
+
+        // int nbars(config->GetSciDetNBars());
+        // int nlayers(config->GetSciDetNLayers());
+        // for (int it(0); it<nbars*nlayers; ++it){
+        //     TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter(it));
+        //     tmpEve->SetRnrSelf(0);
+        //     tmpEve->SetMainColor(0);
+        //     //delete tmpEve;
+        // }
+
+        // std::vector< SciDetHit* > listOfSciHits = event->GetSciDetHits();
+        // for(std::vector< SciDetHit* >::iterator sciHit=listOfSciHits.begin(); sciHit!=listOfSciHits.end(); sciHit++){
+        //     int node_id = (*sciHit)->GetLayerID()*nbars+(*sciHit)->GetBarID();
+        //     TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter(node_id));
+        //     tmpEve->SetRnrSelf(1);
+        //     tmpEve->SetMainColor(1);
+        //     delete tmpEve;
+        // }
+
+        // int trkCnt = 1;
+        // for(auto trk=recoTracks.begin(); trk != recoTracks.end(); trk++){
+        //     auto barIds = (*trk)->GetBarIDs();
+        //     for(auto id=barIds.begin(); id!=barIds.end(); id++){
+        //         TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter((*id)));
+        //         tmpEve->SetRnrSelf(1);
+        //         tmpEve->SetMainColor(trkCnt+1);
+        //         delete tmpEve;
+        //     }
+        //     trkCnt++;
+        // }
+
+    TCanvas *canv = new TCanvas("canv","canv",600,1200);
+    canv->Divide(1,2);
+    gStyle->SetOptStat(0);
+
+    const int nbars(config->GetSciDetNBars());
+    const int nlayers(config->GetSciDetNLayers());
+
+    TH2F* h_hitsMap[2];
+    h_hitsMap[0] = new TH2F("h_hitsMapZY","TOP VIEW",nlayers,0,nlayers,nbars,0,nbars);
+    h_hitsMap[1] = new TH2F("h_hitsMapZX","SIDE VIEW",nlayers,0,nlayers,nbars,0,nbars);
+
+    int trkCnt = 1;
+    for(auto trk=trks.begin(); trk != trks.end(); trk++){
+        auto barIds = (*trk)->GetBarIDs();
+        for(auto id=barIds.begin(); id!=barIds.end(); id++){
+            int layerID = (*id)/32;
+            int orientation = layerID%2;
+            int barID = (*id)%32;
+            h_hitsMap[orientation]->SetBinContent(layerID+1,barID+1,trkCnt);
+        }
+        trkCnt++;
+    }
+
+    TString xLabel = "# Layer (";
+    xLabel += config->GetSciDetBarZ();
+    xLabel += "mm/Layer)";
+
+    TString yLabel = "# Bar (";
+    yLabel += config->GetSciDetBarX();
+    yLabel += "mm/Bar)";
+
+    h_hitsMap[0]->GetXaxis()->SetTitle(xLabel.Data());
+    h_hitsMap[0]->GetYaxis()->SetTitle(yLabel.Data());
+
+    h_hitsMap[0]->GetXaxis()->SetTickLength(0.);
+    h_hitsMap[1]->GetXaxis()->SetTickLength(0.);
+    h_hitsMap[0]->GetYaxis()->SetTickLength(0.);
+    h_hitsMap[1]->GetYaxis()->SetTickLength(0.);
+
+    h_hitsMap[1]->GetXaxis()->SetTitle(xLabel.Data());
+    h_hitsMap[1]->GetYaxis()->SetTitle(yLabel.Data());
+
+    canv->cd(1);
+    int gridColor = kGray;
+    h_hitsMap[0]->Draw("COLZ");
+    for(int i(1); i<nbars; i++){
+        TBox *bargrid = new TBox(0,i-0.025,nlayers,i+0.025);
+        bargrid->SetFillColor(gridColor);
+        bargrid->Draw("same");
+    }
+    for(int i(1); i<nlayers; i+=2){
+        TBox *blindbox = new TBox(i,0,i+1,nbars);
+        blindbox->SetFillColor(gridColor);
+        blindbox->Draw("same");
+    }
+    canv->cd(2);
+    h_hitsMap[1]->Draw("COLZ");
+    for(int i(1); i<nbars; i++){
+        TBox *bargrid = new TBox(0,i-0.025,nlayers,i+0.025);
+        bargrid->SetFillColor(gridColor);
+        bargrid->Draw("same");
+    }
+    for(int i(0); i<nlayers; i+=2){
+        TBox *blindbox = new TBox(i,0,i+1,nbars);
+        blindbox->SetFillColor(gridColor);
+        blindbox->Draw("same");
+    }
+    canv->Update();
+    canv->WaitPrimitive();
+
+    delete h_hitsMap[0];
+    delete h_hitsMap[1];
+    delete canv;
+
+}
+
+
+void pCTEvent::DrawRecoTracks3D(pCTXML* config, std::vector< pCTTrack* > trks){
+
+    Int_t maxX = -999;
+    Int_t maxY = -999;
+    Int_t maxZ = -999;
+    Int_t minX = 999;
+    Int_t minY = 999;
+    Int_t minZ = 999;
+
+    Int_t tolerance = 10;
+
+    if(!trks.size()) return;
+
+    TCanvas *canv = new TCanvas("canv","canv",600,1200);
+    canv->Divide(1,2);
+    gStyle->SetOptStat(0);
+
+    gStyle->SetCanvasColor(0);
+    gStyle->SetMarkerStyle(21);
+    gStyle->SetMarkerSize(1.05);
+
+    TNtuple* Data_Tuple = new TNtuple("fData", "fData", "x:y:z:color");
+
+    int trkCnt = 1;
+    for(auto trk=trks.begin(); trk != trks.end(); trk++){
+        auto hits = (*trk)->Get3DHits();
+        for(auto hit=hits.begin(); hit!=hits.end(); hit++){
+            Data_Tuple->Fill(hit->X(), hit->Y(), hit->Z(), trkCnt); 
+            if(hit->X()>maxX) maxX = hit->X();
+            if(hit->X()<minX) minX = hit->X();
+            if(hit->Y()>maxY) maxY = hit->Y();
+            if(hit->Y()<minY) minY = hit->Y();
+            if(hit->Z()>maxZ) maxZ = hit->Z();
+            if(hit->Z()<minZ) minZ = hit->Z();
+        }
+        trkCnt++;
+    }
+
+    canv->cd(1);
+
+    Data_Tuple->Draw("x:y:z:color","","box");
+    TH3F *htemp = (TH3F*) gPad->GetPrimitive("htemp");
+    htemp->GetZaxis()->SetLimits(minX-tolerance,maxX+tolerance);
+    htemp->GetYaxis()->SetLimits(minY-tolerance,maxY+tolerance);
+    htemp->GetXaxis()->SetLimits(minZ-tolerance,maxZ+tolerance);
+    htemp->SetTitle("");
+
+    canv->Update();
+    canv->WaitPrimitive();
+
+    delete Data_Tuple;
+    delete canv;
 }

@@ -23,15 +23,15 @@ class pCTTrackingManager: public TObject {
 
 private:
 
-    pCTEvent* fevent;                                 // the event we are managing
-    pCTXML*   fconfig;                                // the configuration used to generate the event.
+    pCTEvent* fevent;                                   // the event we are managing
+    pCTXML*   fconfig;                                  // the configuration used to generate the event.
 
     //--------------
     std::vector< std::vector<CMOSPixel*>> fcmosTracks;  // list of tracks provided by the CMOS tracking algorithm.       
     int NrecoTracks;                                    // number of tracks which are succesfully reconstructed.
     std::map<int, bool> isReco;                         // true if the track is reco.
     std::map<int, bool> isCMOSReco;                     // true if the track is reco.
-    std::map<int, std::vector<TVector3>> recoTracks;    // list of 3D points reconstructed at the SciDet.
+    std::vector< pCTTrack* > fRecoTracks;               // list of pCTTracks
     //--------------
 
 public:
@@ -54,21 +54,18 @@ public:
 
     std::map<int, bool>   GetIsReco() {return isReco;}
     void SetIsReco(int i, bool b)     {isReco[i] = i;}
-
-    //void DrawRecoEvent();
     void DrawGeometry();
+    std::vector< pCTTrack* > GetRecoTracks() {return fRecoTracks;};
 
     //------------------
 
     double TrackOptimality(vector <CMOSPixel*> inputPixels, pCTXML* config);
 
-    std::vector< pCTTrack* > DoRTTracking();
+    void DoRTTracking();
     void DoCMOSTracking();
     void DoCMOSChi2Tracking();
-    std::vector<std::pair<std::pair<double,double>,std::pair<double,double>>> phantomPositions();
+    void phantomPositions();
     TVector3 GetSpacePoint (CMOSPixel* pixel, int plane);
-
-    //ClassDef(pCTTrackingManager,1) 
 };
 
 #endif

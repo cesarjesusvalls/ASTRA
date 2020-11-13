@@ -50,7 +50,8 @@ int main(int argc,char** argv){
     float   start_time     = clock();
     bool    show_SciDet    = false;
     bool    show_CMOS      = false;
-    TString fileIn         = "/Users/cjesus/Dev/protonCT/output/simulation_file.root";
+    bool    show_reco      = false;
+    TString fileIn         = "/Users/cjesus/Dev/protonCT/output/simulation_file_3_0.05_CMOS.root";
     TString fileOut        = "/Users/cjesus/Dev/protonCT/output/erase_me.root";
     int evtIni             = 0;
     int evtFin             = 0;
@@ -95,6 +96,9 @@ int main(int argc,char** argv){
         else if (string( gApplication->Argv(iarg))=="-showCMOS"){
             show_CMOS = true;
         }
+        else if (string( gApplication->Argv(iarg))=="-showRECO"){
+            show_reco = true;
+        }
     }
 
     TFile* outFile = new TFile(fileOut.Data(),"RECREATE");
@@ -136,6 +140,15 @@ int main(int argc,char** argv){
 
         if(show_SciDet) event->DrawSciDetHits(config);
         if(show_CMOS)   event->DrawCMOSHits(config);
+
+        if(show_reco){
+            pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
+            trkMan->DoCMOSChi2Tracking();
+            trkMan->DoRTTracking();
+            auto recoTracks = trkMan->GetRecoTracks();
+            event->DrawRecoTracks(config,recoTracks);
+            event->DrawRecoTracks3D(config,recoTracks);
+        }
     }
 
     inputFile->Close();

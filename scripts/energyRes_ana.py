@@ -11,11 +11,13 @@ barZthick    = [3]#[3,6,9]
 
 commands = []
 
+#/Users/cjesus/Dev/protonCT/output/simulation_file_3_0.05_CMOS.root
+
 for M in measurements:
     for Z in barZthick:
         for C in coating:
-            command = prog + " -z 1000000 -i " + in_file + str(Z) + "_" + str(C) + "_CMOS_tmp.root "
-            command = command + "-o /Users/cjesus/Dev/protonCT/output/energyRes_" + str(M) + "_" + str(Z) + "_" + str(C) + "_CMOS.root" + " -m " + str(M) 
+            command = prog + " -z 1000000 -i " + in_file + str(Z) + "_" + str(C) + "_CMOS.root "
+            command = command + "-o /Users/cjesus/Dev/protonCT/output/energyRes_" + str(M) + "_" + str(Z) + "_" + str(C)+ "_CMOS.root -m " + str(M) + " -s " + str(0.96) 
             commands.append(command)
             print("executing: ", command)
             os.system(command)

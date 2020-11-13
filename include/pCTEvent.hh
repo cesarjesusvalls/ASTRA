@@ -16,6 +16,7 @@
 #include "SciDetHit.hh"
 #include "pCTTrack.hh"
 #include "TVector3.h"
+
 class pCTEvent : public TObject {
 
 private:
@@ -42,6 +43,8 @@ public:
     };
 
     void DrawSciDetHits (pCTXML* config);
+    void DrawRecoTracks (pCTXML* config, std::vector< pCTTrack* > trks);
+    void DrawRecoTracks3D (pCTXML* config, std::vector< pCTTrack* > trks);
     void DrawCMOSHits   (pCTXML* config);
 
     //-----Setters------

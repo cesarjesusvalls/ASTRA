@@ -151,7 +151,8 @@ TStyle* SetpCTStyle(Int_t WhichStyle, TString styleName = "pCT") {
     // pCTstyle->SetNumberContours(NCont);
 
     // - Rainbow -
-    pCTstyle->SetPalette(kMint);  // use the rainbow color set
+    //pCTstyle->SetPalette(kMint);  // use the rainbow color set
+    pCTstyle->SetPalette(kRainBow);  // use the rainbow color set
 
     // -- axis --
     pCTstyle->SetStripDecimals(kFALSE); // don't do 1.0 -> 1

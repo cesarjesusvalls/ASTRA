@@ -93,6 +93,8 @@ inline void make_display(pCTXML* cfg)
     auto gGeoManager = gEve->GetGeometry("geometry.root");
     gGeoManager->DefaultColors();
 
+    cout << ".......\n";
+
     TGLViewer *v = gEve->GetDefaultGLViewer();
     v->ColorSet().Background().SetColor(kMagenta+4);
     
@@ -114,29 +116,33 @@ inline void make_display(pCTXML* cfg)
     int nbars(cfg->GetSciDetNBars());
     int nlayers(cfg->GetSciDetNLayers());
 
-    TGeoNode* SciDetbar[nbars*nlayers*2];
-    for (int it(0); it<nbars*nlayers; ++it){
-        SciDetbar[it] = SciDet->GetDaughter(it);
-        TEveGeoNode* tmpEve = new TEveGeoNode(SciDetbar[it]);
-        // tmpEve->SetMainColor(3);
-        //tmpEve->SetMainTransparency (100);
-        tmpEve->SetRnrSelf(0);
-        if((it%20)==0){
-            tmpEve->SetRnrSelf(1);
-            tmpEve->SetMainColor(2);
-        }
-        tmpEve->SetMainTransparency (10);
-        // else{
-        //     tmpEve->SetMainColor(3);
-        //     tmpEve->SetMainTransparency (100);       
-        // }
-    }
+    // TGeoNode* SciDetbar[nbars*nlayers*2];
+    // for (int it(0); it<nbars*nlayers; ++it){
+    //     SciDetbar[it] = SciDet->GetDaughter(it);
+    //     TEveGeoNode* tmpEve = new TEveGeoNode(SciDetbar[it]);
+    //     // tmpEve->SetMainColor(3);
+    //     //tmpEve->SetMainTransparency (100);
+    //     tmpEve->SetRnrSelf(0);
+    //     if((it%20)==0){
+    //         tmpEve->SetRnrSelf(1);
+    //         tmpEve->SetMainColor(2);
+    //     }
+    //     tmpEve->SetMainTransparency (10);
+    //     // else{
+    //     //     tmpEve->SetMainColor(3);
+    //     //     tmpEve->SetMainTransparency (100);       
+    //     // }
+    // }
 
     TEveGeoTopNode* tmpEve = new TEveGeoTopNode(gGeoManager, SciDet);
     // tmpEve->SetMainColor(2);
     // tmpEve->SetMainTransparency (50);
     gEve->AddElement(tmpEve);
-
+    gEve->AddElement(new TEveGeoTopNode(gGeoManager, SciDet));
+    // gEve->AddElement(new TEveGeoTopNode(gGeoManager, topNode->GetDaughter(0)));
+    // gEve->AddElement(new TEveGeoTopNode(gGeoManager, topNode->GetDaughter(1)));
+    // gEve->AddElement(new TEveGeoTopNode(gGeoManager, topNode->GetDaughter(2)));
+    // gEve->AddElement(new TEveGeoTopNode(gGeoManager, topNode->GetDaughter(3)));
 
     // TEveGeoTopNode* tmpEve = new TEveGeoTopNode(gGeoManager, SciDet);
     // tmpEve->SetMainColor(2);
@@ -183,6 +189,7 @@ int main(int argc,char** argv){
     dataBranch->SetAddress(&event);
 
     config = (pCTXML*) inputFile->Get("XMLinput");
+    cout << "alive\n";
 
     double Z_pos[4] = {0.,5.,10.,15.};
 

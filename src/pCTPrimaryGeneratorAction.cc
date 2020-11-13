@@ -102,8 +102,8 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     for (int ind=0; ind<pCTXMLInput->GetNProtons(); ind++){
         if(pCTXMLInput->GetBeamType() == "Rectangular"){
             // This geometry configurations is thought for 96mmx96mm RT (width flat protons in 90x90mm sufrace).
-            G4double x0 =   (G4UniformRand()-0.5)*(pCTXMLInput->GetPlaneColumns()*pCTXMLInput->GetPixelX()*0.001-15);
-            G4double y0 =   (G4UniformRand()-0.5)*(pCTXMLInput->GetPlaneRows()*pCTXMLInput->GetPixelY()*0.001-15);
+            G4double x0 =   (G4UniformRand()-0.5)*(pCTXMLInput->GetPlaneColumns()*pCTXMLInput->GetPixelX()*0.001-40);
+            G4double y0 =   (G4UniformRand()-0.5)*(pCTXMLInput->GetPlaneRows()*pCTXMLInput->GetPixelY()*0.001-40);
             G4double z0 =   pCTXMLInput->GetPosZ0()*10-5;
             fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
         }
@@ -118,6 +118,42 @@ void pCTPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
             }  
             fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
         }
+        if(pCTXMLInput->GetBeamType() == "M1"){
+            // This geometry configurations is thought for 96mmx96mm RT (width flat protons in 90x90mm sufrace).
+            G4double x0 = -10;
+            G4double y0 = 10;
+            G4double z0 =   pCTXMLInput->GetPosZ0()*10-5;
+            fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+        }
+        if(pCTXMLInput->GetBeamType() == "M2"){
+            // This geometry configurations is thought for 96mmx96mm RT (width flat protons in 90x90mm sufrace).
+            G4double x0 = 10;
+            G4double y0 = 10;
+            G4double z0 =   pCTXMLInput->GetPosZ0()*10-5;
+            fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+        }
+        if(pCTXMLInput->GetBeamType() == "M3"){
+            // This geometry configurations is thought for 96mmx96mm RT (width flat protons in 90x90mm sufrace).
+            G4double x0 = -10;
+            G4double y0 = -10;
+            G4double z0 =   pCTXMLInput->GetPosZ0()*10-5;
+            fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+        }
+        if(pCTXMLInput->GetBeamType() == "M4"){
+            // This geometry configurations is thought for 96mmx96mm RT (width flat protons in 90x90mm sufrace).
+            G4double x0 = 10;
+            G4double y0 = -10;
+            G4double z0 =   pCTXMLInput->GetPosZ0()*10-5;
+            fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+        }
+        if(pCTXMLInput->GetBeamType() == "M5"){
+            // This geometry configurations is thought for 96mmx96mm RT (width flat protons in 90x90mm sufrace).
+            G4double x0 = 0;
+            G4double y0 = 0;
+            G4double z0 =   pCTXMLInput->GetPosZ0()*10-5;
+            fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+        }
+
         iniEnergy = pCTXMLInput->GetIniPGUNEnergy();
         if(pCTXMLInput->UseEnergyWide()){
             iniEnergy = 20 + (G4UniformRand()*220.);

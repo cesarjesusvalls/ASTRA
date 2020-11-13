@@ -100,7 +100,7 @@ G4Element* F = new G4Element("Fluorine", "F", 9, 18.998*g/mole);
 
 
 
-    float phantomThickness = 0.1;
+    float phantomThickness = 3;
     float phantomSide = 5;
     float matSide = 1;
     G4bool checkOverlaps = true;

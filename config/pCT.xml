@@ -39,7 +39,7 @@
 <!-- PGUN info -->
 
 <BeamType>
-  Rectangular
+  M5
 </BeamType>
 
 <NProtons>
@@ -47,11 +47,11 @@
 </NProtons>
 
 <IniPGUNEnergy>
-  210
+  180
 </IniPGUNEnergy>
 
 <UseEnergyWide>
-  True
+  False
 </UseEnergyWide>
 
 <!-- ......... -->
@@ -80,7 +80,7 @@
   </SciDetBarZ>
 
   <BarCoatThick>
-    0.1
+    0.05
   </BarCoatThick>
 
 <!-- .............. -->

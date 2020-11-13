@@ -27,9 +27,8 @@
 #include "TGraphErrors.h"
 
 int total_reco = 0;
-int total_reco_CMOS = 0;
 
-bool GenerateNewRngToEnergyTable = true;
+bool GenerateNewRngToEnergyTable = false;
 int  observable = 0;
 
 double straightness_cut = 0;
@@ -55,13 +54,11 @@ int main(int argc,char** argv){
     bool    show_SciDet    = false;
     bool    show_CMOS      = false;
     TString fileIn         = "/Users/cjesus/Dev/protonCT/output/simulation_file.root";
-    TString fileOut        = "/Users/cjesus/Dev/protonCT/output/analysis_out_3.root";
+    TString fileOut        = "/Users/cjesus/Dev/protonCT/output/analysis_outfile.root";
     int evtIni             = 0;
     int evtFin             = 0;
 
-
     for (int iarg=0; iarg<gApplication->Argc(); iarg++){
-        //cout << "iarg: " << iarg << "," << string( gApplication->Argv(iarg)) << endl;
         if (string( gApplication->Argv(iarg))=="-i" || string( gApplication->Argv(iarg))=="--input" ){
             iarg++;
             fileIn = gApplication->Argv(iarg);
@@ -136,16 +133,9 @@ int main(int argc,char** argv){
         cerr << "evtFin must be larger than event Ini!" << endl;
     }
 
-
-    // TF1* fitval;
-    // if(observable) fitval = new TF1("fitval","pol3",0,120);
-    // else  fitval = new TF1("fitval","pol3",2000,20000);
-    // fitval->SetParameters(34.0868,3.20458,-0.0219488,8.48856e-05); 
-
-
     //_______THE RESULT HITOS_____
 
-    TH1F* h_recoE           = new TH1F("h_recoE","h_recoE",100,0,400);
+    TH1F* h_recoE           = new TH1F("h_recoE","h_recoE",100,150,200);
     TH1F* h_imageDist       = new TH1F("h_imageDist","h_imageDist",100,80,250);
     TH2F* h_StraightnessVsE = new TH2F("h_StraightnessVsE","h_StraightnessVsE",100,0,250,100,0,1);
 
@@ -158,8 +148,10 @@ int main(int argc,char** argv){
     const double nrows(config->GetPlaneRows());
     const double ncols(config->GetPlaneColumns());
 
-    TH2F* h_hitsMap     = new TH2F("image","image",100,0,nrows,100,0,ncols);
-    TH2F* h_hitsMapNorm = new TH2F("imageNorm","imageNorm",100,0,nrows,100,0,ncols);
+    int nbins_imag = 100;
+    int min_pos = -45;
+    TH2F* h_hitsMap     = new TH2F("image","image",nbins_imag,-min_pos,min_pos,nbins_imag,-min_pos,min_pos);
+    TH2F* h_hitsMapNorm = new TH2F("imageNorm","imageNorm",nbins_imag,-min_pos,min_pos,nbins_imag,-min_pos,min_pos);
     TString xLabel = "# Pixel (";
     xLabel += pitchX;
     xLabel += "#mum/Pixel)";
@@ -183,7 +175,7 @@ int main(int argc,char** argv){
     else            h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,20000,50,0,maxE);
 
     TF1* fitval = new TF1("fitval","[0]+[1]*x+[2]*sqrt([3]*x)",0,nlayers+10);
-    fitval->SetParameters(0,1,1,1); 
+    fitval->SetParameters(13.5133,0.241717,4.7242,3.0556); 
 
     //_______THE ANALYSIS______
 
@@ -192,6 +184,7 @@ int main(int argc,char** argv){
 
     cout << "Tot # Events: " << data->GetEntries() << endl;
     for(int ievt(evtIni); ievt<evtFin; ievt++){
+        if(!GenerateNewRngToEnergyTable) continue;
         if(ievt == maxEvents-1 or selEvents >= maxSelEvents) break;
 
         data->GetEntry(ievt);
@@ -199,12 +192,6 @@ int main(int argc,char** argv){
 
         std::map <int, double > trackIdToGunEnergy = event->GetGunEnergyMap();
         std::map <int, double >::iterator gunEit;
-
-        //if((*trackIdToGunEnergy.begin()).second>80) continue;
-
-        // cout << trackIdToGunEnergy.size() << endl;
-        // for ( gunEit = trackIdToGunEnergy.begin(); gunEit != trackIdToGunEnergy.end(); gunEit++ )
-        //     std::cout << (*gunEit).first << "," << (*gunEit).second << std::endl;
 
         std::vector< SciDetHit* > listOfSciHits = event->GetSciDetHits();
         std::vector< SciDetHit* >::iterator sciHit;
@@ -214,8 +201,8 @@ int main(int argc,char** argv){
 
         pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
         trkMan->DoCMOSChi2Tracking();
-        auto recoTracks = trkMan->DoRTTracking();
-        //cout << "size: " << recoTracks.size() << endl;
+        trkMan->DoRTTracking();
+        auto recoTracks = trkMan->GetRecoTracks();
 
         total_reco+=recoTracks.size();
 
@@ -228,25 +215,9 @@ int main(int argc,char** argv){
             }
         }
 
-        // std::vector< pCTTrack* > recoTracks = event->Reconstruct(config);
-        // if(recoTracks.size() == 1){
-
-        //         // double straightness = (*recoTracks.begin())->GetRecoMeas(2)/(*recoTracks.begin())->GetRecoMeas(3);
-        //         // cout << "straightness: " << straightness << endl;
-
-        //         // if(straightness <0.98) continue;
-
-        //         h_trueEvsRng->Fill((*recoTracks.begin())->GetRecoMeas(observable),(*trackIdToGunEnergy.begin()).second);
-        //         //cout << (*recoTracks.begin())->GetRecoMeas(observable) << endl;
-        //     }
-
-
-        //cout << (*trackIdToGunEnergy.begin()).second << "," << fitval->Eval((*trackIdToGunEnergy.begin()).second) << endl;
-
         if(show_SciDet) event->DrawSciDetHits(config);
         if(show_CMOS)   event->DrawCMOSHits(config);
     }
-
 
     if(GenerateNewRngToEnergyTable){
         for(int i(0); i<50; i++){
@@ -258,7 +229,7 @@ int main(int argc,char** argv){
             for(int j(0); j<50; j++)
                 if(h_trueEvsRng->GetBinContent(i+1,j+1) < maxBinCnt or maxBinCnt <10) h_trueEvsRng->SetBinContent(i+1,j+1,0);
         }
-        h_trueEvsRng->Fit(fitval,"RQ");
+        h_trueEvsRng->Fit(fitval,"R");
     }
 
     int nResBins = maxE/nResBinWidth;
@@ -286,7 +257,9 @@ int main(int argc,char** argv){
 
         pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
         trkMan->DoCMOSChi2Tracking();
-        auto recoTracks = trkMan->DoRTTracking();
+        trkMan->DoRTTracking();
+        trkMan->phantomPositions();
+        auto recoTracks = trkMan->GetRecoTracks();
 
         for(int i(0); i<recoTracks.size(); i++){
             double trueEnergy = recoTracks[i]->GetTrueEnergy();
@@ -307,41 +280,14 @@ int main(int argc,char** argv){
                 for (int it(0); it<10; it++) if(straightness >= eff_bin[it]) eff_cnt[it]++;
                 if(straightness < straightness_cut) continue;
                 h_EResByRng[RngResBin]->Fill(RngRes);
+
+                //std::cout << "X,Y: " << recoTracks[i]->GetPhantomProjX() << "," << recoTracks[i]->GetPhantomProjY() << std::endl;
+
+                h_hitsMap->Fill(recoTracks[i]->GetPhantomProjX(),recoTracks[i]->GetPhantomProjY(),recoEnergyByRng);
+                h_recoE->Fill(recoEnergyByRng);
+                h_hitsMapNorm->Fill(recoTracks[i]->GetPhantomProjX(),recoTracks[i]->GetPhantomProjY(),1);
             }
         }
-
-        //std::vector< pCTTrack* > recoTracks = event->Reconstruct(config);
-        // if(recoTracks.size() != 1) continue;
-
-        // double recoEnergyByRng = fitval->Eval((*recoTracks.begin())->GetRecoMeas(observable));
-        // int RngResBin = (int) (*trackIdToGunEnergy.begin()).second/nResBinWidth;
-        // double RngRes = 100*(trueEnergy-recoEnergyByRng)/trueEnergy;
-
-        // double straightness = (*recoTracks.begin())->GetRecoMeas(2)/(*recoTracks.begin())->GetRecoMeas(3);
-        // //cout << "straightness: " << straightness << endl;
-
-        // h_StraightnessVsE->Fill((*trackIdToGunEnergy.begin()).second,straightness);
-
-        // for (ushort p(0); p<nplanes; p++){
-        //     if(!p) continue;
-        //     std::map<G4int, std::vector< CMOSPixel* > > Counter = event->GetPixelHitsMap();
-        //     std::map<G4int, std::vector< CMOSPixel*> >::iterator it;
-        //     for(it=Counter.begin(); it!=Counter.end(); it++){
-        //         ushort Plane = (*it).first;
-        //         if (Plane != p) continue;
-        //         ushort nHitsInPlane = (*it).second.size();
-        //         if(nHitsInPlane>1) continue;
-        //         for(ushort index(0); index<nHitsInPlane; index++)
-        //         {
-        //             ushort X = (*it).second.at(index)->GetX();
-        //             ushort Y = (*it).second.at(index)->GetY();
-        //             ushort e = (*it).second.at(index)->GetElectronsLiberated();
-        //             h_hitsMap->Fill(X+1,Y+1,recoEnergyByRng);
-        //             h_recoE->Fill(recoEnergyByRng);
-        //             h_hitsMapNorm->Fill(X+1,Y+1,1);
-        //         }
-        //     }
-        // }
 
     }
 
@@ -349,7 +295,6 @@ int main(int argc,char** argv){
     g_EffVsStraigness->SetName("g_EffVsStraigness");
     for (int it(0); it<10; it++){
         g_EffVsStraigness->SetPoint(g_EffVsStraigness->GetN(),eff_bin[it],1.*eff_cnt[it]/h_StraightnessVsE->GetEntries());
-        cout << "eff: " << eff_bin[it] << ", " << 1.*eff_cnt[it]/h_StraightnessVsE->GetEntries() << endl;
     }
 
     cout << "TOTAL RECO:  " << total_reco << endl;
@@ -373,8 +318,8 @@ int main(int argc,char** argv){
         if( bin*nResBinWidth+nResBinWidth/2 < 60 and nlayers < 50) continue;
         g_EResByRng->SetPoint(g_EResByRng->GetN(),bin*nResBinWidth+nResBinWidth/2,fitsigma);
         g_EResByRng->SetPointError(g_EResByRng->GetN()-1,0,fitRes->GetParError(2));
-        c1->Update();
-        c1->WaitPrimitive();
+        //c1->Update();
+        //c1->WaitPrimitive();
     }
 
     TCanvas* c2 = new TCanvas("c2");
@@ -404,37 +349,47 @@ int main(int argc,char** argv){
     g_EffVsStraigness->Draw("AP");
     c7->Update();
 
-    // TCanvas* c4 = new TCanvas("c4");
-    // c4->Divide(1,5);
-    // c4->cd(1);
-    // h_hitsMap->DrawCopy("COLZ");
-    // c4->cd(2);
-    // h_hitsMapNorm->DrawCopy("COLZ");
-    // c4->cd(3);
-    // h_hitsMap->Divide(h_hitsMapNorm);
-    // h_hitsMap->GetZaxis()->SetRangeUser(120,160);
-    // h_hitsMap->DrawCopy("COLZ");
-    // c4->cd(4);
-    // h_hitsMap->DrawCopy("CONTZ");
-    // c4->cd(5);
-    // h_hitsMap->DrawCopy("CONT1Z");
-    // c4->Update();
+    TCanvas* c4 = new TCanvas("c4");
+    c4->Divide(1,5);
+    c4->cd(1);
+    h_hitsMap->DrawCopy("COLZ");
+    c4->cd(2);
+    h_hitsMapNorm->DrawCopy("COLZ");
+    c4->cd(3);
+    h_hitsMap->Divide(h_hitsMapNorm);
+    h_hitsMap->GetZaxis()->SetRangeUser(140,190);
+    h_hitsMap->DrawCopy("COLZ");
+    c4->cd(4);
+    h_hitsMap->DrawCopy("CONTZ");
+    c4->cd(5);
+    h_hitsMap->DrawCopy("CONT1Z");
+    c4->Update();
 
-    // for(int i(0); i<100; i++)
-    //     for(int j(0); j<100; j++)
-    //         h_imageDist->Fill(h_hitsMap->GetBinContent(i+1,j+1));
+    for(int i(0); i<100; i++)
+        for(int j(0); j<100; j++)
+            h_imageDist->Fill(h_hitsMap->GetBinContent(i+1,j+1));
 
-    // TCanvas* c5 = new TCanvas("c5");
-    // c5->cd();
-    // h_imageDist->Draw("HIST");
-    // c5->Update();
-    //c5->WaitPrimitive();
+    TCanvas* c5 = new TCanvas("c5");
+    c5->cd();
+    //h_imageDist->Draw("HIST");
+    h_recoE->Draw("HIST");
+    c5->Update();
+
+    TCanvas* c8 = new TCanvas("c8");
+    c8->cd();
+    h_hitsMap->GetZaxis()->SetRangeUser(150,180);
+    h_hitsMap->DrawCopy("COLZ");
+    c8->Update();
+    //c8->WaitPrimitive();
 
     //_____________________
 
     outFile->cd();
+    h_recoE->Write();
+    h_imageDist->Write();
     h_trueEvsRng->Write();
     g_EResByRng->Write();
+    h_hitsMap->Write();
     outFile->Close();
 
     if(batch) return 0;

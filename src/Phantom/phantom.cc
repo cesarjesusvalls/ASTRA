@@ -88,7 +88,7 @@ for ( G4int h = 0 ; (h<nHits) ; ++h )
     TVector3 pos(pos_.getX(),pos_.getY(),pos_.getZ());
 
     if (abs(midPos.Z() - phantomPosZ) > abs(pos.Z()-phantomPosZ)) midPos=pos;
-    std::cout << "Phantom mid pos =  " << midPos.X() << ", " << midPos.Y() << ", " << midPos.Z()<< std::endl;
+    //std::cout << "Phantom mid pos =  " << midPos.X() << ", " << midPos.Y() << ", " << midPos.Z()<< std::endl;
 
     // if already exists then add the new point and the edep 
     if(hitsMap.find(trackID) != hitsMap.end()){
