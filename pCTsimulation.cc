@@ -159,6 +159,11 @@ int main(int argc,char** argv)
                 pCTXMLInput->SetNProtons(atof(string(argv[iarg]).c_str()));
                 cout << "New number of protons: " << pCTXMLInput->GetNProtons()<< endl;
             }
+            else if (string(argv[iarg])=="--typeGUN"){
+                iarg++;
+                pCTXMLInput->SetBeamType(atof(string(argv[iarg]).c_str()));
+                cout << "New Beam type: " << pCTXMLInput->GetBeamType()<< endl;
+            }
       }
   }
 
