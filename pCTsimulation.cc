@@ -164,6 +164,11 @@ int main(int argc,char** argv)
                 pCTXMLInput->SetBeamType(atof(string(argv[iarg]).c_str()));
                 cout << "New Beam type: " << pCTXMLInput->GetBeamType()<< endl;
             }
+            else if (string(argv[iarg])=="--NOTenergyWide"){
+                iarg++;
+                pCTXMLInput->SetUseEnergyWide(false);
+                cout << "New Energy Wide: " << pCTXMLInput->UseEnergyWide()<< endl;
+            }
       }
   }
 

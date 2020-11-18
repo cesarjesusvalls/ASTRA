@@ -101,6 +101,9 @@ int main(int argc,char** argv){
         else if (string( gApplication->Argv(iarg))=="-showCMOS"){
             show_CMOS = true;
         }
+        else if (string( gApplication->Argv(iarg))=="-UsePreFitInfo"){
+            GenerateNewRngToEnergyTable = false;
+        }
     }
 
     TFile* outFile = new TFile(fileOut.Data(),"RECREATE");
@@ -171,8 +174,7 @@ int main(int argc,char** argv){
     const int nbars(config->GetSciDetNBars());
     const int nlayers(config->GetSciDetNLayers());
 
-    if( observable) h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,nlayers+10,50,0,maxE);
-    else            h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,20000,50,0,maxE);
+    h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,nlayers+10,50,0,maxE);
 
     TF1* fitval = new TF1("fitval","[0]+[1]*x+[2]*sqrt([3]*x)",0,nlayers+10);
     //fitval->SetParameters(13.5133,0.241717,4.7242,3.0556); 
@@ -312,7 +314,6 @@ int main(int argc,char** argv){
         if (bin*nResBinWidth+nResBinWidth/2 < 100) fitRes = new TF1("fitRes","gaus",-10,10);
         if(!h_EResByRng[bin]->GetEntries()) continue;
         fitRes->SetParameters(100,0,10); 
-        if(!observable) fitRes->SetParameters(1000,0,1); 
         h_EResByRng[bin]->Fit("fitRes","RQ");
         double fitmean  = fitRes->GetParameter(1);
         double fitsigma = fitRes->GetParameter(2);

@@ -4,11 +4,11 @@ file (GLOB UTILS
     ${PROJECT_SOURCE_DIR}/utils/*.cc
 )
 
-ADD_EXECUTABLE(templateAna          templateAna.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
-TARGET_LINK_LIBRARIES(templateAna   Evtdict ${ROOT_LIBRARIES})
+ADD_EXECUTABLE(event_display          event_display.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
+TARGET_LINK_LIBRARIES(event_display   Evtdict ${ROOT_LIBRARIES})
 
-ADD_EXECUTABLE(energyRes          energyRes.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
-TARGET_LINK_LIBRARIES(energyRes   Evtdict ${ROOT_LIBRARIES})
+ADD_EXECUTABLE(energy_res          energy_res.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
+TARGET_LINK_LIBRARIES(energy_res   Evtdict ${ROOT_LIBRARIES})
 
-ADD_EXECUTABLE(tracker_Test          tracker_Test.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
-TARGET_LINK_LIBRARIES(tracker_Test   Evtdict ${ROOT_LIBRARIES})
+ADD_EXECUTABLE(advanced_event_display          advanced_event_display.cc ${EXTRA_SOURCEFILES} ${EXTRA_HEADERFILES})
+TARGET_LINK_LIBRARIES(advanced_event_display   Evtdict ${ROOT_LIBRARIES})

@@ -43,7 +43,7 @@
 </BeamType>
 
 <NProtons>
-  2
+  1
 </NProtons>
 
 <IniPGUNEnergy>
@@ -51,7 +51,7 @@
 </IniPGUNEnergy>
 
 <UseEnergyWide>
-  False
+  True
 </UseEnergyWide>
 
 <!-- ......... -->
