@@ -44,19 +44,61 @@ int main(int argc,char** argv){
     double  coating  = 0.1;
     int     barZthick[3] = {3,6,9};
 
-    TFile* file = new TFile("/Users/cjesus/Dev/protonCT/output/energyRes_2_3_0.05_CMOS.root", "READ");
+    TFile* file = new TFile("/Users/cjesus/Dev/protonCT/output/image_2_3_0.05_CMOS.root", "READ");
     TH2F* h_imag  = (TH2F*) file->Get("image");
 
     // NO COATING different bar size for different true energy estimators:
 
+
     gStyle->SetOptStat(0);
     gStyle->SetPalette(kGreyScale);
 
-    TCanvas* c1 = new TCanvas("c1","");
+    TCanvas* c1 = new TCanvas("c1","", 600,600);
     c1->cd();
 
-    h_imag->DrawCopy("COLZ");
+    gPad->SetTopMargin( 0.18 );
+    gPad->SetRightMargin( 0.18 );
+    gPad->SetLeftMargin( 0.18 );
+    gPad->SetBottomMargin( 0.18 );
+
+    //gPad->SetLogz();
+
+    h_imag->SetTitle("");
+
+    h_imag->GetYaxis()->SetTitleOffset(1.2);
+
+    h_imag->GetXaxis()->SetTitle("cm");
+    h_imag->GetYaxis()->SetTitle("cm");
+
+    h_imag->GetZaxis()->SetRangeUser(165,168);
+    h_imag->GetXaxis()->SetRangeUser(-20,20);
+    h_imag->GetYaxis()->SetRangeUser(-20,20);
+    h_imag->DrawCopy("CONT1Z");
     c1->Update();
+
+
+    TCanvas* c2 = new TCanvas("c2","", 600,600);
+    c2->cd();
+
+    gPad->SetTopMargin( 0.18 );
+    gPad->SetRightMargin( 0.18 );
+    gPad->SetLeftMargin( 0.18 );
+    gPad->SetBottomMargin( 0.18 );
+    //gPad->SetLogz();
+
+    h_imag->SetTitle("");
+
+    h_imag->GetYaxis()->SetTitleOffset(1.2);
+
+    h_imag->GetXaxis()->SetTitle("cm");
+    h_imag->GetYaxis()->SetTitle("cm");
+
+    h_imag->GetZaxis()->SetRangeUser(153,178);
+    h_imag->GetXaxis()->SetRangeUser(-20,20);
+    h_imag->GetYaxis()->SetRangeUser(-20,20);
+    h_imag->DrawCopy("COLZ");
+    c2->Update();
+
 
 
     file->Close();

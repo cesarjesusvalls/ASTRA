@@ -138,6 +138,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
         new G4PVPlacement(0,G4ThreeVector(0.*cm,0.*cm,-3*cm)    ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
       
       */
+    std::cout << "USING PHANTOM!" << std::endl;
     G4ThreeVector phantomPos    = G4ThreeVector(0,0,(pCTXMLInput->GetPosZ2()+pCTXMLInput->GetPosZ1())*0.5*cm);
       new G4PVPlacement(0,phantomPos    ,logicPhantom,"phantom",logicEnv,false,0,checkOverlaps);
     }

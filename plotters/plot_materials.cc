@@ -52,8 +52,29 @@ int main(int argc,char** argv){
         h_imag[i]  = (TH2F*) file[i]->Get("h_recoE");
     }
 
+    TF1* g1 = new TF1("g1","gaus",150,185);
+    TF1* g2 = new TF1("g2","gaus",150,185);
+    TF1* g3 = new TF1("g3","gaus",150,185);
+    TF1* g4 = new TF1("g4","gaus",150,185);
+    TF1* g5 = new TF1("g5","gaus",150,185);
+
+    g1->SetParameters(100,160,5);
+    g2->SetParameters(100,160,5);
+    g3->SetParameters(100,160,5);
+    g4->SetParameters(100,160,5);
+    g5->SetParameters(100,160,5); 
+
     TCanvas* c1 = new TCanvas("c1","");
     c1->cd();
+
+    gPad->SetRightMargin(0.04);
+    gPad->SetLeftMargin(0.14);
+
+    h_imag[0]->SetStats(0);
+    h_imag[1]->SetStats(0);
+    h_imag[2]->SetStats(0);
+    h_imag[3]->SetStats(0);
+    h_imag[4]->SetStats(0);
 
     h_imag[0]->SetLineColor(kRed);
     h_imag[1]->SetLineColor(kGreen+1);
@@ -61,18 +82,68 @@ int main(int argc,char** argv){
     h_imag[3]->SetLineColor(kAzure+2);
     h_imag[4]->SetLineColor(kCyan);
 
-    h_imag[0]->DrawCopy("HIST");
-    h_imag[1]->DrawCopy("HIST same");
-    h_imag[2]->DrawCopy("HIST same");
-    h_imag[3]->DrawCopy("HIST same");
-    h_imag[4]->DrawCopy("HIST same");
+    h_imag[0]->SetMarkerColor(kRed);
+    h_imag[1]->SetMarkerColor(kGreen+1);
+    h_imag[2]->SetMarkerColor(kOrange-5);
+    h_imag[3]->SetMarkerColor(kAzure+2);
+    h_imag[4]->SetMarkerColor(kCyan);
 
-    auto leg1 = new TLegend(0.55,0.65,0.85,0.85);
-    leg1->AddEntry(h_imag[0], "lung","l");
-    leg1->AddEntry(h_imag[1], "ribBone ","l");
-    leg1->AddEntry(h_imag[2], "hcBone ","l");
-    leg1->AddEntry(h_imag[3], "adipose ","l");
-    leg1->AddEntry(h_imag[4], "water ","l");
+    g1->SetNpx(300);
+    g2->SetNpx(300);
+    g3->SetNpx(300);
+    g4->SetNpx(300);
+    g5->SetNpx(300);
+
+    g1->SetLineColor(kRed);
+    g2->SetLineColor(kGreen+1);
+    g3->SetLineColor(kOrange-5);
+    g4->SetLineColor(kAzure+2);
+    g5->SetLineColor(kCyan);
+
+    g1->SetLineWidth(2);
+    g2->SetLineWidth(2);
+    g3->SetLineWidth(2);
+    g4->SetLineWidth(2);
+    g5->SetLineWidth(2);
+
+    h_imag[0]->SetLineWidth(0);
+    h_imag[1]->SetLineWidth(0);
+    h_imag[2]->SetLineWidth(0);
+    h_imag[3]->SetLineWidth(0);
+    h_imag[4]->SetLineWidth(0);
+
+    h_imag[0]->Fit("g1");
+    h_imag[1]->Fit("g2");
+    h_imag[2]->Fit("g3");
+    h_imag[3]->Fit("g4");
+    h_imag[4]->Fit("g5");
+
+    h_imag[0]->GetXaxis()->SetTitle("Reconstructed Energy [MeV]");
+    h_imag[0]->GetYaxis()->SetTitle("Entres");
+    h_imag[0]->GetYaxis()->SetTitleOffset(1.4);
+    h_imag[0]->SetTitle("");
+
+    h_imag[0]->GetYaxis()->SetRangeUser(0,4000);
+    h_imag[0]->DrawCopy("P9"); 
+    h_imag[1]->DrawCopy("P9 same");
+    h_imag[2]->DrawCopy("P9 same");
+    h_imag[3]->DrawCopy("P9 same");
+    h_imag[4]->DrawCopy("P9 same");
+
+    h_imag[2]->DrawCopy("same");
+    h_imag[1]->DrawCopy("same");
+    h_imag[4]->DrawCopy("same");
+    h_imag[3]->DrawCopy("same");
+    h_imag[0]->DrawCopy("same");
+
+
+    auto leg1 = new TLegend(0.15, 0.905, 0.94, 0.98);
+    leg1->SetNColumns(5);
+    leg1->AddEntry(g3, "hcBone ","l");
+    leg1->AddEntry(g2, "ribBone ","l");
+    leg1->AddEntry(g5, "water ","l");
+    leg1->AddEntry(g4, "adipose ","l");
+    leg1->AddEntry(g1, "lung","l");
 
     leg1->SetBorderSize(0);
     leg1->Draw("same");

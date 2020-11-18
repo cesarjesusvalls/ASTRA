@@ -2,4 +2,4 @@
 /run/initialize
 /gun/particle proton
 /gun/energy 180 MeV
-/run/beamOn 100000
+/run/beamOn 1000000

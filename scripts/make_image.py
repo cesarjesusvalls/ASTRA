@@ -2,7 +2,7 @@ import os
 import multiprocessing as mp
 
 prog     = "../bin/energyRes"
-in_file  = "/Users/cjesus/Dev/protonCT/output/simulation_file_"
+in_file  = "/Users/cjesus/Dev/protonCT/output/imaging_"
 out_path = "/Users/cjesus/Dev/protonCT/output/image_"
 
 measurements = [2]  
@@ -15,8 +15,8 @@ commands = []
 for M in measurements:
     for Z in barZthick:
         for C in coating:
-            command = prog + " -z 100000 -i " + in_file + str(Z) + "_" + str(C) + "_CMOS.root "
-            command = command + "-o /Users/cjesus/Dev/protonCT/output/imaging_" + str(M) + "_" + str(Z) + "_" + str(C)+ "_CMOS.root -m " + str(M)# + " -s " + str(0.96) 
+            command = prog + " -z 1000000 -i " + in_file + str(Z) + "_" + str(C) + "_CMOS.root "
+            command = command + "-o " + out_path + str(M) + "_" + str(Z) + "_" + str(C)+ "_CMOS.root -m " + str(M) + " -s " + str(0.96) 
             commands.append(command)
             print("executing: ", command)
             os.system(command)

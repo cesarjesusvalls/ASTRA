@@ -39,11 +39,11 @@
 <!-- PGUN info -->
 
 <BeamType>
-  M5
+  Rectangular
 </BeamType>
 
 <NProtons>
-  1
+  2
 </NProtons>
 
 <IniPGUNEnergy>

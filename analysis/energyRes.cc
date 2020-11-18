@@ -135,7 +135,7 @@ int main(int argc,char** argv){
 
     //_______THE RESULT HITOS_____
 
-    TH1F* h_recoE           = new TH1F("h_recoE","h_recoE",100,150,200);
+    TH1F* h_recoE           = new TH1F("h_recoE","h_recoE",20,150,185);
     TH1F* h_imageDist       = new TH1F("h_imageDist","h_imageDist",100,80,250);
     TH2F* h_StraightnessVsE = new TH2F("h_StraightnessVsE","h_StraightnessVsE",100,0,250,100,0,1);
 
@@ -148,8 +148,8 @@ int main(int argc,char** argv){
     const double nrows(config->GetPlaneRows());
     const double ncols(config->GetPlaneColumns());
 
-    int nbins_imag = 100;
-    int min_pos = -45;
+    int nbins_imag = 150;
+    int min_pos = 30;
     TH2F* h_hitsMap     = new TH2F("image","image",nbins_imag,-min_pos,min_pos,nbins_imag,-min_pos,min_pos);
     TH2F* h_hitsMapNorm = new TH2F("imageNorm","imageNorm",nbins_imag,-min_pos,min_pos,nbins_imag,-min_pos,min_pos);
     TString xLabel = "# Pixel (";
@@ -175,7 +175,8 @@ int main(int argc,char** argv){
     else            h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,20000,50,0,maxE);
 
     TF1* fitval = new TF1("fitval","[0]+[1]*x+[2]*sqrt([3]*x)",0,nlayers+10);
-    fitval->SetParameters(13.5133,0.241717,4.7242,3.0556); 
+    //fitval->SetParameters(13.5133,0.241717,4.7242,3.0556); 
+    fitval->SetParameters(13.5237,0.241549,4.78621,2.97965); 
 
     //_______THE ANALYSIS______
 
@@ -283,9 +284,11 @@ int main(int argc,char** argv){
 
                 //std::cout << "X,Y: " << recoTracks[i]->GetPhantomProjX() << "," << recoTracks[i]->GetPhantomProjY() << std::endl;
 
-                h_hitsMap->Fill(recoTracks[i]->GetPhantomProjX(),recoTracks[i]->GetPhantomProjY(),recoEnergyByRng);
-                h_recoE->Fill(recoEnergyByRng);
-                h_hitsMapNorm->Fill(recoTracks[i]->GetPhantomProjX(),recoTracks[i]->GetPhantomProjY(),1);
+                if (recoEnergyByRng>135){
+                    h_hitsMap->Fill(recoTracks[i]->GetPhantomProjX(),recoTracks[i]->GetPhantomProjY(),recoEnergyByRng);
+                    h_recoE->Fill(recoEnergyByRng);
+                    h_hitsMapNorm->Fill(recoTracks[i]->GetPhantomProjX(),recoTracks[i]->GetPhantomProjY(),1);
+                }
             }
         }
 
