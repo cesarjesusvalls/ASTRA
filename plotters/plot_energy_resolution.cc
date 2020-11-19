@@ -49,24 +49,15 @@ int main(int argc,char** argv){
     TGraphErrors* h_ERes    [4];
 
     //a/sqrt(E) + b/E+c
-    TF1* fitval = new TF1("fitval","[0]/sqrt(x) +[1]/x + [2]",80,240);
+    TF1* fitval = new TF1("fitval","[0]/sqrt(x) +[1]/x + [2]",50,240);
     fitval->SetParameters(1,1,1); 
 
-    TString baseName = "/Users/cjesus/Dev/protonCT/output/energyRes_2_";
+    TString baseName = "../output/resolution_";
     for(uint k(0); k<3; ++k){
-        fnames  [k]    = baseName + barZthick[k] + "_0.05.root"; 
+        fnames  [k]    = baseName + barZthick[k] + "mm_1protons_analysis.root"; 
         files   [k]    = new TFile(fnames[k].Data(), "READ");
         h_ERes  [k]    = (TGraphErrors*) files[k]->Get("EResByRng");
     }
-
-    // fnames  [3]    = "/Users/cjesus/Dev/protonCT/output/energyRes_2_3_0.05_CMOS.root"; 
-    // files   [3]    = new TFile(fnames[3].Data(), "READ");
-    // h_ERes  [3]    = (TGraphErrors*) files[3]->Get("EResByRng");
-
-    cout << "alive\n";
-
-    // NO COATING different bar size for different true energy estimators:
-
 
     TCanvas* c1 = new TCanvas("c1","");
     c1->cd();
@@ -92,10 +83,6 @@ int main(int argc,char** argv){
     h_ERes[0]->GetYaxis()->SetTitleOffset(1.2);
     h_ERes[0]->GetXaxis()->SetTitle("Proton True Kinetic Energy [MeV]");
     h_ERes[0]->GetYaxis()->SetTitle("Energy resolution #sigma = (True-Reco) / True [%]");
-
-    // h_ERes[3]->SetMarkerColor(kBlack);
-    // h_ERes[3]->SetMarkerStyle(22);
-    // h_ERes[3]->SetMarkerSize(1.4);
     
     double min_x = 0;
     double max_x = 240;
@@ -117,14 +104,13 @@ int main(int argc,char** argv){
     leg1->AddEntry(h_ERes[0], "3  mm ","P");
     leg1->AddEntry(h_ERes[1], "6  mm ","P");
     leg1->AddEntry(h_ERes[2], "9 mm ","P");
-    //leg1->AddEntry(h_ERes[3], "3  mm + CMOS ","P");
-    //line1pcnt->Draw("same");
 
     leg1->SetBorderSize(0);
     leg1->Draw("same");
 
     c1->Update();
-    c1->SaveAs("/Users/cjesus/Work/plots_pCT/eRes_by_Thickness_bis_fit.pdf");
+    c1->SaveAs("../plots/energy_res.pdf");
+    c1->SaveAs("../plots/energy_res.png");
     c1->WaitPrimitive();
 
 
@@ -141,7 +127,7 @@ int main(int argc,char** argv){
     min_x = 80;
     max_x = 240;
 
-    h_ERes[0]->GetYaxis()->SetRangeUser(0.5,1);
+    h_ERes[0]->GetYaxis()->SetRangeUser(0.5,1.4);
     h_ERes[0]->GetXaxis()->SetRangeUser(min_x,max_x);
 
     h_ERes[0]->GetYaxis()->SetTitleOffset(1.2);
@@ -149,19 +135,18 @@ int main(int argc,char** argv){
     h_ERes[0]->Fit(fitval,"R");
     h_ERes[1]->Draw("P same");
     h_ERes[2]->Draw("P same");
-    //h_ERes[3]->Draw("P same");
 
     auto leg2 = new TLegend(0.15,0.15,0.35,0.4);
     leg2->AddEntry(h_ERes[0], "3  mm ","P");
     leg2->AddEntry(h_ERes[1], "6  mm ","P");
     leg2->AddEntry(h_ERes[2], "9  mm ","P");
-    //leg2->AddEntry(h_ERes[3], "3  mm + CMOS ","P");
 
     leg2->SetBorderSize(0);
     leg2->Draw("same");
 
     c2->Update();
-    c2->SaveAs("/Users/cjesus/Work/plots_pCT/eRes_by_Thickness_detail_bis_fit.pdf");
+    c2->SaveAs("../plots/energy_res_detail.pdf");
+    c2->SaveAs("../plots/energy_res_detail.png");
     c2->WaitPrimitive();
 
 

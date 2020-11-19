@@ -10,7 +10,7 @@ Cut_In_Straightness = True
 Nprotons  = [1,2]
 barZthick = [3] 
 
-max_events = 1000
+max_events = 1000000
 
 commands = []
 

@@ -304,14 +304,14 @@ int main(int argc,char** argv){
 
     cout << "TOTAL RECO:  " << total_reco << endl;
 
-    TF1* fitRes = new TF1("fitRes","gaus",-50,50);
-    fitRes->SetParameters(100,0,10); 
+    TF1* fitRes = new TF1("fitRes","gaus",-80,80);
+    fitRes->SetParameters(100,0,30); 
     TCanvas* c1 = new TCanvas("c1");
     c1->cd();
     TGraphErrors* g_EResByRng = new TGraphErrors();
     g_EResByRng->SetName("EResByRng");
     for(int bin(0); bin<nResBins; bin++){
-        if (bin*nResBinWidth+nResBinWidth/2 < 100) fitRes = new TF1("fitRes","gaus",-10,10);
+        if (bin*nResBinWidth+nResBinWidth/2 > 100) fitRes = new TF1("fitRes","gaus",-10,10);
         if(!h_EResByRng[bin]->GetEntries()) continue;
         fitRes->SetParameters(100,0,10); 
         h_EResByRng[bin]->Fit("fitRes","RQ");
@@ -322,8 +322,8 @@ int main(int argc,char** argv){
         if( bin*nResBinWidth+nResBinWidth/2 < 60 and nlayers < 50) continue;
         g_EResByRng->SetPoint(g_EResByRng->GetN(),bin*nResBinWidth+nResBinWidth/2,fitsigma);
         g_EResByRng->SetPointError(g_EResByRng->GetN()-1,0,fitRes->GetParError(2));
-        //c1->Update();
-        //c1->WaitPrimitive();
+        c1->Update();
+        c1->WaitPrimitive();
     }
 
     TCanvas* c2 = new TCanvas("c2");
@@ -389,6 +389,8 @@ int main(int argc,char** argv){
     //_____________________
 
     outFile->cd();
+    h_StraightnessVsE->Write();
+    g_EffVsStraigness->Write();
     h_recoE->Write();
     h_imageDist->Write();
     h_trueEvsRng->Write();

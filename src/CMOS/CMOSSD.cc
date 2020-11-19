@@ -207,14 +207,14 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
   
     // if pEvtID  ==-1 then no runs have occured before and we need to make the file
     // if pEVTID > current event ID then a new run has started and we need a new file
-    if(pEvtID>evtID && fout.is_open())
-    fout.close();
+    // if(pEvtID>evtID && fout.is_open())
+    // fout.close();
   
-    if(pEvtID==-1 || pEvtID>evtID)
-    {   
-        fname = "Test_"+GetName()+".txt"; 
-        fout.open(fname.c_str(), std::ios::out); //| std::ios::app);  
-    }
+    // if(pEvtID==-1 || pEvtID>evtID)
+    // {   
+    //     fname = "Test_"+GetName()+".txt"; 
+    //     fout.open(fname.c_str(), std::ios::out); //| std::ios::app);  
+    // }
 
     unsigned short int nPlanes = Counter.size();
     

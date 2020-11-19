@@ -146,8 +146,11 @@ int main(int argc,char** argv){
             trkMan->DoCMOSChi2Tracking();
             trkMan->DoRTTracking();
             auto recoTracks = trkMan->GetRecoTracks();
-            event->DrawRecoTracks(config,recoTracks);
-            event->DrawRecoTracks3D(config,recoTracks);
+            if(recoTracks.size()==4){
+                event->DrawSciDetHits(config);
+                event->DrawRecoTracks(config,recoTracks);
+                event->DrawRecoTracks3D(config,recoTracks);
+            }
         }
     }
 

@@ -78,6 +78,8 @@ void pCTEvent::DrawSciDetHits(pCTXML* config){
         blindbox->SetFillColor(gridColor);
         blindbox->Draw("same");
     }
+    canv->SaveAs("../plots/edep_event_display.pdf");
+    canv->SaveAs("../plots/edep_event_display.png");
     canv->Update();
     canv->WaitPrimitive();
 
@@ -231,37 +233,6 @@ std::vector< pCTTrack* > pCTEvent::Reconstruct(pCTXML* config){
 
 void pCTEvent::DrawRecoTracks(pCTXML* config, std::vector< pCTTrack* > trks){
 
-
-        // int nbars(config->GetSciDetNBars());
-        // int nlayers(config->GetSciDetNLayers());
-        // for (int it(0); it<nbars*nlayers; ++it){
-        //     TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter(it));
-        //     tmpEve->SetRnrSelf(0);
-        //     tmpEve->SetMainColor(0);
-        //     //delete tmpEve;
-        // }
-
-        // std::vector< SciDetHit* > listOfSciHits = event->GetSciDetHits();
-        // for(std::vector< SciDetHit* >::iterator sciHit=listOfSciHits.begin(); sciHit!=listOfSciHits.end(); sciHit++){
-        //     int node_id = (*sciHit)->GetLayerID()*nbars+(*sciHit)->GetBarID();
-        //     TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter(node_id));
-        //     tmpEve->SetRnrSelf(1);
-        //     tmpEve->SetMainColor(1);
-        //     delete tmpEve;
-        // }
-
-        // int trkCnt = 1;
-        // for(auto trk=recoTracks.begin(); trk != recoTracks.end(); trk++){
-        //     auto barIds = (*trk)->GetBarIDs();
-        //     for(auto id=barIds.begin(); id!=barIds.end(); id++){
-        //         TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter((*id)));
-        //         tmpEve->SetRnrSelf(1);
-        //         tmpEve->SetMainColor(trkCnt+1);
-        //         delete tmpEve;
-        //     }
-        //     trkCnt++;
-        // }
-
     TCanvas *canv = new TCanvas("canv","canv",600,1200);
     canv->Divide(1,2);
     gStyle->SetOptStat(0);
@@ -280,7 +251,7 @@ void pCTEvent::DrawRecoTracks(pCTXML* config, std::vector< pCTTrack* > trks){
             int layerID = (*id)/32;
             int orientation = layerID%2;
             int barID = (*id)%32;
-            h_hitsMap[orientation]->SetBinContent(layerID+1,barID+1,trkCnt);
+            h_hitsMap[orientation]->SetBinContent(layerID+1,barID+1,trkCnt-0.5);
         }
         trkCnt++;
     }
@@ -329,6 +300,8 @@ void pCTEvent::DrawRecoTracks(pCTXML* config, std::vector< pCTTrack* > trks){
         blindbox->SetFillColor(gridColor);
         blindbox->Draw("same");
     }
+    canv->SaveAs("../plots/reconstructed_track_display.pdf");
+    canv->SaveAs("../plots/reconstructed_track_display.png");
     canv->Update();
     canv->WaitPrimitive();
 
@@ -352,8 +325,7 @@ void pCTEvent::DrawRecoTracks3D(pCTXML* config, std::vector< pCTTrack* > trks){
 
     if(!trks.size()) return;
 
-    TCanvas *canv = new TCanvas("canv","canv",600,1200);
-    canv->Divide(1,2);
+    TCanvas *canv = new TCanvas("canv","canv",600,600);
     gStyle->SetOptStat(0);
 
     gStyle->SetCanvasColor(0);
@@ -362,11 +334,14 @@ void pCTEvent::DrawRecoTracks3D(pCTXML* config, std::vector< pCTTrack* > trks){
 
     TNtuple* Data_Tuple = new TNtuple("fData", "fData", "x:y:z:color");
 
+    // to set the color reference level.
+    Data_Tuple->Fill(-999, -999, -999, 0); 
+
     int trkCnt = 1;
     for(auto trk=trks.begin(); trk != trks.end(); trk++){
         auto hits = (*trk)->Get3DHits();
         for(auto hit=hits.begin(); hit!=hits.end(); hit++){
-            Data_Tuple->Fill(hit->X(), hit->Y(), hit->Z(), trkCnt); 
+            Data_Tuple->Fill(hit->X(), hit->Y(), hit->Z(), trkCnt-0.5); 
             if(hit->X()>maxX) maxX = hit->X();
             if(hit->X()<minX) minX = hit->X();
             if(hit->Y()>maxY) maxY = hit->Y();
@@ -377,8 +352,6 @@ void pCTEvent::DrawRecoTracks3D(pCTXML* config, std::vector< pCTTrack* > trks){
         trkCnt++;
     }
 
-    canv->cd(1);
-
     Data_Tuple->Draw("x:y:z:color","","box");
     TH3F *htemp = (TH3F*) gPad->GetPrimitive("htemp");
     htemp->GetZaxis()->SetLimits(minX-tolerance,maxX+tolerance);
@@ -386,6 +359,8 @@ void pCTEvent::DrawRecoTracks3D(pCTXML* config, std::vector< pCTTrack* > trks){
     htemp->GetXaxis()->SetLimits(minZ-tolerance,maxZ+tolerance);
     htemp->SetTitle("");
 
+    canv->SaveAs("../plots/reconstructed_3D_track_display.pdf");
+    canv->SaveAs("../plots/reconstructed_3D_track_display.png");
     canv->Update();
     canv->WaitPrimitive();
 

@@ -5,12 +5,12 @@ in_file  = "../output/resolution_"
 out_path = "../output/resolution_"
 
 Is_Interactive      = False
-Cut_In_Straightness = False
+Cut_In_Straightness = True
 
-Nprotons  = [1,2]
-barZthick = [3,6,9] 
+Nprotons  = [1]
+barZthick = [3] 
 
-max_events = 1000
+max_events = 1000000
 
 commands = []
 

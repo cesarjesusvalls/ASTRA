@@ -161,7 +161,7 @@ int main(int argc,char** argv)
             }
             else if (string(argv[iarg])=="--typeGUN"){
                 iarg++;
-                pCTXMLInput->SetBeamType(atof(string(argv[iarg]).c_str()));
+                pCTXMLInput->SetBeamType(string(argv[iarg]).c_str());
                 cout << "New Beam type: " << pCTXMLInput->GetBeamType()<< endl;
             }
             else if (string(argv[iarg])=="--NOTenergyWide"){

@@ -48,7 +48,7 @@ int main(int argc,char** argv){
     TH2F* h_imag[5];
 
     for (int i(0); i<5; i++){
-        file[i] = new TFile(TString::Format("/Users/cjesus/Dev/protonCT/output/dist_M%i.root",i+1).Data(), "READ");
+        file[i] = new TFile(TString::Format("../output/material%i_3mm_1protons_analysis.root",i+1).Data(), "READ");
         h_imag[i]  = (TH2F*) file[i]->Get("h_recoE");
     }
 
@@ -119,11 +119,11 @@ int main(int argc,char** argv){
     h_imag[4]->Fit("g5");
 
     h_imag[0]->GetXaxis()->SetTitle("Reconstructed Energy [MeV]");
-    h_imag[0]->GetYaxis()->SetTitle("Entres");
-    h_imag[0]->GetYaxis()->SetTitleOffset(1.4);
+    h_imag[0]->GetYaxis()->SetTitle("Entries");
+    h_imag[0]->GetYaxis()->SetTitleOffset(1.5);
     h_imag[0]->SetTitle("");
 
-    h_imag[0]->GetYaxis()->SetRangeUser(0,4000);
+    h_imag[0]->GetYaxis()->SetRangeUser(0,35000);
     h_imag[0]->DrawCopy("P9"); 
     h_imag[1]->DrawCopy("P9 same");
     h_imag[2]->DrawCopy("P9 same");
@@ -149,7 +149,8 @@ int main(int argc,char** argv){
     leg1->Draw("same");
 
     c1->Update();
-
+    c1->SaveAs("../plots/material_loss.pdf");
+    c1->SaveAs("../plots/material_loss.png");
 
     for(uint k(0); k<5; ++k) file[k]->Close();
     theApp->Run();

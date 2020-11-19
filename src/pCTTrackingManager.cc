@@ -61,7 +61,7 @@ void pCTTrackingManager::DoRTTracking(){
     double barWidth(fconfig->GetSciDetBarX());
 
     // max_dist is the key parameter to decide if 2 points are close or far.
-    double max_dist = 8;
+    double max_dist = 2.5*barWidth;
     std::map<int, int> track_to_id;
     for (int s(0); s<fcmosTracks.size(); ++s){
 
@@ -71,7 +71,7 @@ void pCTTrackingManager::DoRTTracking(){
         
         // this distance is hardcoded... ideally mode to config XML!
         // last CMOS plane to first layer distance is set to 5mm
-        double delta = 5;
+        double delta = 5 + barWidth/2;
 
         // for each seed, compute a prediction in the first SciDet layer.
         TVector3 seed_pos = GetSpacePoint(fcmosTracks[s][3],3);

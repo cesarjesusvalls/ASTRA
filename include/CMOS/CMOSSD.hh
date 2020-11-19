@@ -47,7 +47,7 @@ private:
   CMOSHitCollection*      hitCollection;
   G4int                   HCID;       //JT
   G4int pEvtID;
-	std::ofstream fout;
+	//std::ofstream fout;
 	G4String fname;
   pCTXML*                 pCTXMLInput;
   //HistoManager* fHistoManager;

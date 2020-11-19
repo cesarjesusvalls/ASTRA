@@ -10,7 +10,7 @@ Cut_In_Straightness = True
 Nprotons  = [1,2]
 materials = [1,2,3,4,5]  
 
-max_events = 1000
+max_events = 1000000
 
 commands = []
 
