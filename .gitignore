@@ -11,4 +11,4 @@ Test_CMOS.txt
 *#*
 *~*
 *.so
-
+/plots/*
