@@ -51,7 +51,7 @@
 
 TTree*   data;
 pCTEvent* event;
-TGeoNode* SciDet;
+TGeoNode* Astra;
 pCTXML* config;
 int event_id = 0;
 
@@ -68,7 +68,7 @@ inline void make_gui()
    {
         TString icondir( Form("%s/icons/", gSystem->Getenv("ROOTSYS")) );
         TGPictureButton* b = 0;
-        pCTEventHandler    *fh = new pCTEventHandler(data,&event_id,event,config,SciDet);
+        pCTEventHandler    *fh = new pCTEventHandler(data,&event_id,event,config,Astra);
         b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoBack.gif"));
         hf->AddFrame(b);
         b->Connect("Clicked()", "pCTEventHandler", fh, "Bck()");
@@ -110,14 +110,14 @@ inline void make_display(pCTXML* cfg)
         CMOSepi[it] = CMOS[it]->GetDaughter(0);
         CMOSsub[it] = CMOS[it]->GetDaughter(1);
     }
-    SciDet = topNode->GetDaughter(nCMOS);
+    Astra = topNode->GetDaughter(nCMOS);
 
-    int nbars(cfg->GetSciDetNBars());
-    int nlayers(cfg->GetSciDetNLayers());
+    int nbars(cfg->GetAstraNBars());
+    int nlayers(cfg->GetAstraNLayers());
 
-    TEveGeoTopNode* tmpEve = new TEveGeoTopNode(gGeoManager, SciDet);
+    TEveGeoTopNode* tmpEve = new TEveGeoTopNode(gGeoManager, Astra);
     gEve->AddElement(tmpEve);
-    gEve->AddElement(new TEveGeoTopNode(gGeoManager, SciDet));
+    gEve->AddElement(new TEveGeoTopNode(gGeoManager, Astra));
 
     gEve->GetBrowser()->GetTabRight()->SetTab(1);
     gEve->GetBrowser()->GetTabRight()->SetTab(2);

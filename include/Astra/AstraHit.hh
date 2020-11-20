@@ -1,6 +1,6 @@
 
-#ifndef SciDetHit_h
-#define SciDetHit_h 1
+#ifndef AstraHit_h
+#define AstraHit_h 1
 
 #include "G4VHit.hh"
 #include "G4Allocator.hh"
@@ -9,15 +9,15 @@
 #include "G4Types.hh"
 #include "G4SystemOfUnits.hh"
 
-class SciDetHit : public G4VHit {
+class AstraHit : public G4VHit {
 public:
     /// Constructor
-    SciDetHit(){;};
-    SciDetHit( const G4int copyID,  G4int layerID, G4int barID,
+    AstraHit(){;};
+    AstraHit( const G4int copyID,  G4int layerID, G4int barID,
                G4int orientation,  G4bool isScint,
                G4double edep,  G4int particle_ID, G4int trackID);
     /// Destructor
-    ~SciDetHit();
+    ~AstraHit();
     //! Print on screen a Hit
     void Print();
     
@@ -66,19 +66,19 @@ private:
 };
 
 // Define the "hit collection" using the template class G4THitsCollection:
-typedef G4THitsCollection<SciDetHit> SciDetHitCollection;
+typedef G4THitsCollection<AstraHit> AstraHitCollection;
 
 // -- new and delete overloaded operators:
-extern G4ThreadLocal G4Allocator<SciDetHit>* SciDetHitAllocator;
+extern G4ThreadLocal G4Allocator<AstraHit>* AstraHitAllocator;
 
-inline void* SciDetHit::operator new(size_t)
+inline void* AstraHit::operator new(size_t)
 {
-    if(!SciDetHitAllocator) SciDetHitAllocator = new G4Allocator<SciDetHit>;
-    return (void *) SciDetHitAllocator->MallocSingle();
+    if(!AstraHitAllocator) AstraHitAllocator = new G4Allocator<AstraHit>;
+    return (void *) AstraHitAllocator->MallocSingle();
 }
-inline void SciDetHit::operator delete(void *aHit)
+inline void AstraHit::operator delete(void *aHit)
 {
-    SciDetHitAllocator->FreeSingle((SciDetHit*) aHit);
+    AstraHitAllocator->FreeSingle((AstraHit*) aHit);
 }
 
 #endif

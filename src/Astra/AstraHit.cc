@@ -1,21 +1,21 @@
 
-#include "SciDetHit.hh"
+#include "AstraHit.hh"
 #include "G4SystemOfUnits.hh"
 
 // -- one more nasty trick for new and delete operator overloading:
-G4ThreadLocal G4Allocator<SciDetHit>* SciDetHitAllocator = 0;
+G4ThreadLocal G4Allocator<AstraHit>* AstraHitAllocator = 0;
 
-SciDetHit::SciDetHit( const G4int copyID,  G4int layerID, G4int barID,
+AstraHit::AstraHit( const G4int copyID,  G4int layerID, G4int barID,
               		  G4int orientation,  G4bool isScint,
               		  G4double edep,  G4int particle_ID, G4int track_ID)
 	: fCopyID(copyID), fLayerID(layerID), fBarID(barID),fOrientation(orientation), fIsScint(isScint), fEdep(edep), fParticleID(particle_ID), fTrackID(track_ID) {;};
 
 
-SciDetHit::~SciDetHit()
+AstraHit::~AstraHit()
 {
 }
 
-void SciDetHit::Print()
+void AstraHit::Print()
 {
     //Add one to the plane no. since they start at 0 but det. no starts at 1
 	//G4cout << "Hit: Plane = " << planeNumber+1 << ", Strip = " << stripNumber << ", E = " << eDep/MeV << " MeV, t = "

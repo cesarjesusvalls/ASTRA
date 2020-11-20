@@ -12,7 +12,7 @@
 #include <TObject.h>
 #include <TVector3.h>
 #include "pCTXML.hh"
-#include "SciDetHit.hh"
+#include "AstraHit.hh"
 #include "CMOSPixel.hh"
 #include "CMOSHit.hh"
 #include "CMOSSD.hh"
@@ -21,7 +21,7 @@ class pCTTrack : public TObject {
 
 private:
     std::map <G4int, std::vector< CMOSPixel* >>     fPixelsMap;
-    std::vector< SciDetHit* >                       fSciDetHits;
+    std::vector< AstraHit* >                       fAstraHits;
     double                                          fRecoEnergy;
     double                                          fTrueEnergy;
     // array of observables associated to the track
@@ -54,7 +54,7 @@ public:
 
     //-----Setters------
     void SetPixelHitsMap(std::map<G4int, std::vector< CMOSPixel* >> pxls)  {fPixelsMap       = pxls;};
-    void SetSciDetHits(std::vector< SciDetHit* > hits)                     {fSciDetHits      = hits;};
+    void SetAstraHits(std::vector< AstraHit* > hits)                     {fAstraHits      = hits;};
     void SetRecoEnergy(double E)                                           {fRecoEnergy      = E;};
     void SetTrueEnergy(double E)                                           {fTrueEnergy      = E;};
     void SetRecoMeas(int idx, double mes)                                  {fRecoMeas[idx]   = mes;};
@@ -67,7 +67,7 @@ public:
 
     //-----Getters------
     std::map<G4int, std::vector< CMOSPixel* >>  GetPixelHitsMap()       {return fPixelsMap;};
-    std::vector< SciDetHit* >                   GetSciDetHits()         {return fSciDetHits;};
+    std::vector< AstraHit* >                   GetAstraHits()         {return fAstraHits;};
     double                                      GetRecoEnergy()         {return fRecoEnergy;};
     double                                      GetTrueEnergy()         {return fTrueEnergy;};
     double                                      GetRecoMeas(int idx)    {return fRecoMeas[idx];};

@@ -3,20 +3,20 @@
 #define SCIDETSD_h 1
 
 #include "G4VSensitiveDetector.hh"
-#include "SciDetHit.hh"   
+#include "AstraHit.hh"   
 #include "pCTXML.hh"          
 class G4HCofThisEvent;
 
 #include "iostream"
 #include "string"
  
-class SciDetSD : public G4VSensitiveDetector
+class AstraSD : public G4VSensitiveDetector
 {
 public:
   /// Constructor
-  SciDetSD(G4String SDname);
+  AstraSD(G4String SDname);
   /// Destructor
-  ~SciDetSD();
+  ~AstraSD();
 
 public:
   /// methods from base class G4VSensitiveDetector
@@ -32,7 +32,7 @@ public:
 
 
 private:
-  SciDetHitCollection*      hitCollection;
+  AstraHitCollection*      hitCollection;
   G4int                     HCID;
   G4int pEvtID;
 	std::ofstream fout;

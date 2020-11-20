@@ -51,7 +51,7 @@ int main(int argc,char** argv){
     int     maxSelEvents   = std::numeric_limits<int>::max();;
     int     selEvents      = 0;
     float   start_time     = clock();
-    bool    show_SciDet    = false;
+    bool    show_Astra    = false;
     bool    show_CMOS      = false;
     TString fileIn         = "/Users/cjesus/Dev/protonCT/output/simulation_file.root";
     TString fileOut        = "/Users/cjesus/Dev/protonCT/output/analysis_outfile.root";
@@ -95,8 +95,8 @@ int main(int argc,char** argv){
             iarg++;
             straightness_cut = atof(gApplication->Argv(iarg));
         }
-        else if (string( gApplication->Argv(iarg))=="-showSciDet"){
-            show_SciDet = true;
+        else if (string( gApplication->Argv(iarg))=="-showAstra"){
+            show_Astra = true;
         }
         else if (string( gApplication->Argv(iarg))=="-showCMOS"){
             show_CMOS = true;
@@ -171,8 +171,8 @@ int main(int argc,char** argv){
     int nResBinWidth = 10;
     TH2F* h_trueEvsRng;
 
-    const int nbars(config->GetSciDetNBars());
-    const int nlayers(config->GetSciDetNLayers());
+    const int nbars(config->GetAstraNBars());
+    const int nlayers(config->GetAstraNLayers());
 
     h_trueEvsRng = new TH2F("h_trueEvsRng","",50,0,nlayers+10,50,0,maxE);
 
@@ -196,8 +196,8 @@ int main(int argc,char** argv){
         std::map <int, double > trackIdToGunEnergy = event->GetGunEnergyMap();
         std::map <int, double >::iterator gunEit;
 
-        std::vector< SciDetHit* > listOfSciHits = event->GetSciDetHits();
-        std::vector< SciDetHit* >::iterator sciHit;
+        std::vector< AstraHit* > listOfSciHits = event->GetAstraHits();
+        std::vector< AstraHit* >::iterator sciHit;
 
         hitsMap[(*sciHit)->GetLayerID()][(*sciHit)->GetBarID()][(*sciHit)->GetOrientation()] 
         = (*sciHit)->GetEnergyDeposited();
@@ -224,7 +224,7 @@ int main(int argc,char** argv){
             }
         }
 
-        if(show_SciDet) event->DrawSciDetHits(config);
+        if(show_Astra) event->DrawAstraHits(config);
         if(show_CMOS)   event->DrawCMOSHits(config);
     }
 
@@ -258,8 +258,8 @@ int main(int argc,char** argv){
         std::map <int, double > trackIdToGunEnergy = event->GetGunEnergyMap();
         std::map <int, double >::iterator gunEit;
 
-        std::vector< SciDetHit* > listOfSciHits = event->GetSciDetHits();
-        std::vector< SciDetHit* >::iterator sciHit;
+        std::vector< AstraHit* > listOfSciHits = event->GetAstraHits();
+        std::vector< AstraHit* >::iterator sciHit;
 
         hitsMap[(*sciHit)->GetLayerID()][(*sciHit)->GetBarID()][(*sciHit)->GetOrientation()] 
         = (*sciHit)->GetEnergyDeposited();

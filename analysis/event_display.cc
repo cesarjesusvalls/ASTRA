@@ -48,7 +48,7 @@ int main(int argc,char** argv){
     int     maxSelEvents   = std::numeric_limits<int>::max();;
     int     selEvents      = 0;
     float   start_time     = clock();
-    bool    show_SciDet    = false;
+    bool    show_Astra    = false;
     bool    show_CMOS      = false;
     bool    show_reco      = false;
     TString fileIn         = "/Users/cjesus/Dev/protonCT/output/simulation_file_3_0.05_CMOS.root";
@@ -90,8 +90,8 @@ int main(int argc,char** argv){
             iarg++;
             straightness_cut = atof(gApplication->Argv(iarg));
         }
-        else if (string( gApplication->Argv(iarg))=="-showSciDet"){
-            show_SciDet = true;
+        else if (string( gApplication->Argv(iarg))=="-showAstra"){
+            show_Astra = true;
         }
         else if (string( gApplication->Argv(iarg))=="-showCMOS"){
             show_CMOS = true;
@@ -136,9 +136,9 @@ int main(int argc,char** argv){
         data->GetEntry(ievt);
         cout << "Event: " << ievt << endl;
 
-        cout << "# RT hits: " << event->GetSciDetHits().size() << endl;
+        cout << "# RT hits: " << event->GetAstraHits().size() << endl;
 
-        if(show_SciDet) event->DrawSciDetHits(config);
+        if(show_Astra) event->DrawAstraHits(config);
         if(show_CMOS)   event->DrawCMOSHits(config);
 
         if(show_reco){
@@ -147,7 +147,7 @@ int main(int argc,char** argv){
             trkMan->DoRTTracking();
             auto recoTracks = trkMan->GetRecoTracks();
             if(recoTracks.size()==4){
-                event->DrawSciDetHits(config);
+                event->DrawAstraHits(config);
                 event->DrawRecoTracks(config,recoTracks);
                 event->DrawRecoTracks3D(config,recoTracks);
             }

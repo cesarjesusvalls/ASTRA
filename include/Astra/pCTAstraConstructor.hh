@@ -13,13 +13,13 @@ class G4LogicalVolume;
 #include "pCTXML.hh"
 #include "pCTDetectorConstruction.hh"    
 
-class pCTSciDetConstructor{
+class pCTAstraConstructor{
 
 public:
-    pCTSciDetConstructor(G4String n)
+    pCTAstraConstructor(G4String n)
       : fName(n){Init();};
 
-    virtual ~pCTSciDetConstructor();
+    virtual ~pCTAstraConstructor();
 
     G4String GetName(void) {return fName;}
 
@@ -42,9 +42,9 @@ public:
     void   SetBarZ(double z) {fBarZ = z;}
     double GetBarZ(void)     {return fBarZ;}
 
-    /// Set the number N of layers along the SciDet  
+    /// Set the number N of layers along the Astra  
     void SetNLayers(double N) {fNLayers = N;}
-    /// Get the number N of layers along the SciDet  
+    /// Get the number N of layers along the Astra  
     int GetNLayers(void) {return fNLayers;}
 
     /// Set the number N of bars in each layer  
@@ -52,19 +52,19 @@ public:
     /// Get the number N of bars in each layer   
     int GetNBars(void) {return fNBars;}
 
-    /// Set the X position of the SciDet detector     
+    /// Set the X position of the Astra detector     
     void SetPosX(double pos) {fPosX = pos;}
-    /// Get the X position of the SciDet detector  
+    /// Get the X position of the Astra detector  
     double GetPosX(void) {return fPosX;}
 
-    /// Set the Y position of the SciDet detector       
+    /// Set the Y position of the Astra detector       
     void SetPosY(double pos) {fPosX = pos;}
-    /// Get the Y position of the SciDet detector   
+    /// Get the Y position of the Astra detector   
     double GetPosY(void) {return fPosY;}
 
-    /// Set the Z position of the SciDet detector 
+    /// Set the Z position of the Astra detector 
     void SetPosZ(double pos) {fPosZ = pos;}
-    // Get the Z position of the SciDet detector 
+    // Get the Z position of the Astra detector 
     double GetPosZ(void) {return fPosZ;}
 
     G4Material* FindMaterial(G4String name);
@@ -77,10 +77,10 @@ public:
     pCTXML * GetpCTXML() const {return fpCTXMLInput;};
 
 private:
-    // The name of the SciDet.
+    // The name of the Astra.
     G4String fName;
 
-    // Size of the SciDet
+    // Size of the Astra
     double fDetX;
     double fDetY;
     double fDetZ;
@@ -96,7 +96,7 @@ private:
     /// The number of bars per layer
     int fNBars;
 
-    // Position of the center of the SciDet detector
+    // Position of the center of the Astra detector
     double fPosX;
     double fPosY;
     double fPosZ;

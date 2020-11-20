@@ -12,21 +12,21 @@ double EdepToNphot = 150;
 double MPPCEff     = 0.35;
 double threshold   = 2.99;
 
-void pCTEvent::DrawSciDetHits(pCTXML* config){
+void pCTEvent::DrawAstraHits(pCTXML* config){
 
     TCanvas *canv = new TCanvas("canv","canv",600,1200);
     canv->Divide(1,2);
     gStyle->SetOptStat(0);
 
-    const int nbars(config->GetSciDetNBars());
-    const int nlayers(config->GetSciDetNLayers());
+    const int nbars(config->GetAstraNBars());
+    const int nlayers(config->GetAstraNLayers());
 
     TH2F* h_hitsMap[2];
     h_hitsMap[0] = new TH2F("h_hitsMapZY","TOP VIEW",nlayers,0,nlayers,nbars,0,nbars);
     h_hitsMap[1] = new TH2F("h_hitsMapZX","SIDE VIEW",nlayers,0,nlayers,nbars,0,nbars);
 
-    std::vector< SciDetHit* > listOfSciHits = this->GetSciDetHits();
-    std::vector< SciDetHit* >::iterator sciHit;
+    std::vector< AstraHit* > listOfSciHits = this->GetAstraHits();
+    std::vector< AstraHit* >::iterator sciHit;
     for(sciHit=listOfSciHits.begin(); sciHit!=listOfSciHits.end(); sciHit++){
         int     layerID = (*sciHit)->GetLayerID();
         int     barID   = (*sciHit)->GetBarID();
@@ -35,11 +35,11 @@ void pCTEvent::DrawSciDetHits(pCTXML* config){
     }
 
     TString xLabel = "# Layer (";
-    xLabel += config->GetSciDetBarZ();
+    xLabel += config->GetAstraBarZ();
     xLabel += "mm/Layer)";
 
     TString yLabel = "# Bar (";
-    yLabel += config->GetSciDetBarX();
+    yLabel += config->GetAstraBarX();
     yLabel += "mm/Bar)";
 
     h_hitsMap[0]->GetXaxis()->SetTitle(xLabel.Data());
@@ -170,18 +170,18 @@ std::vector< pCTTrack* > pCTEvent::Reconstruct(pCTXML* config){
     std::vector< pCTTrack* > recoTracks;
     pCTTrack* recoProt = new pCTTrack();
 
-    std::vector< SciDetHit* > listOfSciHits = this->GetSciDetHits();
-    std::vector< SciDetHit* >::iterator sciHit;
+    std::vector< AstraHit* > listOfSciHits = this->GetAstraHits();
+    std::vector< AstraHit* >::iterator sciHit;
 
     double ini[3] = {0};
     double fin[3] = {0};
 
     double pos[3] = {0};
 
-    int nbars(config->GetSciDetNBars());
+    int nbars(config->GetAstraNBars());
 
-    double maxEdep[config->GetSciDetNLayers()];
-    memset( maxEdep, 0, config->GetSciDetNLayers()*sizeof(double) );
+    double maxEdep[config->GetAstraNLayers()];
+    memset( maxEdep, 0, config->GetAstraNLayers()*sizeof(double) );
 
     std::vector<TVector3> listOf3Dhits;
 
@@ -237,8 +237,8 @@ void pCTEvent::DrawRecoTracks(pCTXML* config, std::vector< pCTTrack* > trks){
     canv->Divide(1,2);
     gStyle->SetOptStat(0);
 
-    const int nbars(config->GetSciDetNBars());
-    const int nlayers(config->GetSciDetNLayers());
+    const int nbars(config->GetAstraNBars());
+    const int nlayers(config->GetAstraNLayers());
 
     TH2F* h_hitsMap[2];
     h_hitsMap[0] = new TH2F("h_hitsMapZY","TOP VIEW",nlayers,0,nlayers,nbars,0,nbars);
@@ -257,11 +257,11 @@ void pCTEvent::DrawRecoTracks(pCTXML* config, std::vector< pCTTrack* > trks){
     }
 
     TString xLabel = "# Layer (";
-    xLabel += config->GetSciDetBarZ();
+    xLabel += config->GetAstraBarZ();
     xLabel += "mm/Layer)";
 
     TString yLabel = "# Bar (";
-    yLabel += config->GetSciDetBarX();
+    yLabel += config->GetAstraBarX();
     yLabel += "mm/Bar)";
 
     h_hitsMap[0]->GetXaxis()->SetTitle(xLabel.Data());

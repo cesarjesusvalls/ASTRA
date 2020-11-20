@@ -50,15 +50,15 @@ void pCTTrackingManager::DoRTTracking(){
     // cointainer for the output
     std::vector< pCTTrack* > recoTracks;
 
-    // input info from SciDet
-    std::vector< SciDetHit* > listOfSciHits = fevent->GetSciDetHits();
-    std::vector< SciDetHit* >::iterator sciHit;
+    // input info from Astra
+    std::vector< AstraHit* > listOfSciHits = fevent->GetAstraHits();
+    std::vector< AstraHit* >::iterator sciHit;
 
-    int nbars(fconfig->GetSciDetNBars());
-    int nlayers(fconfig->GetSciDetNLayers());
+    int nbars(fconfig->GetAstraNBars());
+    int nlayers(fconfig->GetAstraNLayers());
     int n_xpixels(fconfig->GetPlaneRows());
     int n_ypixels(fconfig->GetPlaneColumns());
-    double barWidth(fconfig->GetSciDetBarX());
+    double barWidth(fconfig->GetAstraBarX());
 
     // max_dist is the key parameter to decide if 2 points are close or far.
     double max_dist = 2.5*barWidth;
@@ -73,7 +73,7 @@ void pCTTrackingManager::DoRTTracking(){
         // last CMOS plane to first layer distance is set to 5mm
         double delta = 5 + barWidth/2;
 
-        // for each seed, compute a prediction in the first SciDet layer.
+        // for each seed, compute a prediction in the first Astra layer.
         TVector3 seed_pos = GetSpacePoint(fcmosTracks[s][3],3);
         //cout << seed_pos.X() << "," << seed_pos.Y() << "," << seed_pos.Z() << endl;
         TVector3 seed_vec = (seed_pos-GetSpacePoint(fcmosTracks[s][3],3)).Unit();
@@ -82,11 +82,11 @@ void pCTTrackingManager::DoRTTracking(){
         // compute 3D candidates from 2D hits in the first 2 layers.
         std::vector<TVector3> candidates;
         std::vector<std::vector<int>> candidates_barIDs;
-        for(std::vector< SciDetHit* >::iterator hit2d_1=listOfSciHits.begin(); hit2d_1!=listOfSciHits.end(); hit2d_1++){
+        for(std::vector< AstraHit* >::iterator hit2d_1=listOfSciHits.begin(); hit2d_1!=listOfSciHits.end(); hit2d_1++){
             if ((*hit2d_1)->GetLayerID() != 0) continue;
             double pos[2] = {0};
             (*hit2d_1)->GetOrientation() ? pos[0] = (-(*hit2d_1)->GetBarID()+nbars/2)*barWidth : pos[1] = (-(*hit2d_1)->GetBarID()+nbars/2)*barWidth;
-            for(std::vector< SciDetHit* >::iterator hit2d_2=listOfSciHits.begin(); hit2d_2!=listOfSciHits.end(); hit2d_2++){
+            for(std::vector< AstraHit* >::iterator hit2d_2=listOfSciHits.begin(); hit2d_2!=listOfSciHits.end(); hit2d_2++){
                 if ((*hit2d_2)->GetLayerID() != 1) continue;
                 (*hit2d_2)->GetOrientation() ? pos[0] = (-(*hit2d_2)->GetBarID()+nbars/2)*barWidth : pos[1] = (-(*hit2d_2)->GetBarID()+nbars/2)*barWidth;
 
@@ -139,7 +139,7 @@ void pCTTrackingManager::DoRTTracking(){
             double costh    = 1000;
             std::vector<TVector3> layer_candidates;
             std::vector<int> layer_barIDs;
-            for(std::vector< SciDetHit* >::iterator hit2d=listOfSciHits.begin(); hit2d!=listOfSciHits.end(); hit2d++){
+            for(std::vector< AstraHit* >::iterator hit2d=listOfSciHits.begin(); hit2d!=listOfSciHits.end(); hit2d++){
                 if ((*hit2d)->GetLayerID() != layerNum) continue;
                 double pos[2] = {0};
                 (*hit2d)->GetOrientation() ? pos[0] = (-(*hit2d)->GetBarID()+nbars/2)*barWidth : pos[1] = (-(*hit2d)->GetBarID()+nbars/2)*barWidth;

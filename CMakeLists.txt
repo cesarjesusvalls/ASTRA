@@ -16,20 +16,20 @@ endif()
 include(${Geant4_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include/CMOS)
-include_directories(${PROJECT_SOURCE_DIR}/include/SciDet)
+include_directories(${PROJECT_SOURCE_DIR}/include/Astra)
 include_directories(${PROJECT_SOURCE_DIR}/include/SiDet)
 include_directories(${PROJECT_SOURCE_DIR}/include/Phantom)
 
 file (GLOB EXTRA_SOURCEFILES 
     ${PROJECT_SOURCE_DIR}/src/CMOS/*.cc
-    ${PROJECT_SOURCE_DIR}/src/SciDet/*.cc
+    ${PROJECT_SOURCE_DIR}/src/Astra/*.cc
     ${PROJECT_SOURCE_DIR}/src/SiDet/*.cc
     ${PROJECT_SOURCE_DIR}/src/Phantom/*.cc
 )
 
 file (GLOB EXTRA_HEADERFILES 
     ${PROJECT_SOURCE_DIR}/src/CMOS/*.hh
-    ${PROJECT_SOURCE_DIR}/src/SciDet/*.hh
+    ${PROJECT_SOURCE_DIR}/src/Astra/*.hh
     ${PROJECT_SOURCE_DIR}/include/SiDet/*.hh
     ${PROJECT_SOURCE_DIR}/include/Phantom/*.hh
 )

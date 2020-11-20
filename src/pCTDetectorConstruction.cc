@@ -9,7 +9,7 @@
 #include "pCTDetectorConstruction.hh"
 #include "G4SDManager.hh"
 #include "CMOSSD.hh"
-#include "SciDetSD.hh"
+#include "AstraSD.hh"
 #include "phantom.hh"
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
@@ -30,7 +30,7 @@
 #include "pCTRootGeometryManager.hh"
 
 #include "pCTRootPersistencyManager.hh"
-#include "pCTSciDetConstructor.hh"
+#include "pCTAstraConstructor.hh"
 #include "pCTSiDetConstructor.hh"
 #include "phantomConstructor.hh"
 
@@ -54,7 +54,7 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
     fCMOSSD = new CMOSSD("CMOS");
     SDman->AddNewDetector(fCMOSSD);
-    SDman->AddNewDetector(new SciDetSD("SciDetSensDet"));
+    SDman->AddNewDetector(new AstraSD("AstraSensDet"));
     SDman->AddNewDetector(new Phantom("PhantomSD"));
     pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
     pCTXMLInput = InputPersistencyManager->GetXMLInput();
@@ -157,9 +157,9 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4ThreeVector pos2   = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ2())*cm);
     G4ThreeVector pos3   = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ3())*cm);
 
-    G4ThreeVector SciDet;
-    if(pCTXMLInput->GetUse4thCMOS()) SciDet = G4ThreeVector(0, 0, pos3.getZ() + 0.5*cm + pCTXMLInput->GetSciDetNLayers()*pCTXMLInput->GetSciDetBarZ()*mm/2);
-    else                             SciDet = G4ThreeVector(0, 0, pos2.getZ() + 0.5*cm + pCTXMLInput->GetSciDetNLayers()*pCTXMLInput->GetSciDetBarZ()*mm/2);
+    G4ThreeVector Astra;
+    if(pCTXMLInput->GetUse4thCMOS()) Astra = G4ThreeVector(0, 0, pos3.getZ() + 0.5*cm + pCTXMLInput->GetAstraNLayers()*pCTXMLInput->GetAstraBarZ()*mm/2);
+    else                             Astra = G4ThreeVector(0, 0, pos2.getZ() + 0.5*cm + pCTXMLInput->GetAstraNLayers()*pCTXMLInput->GetAstraBarZ()*mm/2);
 
    if(pCTXMLInput->GetUseCMOS()){
 		new G4PVPlacement(0,pos0,logicPlane,nameSiliconDet,logicEnv,false,0,checkOverlaps);
@@ -168,17 +168,17 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
    		if(pCTXMLInput->GetUse4thCMOS()) new G4PVPlacement(0,pos3,logicPlane,nameSiliconDet,logicEnv,false,3,checkOverlaps);
    }
 
-    //______ SciDet ______
-    pCTSciDetConstructor* fSciDetConstructor = new pCTSciDetConstructor("SciDet");
-    G4String nameSciDet = fSciDetConstructor->GetName();
-    fSciDetConstructor->SetNLayers(pCTXMLInput->GetSciDetNLayers());
-    fSciDetConstructor->SetNBars(pCTXMLInput->GetSciDetNBars());
-    fSciDetConstructor->SetBarX(pCTXMLInput->GetSciDetBarX()*mm);
-    fSciDetConstructor->SetBarY(pCTXMLInput->GetSciDetBarY()*mm);
-    fSciDetConstructor->SetBarZ(pCTXMLInput->GetSciDetBarZ()*mm);
-    logicSciDet = fSciDetConstructor->GetPiece(); 
-    if(pCTXMLInput->GetUseSciDet()){
-        new G4PVPlacement(0,SciDet,logicSciDet,nameSciDet,logicEnv,false,0,checkOverlaps);
+    //______ Astra ______
+    pCTAstraConstructor* fAstraConstructor = new pCTAstraConstructor("Astra");
+    G4String nameAstra = fAstraConstructor->GetName();
+    fAstraConstructor->SetNLayers(pCTXMLInput->GetAstraNLayers());
+    fAstraConstructor->SetNBars(pCTXMLInput->GetAstraNBars());
+    fAstraConstructor->SetBarX(pCTXMLInput->GetAstraBarX()*mm);
+    fAstraConstructor->SetBarY(pCTXMLInput->GetAstraBarY()*mm);
+    fAstraConstructor->SetBarZ(pCTXMLInput->GetAstraBarZ()*mm);
+    logicAstra = fAstraConstructor->GetPiece(); 
+    if(pCTXMLInput->GetUseAstra()){
+        new G4PVPlacement(0,Astra,logicAstra,nameAstra,logicEnv,false,0,checkOverlaps);
     }
 
     pCTRootGeometryManager::Get()->Update(physWorld, true);

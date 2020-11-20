@@ -1,6 +1,6 @@
 
-#ifndef SciDetBar_h
-#define SciDetBar_h 1
+#ifndef AstraBar_h
+#define AstraBar_h 1
 
 #include "G4VHit.hh"
 #include "G4Allocator.hh"
@@ -9,12 +9,12 @@
 #include "G4Types.hh"
 #include "G4SystemOfUnits.hh"
 
-class SciDetBar : public G4VHit {
+class AstraBar : public G4VHit {
 public:
     /// Constructor
-    SciDetBar();
+    AstraBar();
     /// Destructor
-    ~SciDetBar();
+    ~AstraBar();
     //! Print on screen a Hit
     void Print();
   
@@ -42,16 +42,16 @@ private:
 
 
 // -- new and delete overloaded operators:
-extern G4ThreadLocal G4Allocator<SciDetBar>* SciDetBarAllocator;
+extern G4ThreadLocal G4Allocator<AstraBar>* AstraBarAllocator;
 
-inline void* SciDetBar::operator new(size_t)
+inline void* AstraBar::operator new(size_t)
 {
-    if(!SciDetBarAllocator) SciDetBarAllocator = new G4Allocator<SciDetBar>;
-    return (void *) SciDetBarAllocator->MallocSingle();
+    if(!AstraBarAllocator) AstraBarAllocator = new G4Allocator<AstraBar>;
+    return (void *) AstraBarAllocator->MallocSingle();
 }
-inline void SciDetBar::operator delete(void *aHit)
+inline void AstraBar::operator delete(void *aHit)
 {
-    SciDetBarAllocator->FreeSingle((SciDetBar*) aHit);
+    AstraBarAllocator->FreeSingle((AstraBar*) aHit);
 }
 
 #endif

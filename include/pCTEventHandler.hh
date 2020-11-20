@@ -25,15 +25,15 @@
     //     CMOSepi[it] = CMOS[it]->GetDaughter(0);
     //     CMOSsub[it] = CMOS[it]->GetDaughter(1);
     // }
-    // TGeoNode* SciDet = topNode->GetDaughter(nCMOS);
+    // TGeoNode* Astra = topNode->GetDaughter(nCMOS);
 
-    // int nbars(config->GetSciDetNBars());
-    // int nlayers(config->GetSciDetNLayers());
+    // int nbars(config->GetAstraNBars());
+    // int nlayers(config->GetAstraNLayers());
 
-    // TGeoNode* SciDetbar[nbars*nlayers*2];
+    // TGeoNode* Astrabar[nbars*nlayers*2];
     // for (int it(0); it<nbars*nlayers*2; ++it){
-    //     SciDetbar[it] = SciDet->GetDaughter(it);
-    //     TEveGeoNode* tmpEve = new TEveGeoNode(SciDetbar[it]);
+    //     Astrabar[it] = Astra->GetDaughter(it);
+    //     TEveGeoNode* tmpEve = new TEveGeoNode(Astrabar[it]);
     //     tmpEve->SetMainColor(1);
     //     tmpEve->SetMainTransparency (99);
     // }
@@ -46,10 +46,10 @@ public:
     TTree* data;
     pCTEvent* event;
     pCTXML* config;
-    TGeoNode* SciDet;
+    TGeoNode* Astra;
 
     pCTEventHandler(TTree* treedat, int* evt_id, pCTEvent* evt, pCTXML* cfg, TGeoNode* node) :
-    data(treedat), event_id(evt_id), event(evt), config(cfg), SciDet(node) {};
+    data(treedat), event_id(evt_id), event(evt), config(cfg), Astra(node) {};
 
     pCTEventHandler(){};
     virtual ~pCTEventHandler(){};
@@ -85,10 +85,10 @@ public:
 
         std::cout << "alive: " << std::endl;
 
-        int nbars(config->GetSciDetNBars());
-        int nlayers(config->GetSciDetNLayers());
+        int nbars(config->GetAstraNBars());
+        int nlayers(config->GetAstraNLayers());
         for (int it(0); it<nbars*nlayers; ++it){
-            TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter(it));
+            TEveGeoNode* tmpEve = new TEveGeoNode(Astra->GetDaughter(it));
             tmpEve->SetRnrSelf(0);
             tmpEve->SetMainColor(0);
             //delete tmpEve;
@@ -96,10 +96,10 @@ public:
 
         std::cout << "alive1: " << std::endl;
 
-        std::vector< SciDetHit* > listOfSciHits = event->GetSciDetHits();
-        for(std::vector< SciDetHit* >::iterator sciHit=listOfSciHits.begin(); sciHit!=listOfSciHits.end(); sciHit++){
+        std::vector< AstraHit* > listOfSciHits = event->GetAstraHits();
+        for(std::vector< AstraHit* >::iterator sciHit=listOfSciHits.begin(); sciHit!=listOfSciHits.end(); sciHit++){
             int node_id = (*sciHit)->GetLayerID()*nbars+(*sciHit)->GetBarID();
-            TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter(node_id));
+            TEveGeoNode* tmpEve = new TEveGeoNode(Astra->GetDaughter(node_id));
             tmpEve->SetRnrSelf(1);
             tmpEve->SetMainColor(1);
             delete tmpEve;
@@ -107,13 +107,13 @@ public:
 
         std::cout << "alive2: " << std::endl;
 
-        //event->DrawSciDetHits(config);
+        //event->DrawAstraHits(config);
 
         int trkCnt = 1;
         for(auto trk=recoTracks.begin(); trk != recoTracks.end(); trk++){
             auto barIds = (*trk)->GetBarIDs();
             for(auto id=barIds.begin(); id!=barIds.end(); id++){
-                TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter((*id)));
+                TEveGeoNode* tmpEve = new TEveGeoNode(Astra->GetDaughter((*id)));
                 tmpEve->SetRnrSelf(1);
                 tmpEve->SetMainColor(trkCnt+1);
                 delete tmpEve;
@@ -124,7 +124,7 @@ public:
         std::cout << "alive3: " << std::endl;
         
         // for (int it(0); it<30; ++it){
-        //     TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter(it));
+        //     TEveGeoNode* tmpEve = new TEveGeoNode(Astra->GetDaughter(it));
         //     if (it%100==0){
         //         tmpEve->SetMainColor(2);
         //         tmpEve->SetMainTransparency (10);

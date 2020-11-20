@@ -15,20 +15,20 @@
 #include <G4SubtractionSolid.hh>
 
 #include <G4Tubs.hh>
-#include "pCTSciDetConstructor.hh"
+#include "pCTAstraConstructor.hh"
 
 #include "G4SDManager.hh"
 // used to keep a list of SD logical volumes
 #include "G4RegionStore.hh"
 #include <G4Region.hh> 
-#include "SciDetSD.hh"
+#include "AstraSD.hh"
 
 #include "pCTXML.hh"
 #include "pCTRootPersistencyManager.hh"
 
-pCTSciDetConstructor::~pCTSciDetConstructor() {;}
+pCTAstraConstructor::~pCTAstraConstructor() {;}
 
-void pCTSciDetConstructor::Init(void) {
+void pCTAstraConstructor::Init(void) {
     
     // Number layers 
     fNLayers = 1;
@@ -43,7 +43,7 @@ void pCTSciDetConstructor::Init(void) {
 
     fCoatingThickness = 0.*CLHEP::mm;
 
-    // Set total size of the SciDet
+    // Set total size of the Astra
     double TotWidth  = fBarX * fNBars; 
     double TotHeight = fBarY; 
     double TotLength = fBarZ * fNLayers; 
@@ -61,18 +61,18 @@ void pCTSciDetConstructor::Init(void) {
     //AddConstructor(new pCTSciBarConstructor(GetBarName(), this)); 
 }
 
-G4Material* pCTSciDetConstructor::FindMaterial(G4String name) {
+G4Material* pCTAstraConstructor::FindMaterial(G4String name) {
     G4Material* material = G4Material::GetMaterial(name,true);
     return material;
 }
 
-G4LogicalVolume *pCTSciDetConstructor::GetPiece(void) {
+G4LogicalVolume *pCTAstraConstructor::GetPiece(void) {
 
   pCTRootPersistencyManager* InputPersistencyManager
     = pCTRootPersistencyManager::GetInstance();
   fpCTXMLInput = InputPersistencyManager->GetXMLInput();
 
-  // Set total size of the SciDet
+  // Set total size of the Astra
   double TotWidth  = fBarX * fNBars; 
   double TotHeight = fBarY; 
   double TotLength = fBarZ * fNLayers; 
@@ -81,14 +81,14 @@ G4LogicalVolume *pCTSciDetConstructor::GetPiece(void) {
   SetDetY(TotHeight);
   SetDetZ(TotLength);
 
-  // create the SciDet logical volume
-  G4VSolid* SciDet_solidV = new G4Box(GetName(), GetDetX()/ 2., GetDetY()/ 2., GetDetZ()/ 2.);
-  G4LogicalVolume* SciDet_logicalV = new G4LogicalVolume(SciDet_solidV,FindMaterial("Air"),GetName());
-  //SciDet_logicalV->SetVisAttributes(G4Colour(1.0, 0.0, 0.0));
-  SciDet_logicalV->SetVisAttributes(G4VisAttributes::Invisible);
+  // create the Astra logical volume
+  G4VSolid* Astra_solidV = new G4Box(GetName(), GetDetX()/ 2., GetDetY()/ 2., GetDetZ()/ 2.);
+  G4LogicalVolume* Astra_logicalV = new G4LogicalVolume(Astra_solidV,FindMaterial("Air"),GetName());
+  //Astra_logicalV->SetVisAttributes(G4Colour(1.0, 0.0, 0.0));
+  Astra_logicalV->SetVisAttributes(G4VisAttributes::Invisible);
 
   G4SDManager*   SDman         = G4SDManager::GetSDMpointer();
-  SciDetSD*      SciDetSensDet = (SciDetSD*)SDman->FindSensitiveDetector("SciDetSensDet");
+  AstraSD*      AstraSensDet = (AstraSD*)SDman->FindSensitiveDetector("AstraSensDet");
 
   G4VSolid* barSolid               = new G4Box("barSolid",  GetBarX()/2,GetBarY()/2,GetBarZ()/2);
   G4VSolid* scintSolid             = new G4Box("scintSolid",GetBarX()/2-fCoatingThickness,GetBarY()/2-fCoatingThickness,GetBarZ()/2-fCoatingThickness);
@@ -96,8 +96,8 @@ G4LogicalVolume *pCTSciDetConstructor::GetPiece(void) {
   G4LogicalVolume *scintVolume     = new G4LogicalVolume(scintSolid,  FindMaterial("PlasticScintillator"),"scintLV");
   G4LogicalVolume *coatingVolume   = new G4LogicalVolume(coatingSolid,FindMaterial("PlasticScintillator"),"coatingLV");
 
-  scintVolume->SetSensitiveDetector( SciDetSensDet ); 
-  //coatingVolume->SetSensitiveDetector( SciDetSensDet ); 
+  scintVolume->SetSensitiveDetector( AstraSensDet ); 
+  //coatingVolume->SetSensitiveDetector( AstraSensDet ); 
   scintVolume->SetVisAttributes(G4Color(0.0,0.8,0.8,0.));
   //coatingVolume->SetVisAttributes(G4Color(0.0,0.0,0.8,0.));
   coatingVolume->SetVisAttributes(G4VisAttributes::Invisible);
@@ -113,15 +113,15 @@ G4LogicalVolume *pCTSciDetConstructor::GetPiece(void) {
           G4RotationMatrix rotM;
           if(nlayer%2==0){
               rotM.rotateZ(90.0 * CLHEP::deg);
-              new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector(0, (GetNBars()-nbar*2-1)*fBarX/2, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),scintVolume,  GetName()+barName.Data()+"/Scint",SciDet_logicalV,false,nlayer*GetNBars()+nbar);
-              //new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector(0, (GetNBars()-nbar*2-1)*fBarX/2, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),coatingVolume,GetName()+barName.Data()+"/Coating",SciDet_logicalV,false,nlayer*GetNBars()+nbar);
+              new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector(0, (GetNBars()-nbar*2-1)*fBarX/2, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),scintVolume,  GetName()+barName.Data()+"/Scint",Astra_logicalV,false,nlayer*GetNBars()+nbar);
+              //new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector(0, (GetNBars()-nbar*2-1)*fBarX/2, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),coatingVolume,GetName()+barName.Data()+"/Coating",Astra_logicalV,false,nlayer*GetNBars()+nbar);
           }
           else{
-              new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector((GetNBars()-nbar*2-1)*fBarX/2, 0, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),scintVolume,  GetName()+barName.Data()+"/Scint"  ,SciDet_logicalV,false,nlayer*GetNBars()+nbar);
-              //new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector((GetNBars()-nbar*2-1)*fBarX/2, 0, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),coatingVolume,GetName()+barName.Data()+"/Coating",SciDet_logicalV,false,nlayer*GetNBars()+nbar);
+              new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector((GetNBars()-nbar*2-1)*fBarX/2, 0, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),scintVolume,  GetName()+barName.Data()+"/Scint"  ,Astra_logicalV,false,nlayer*GetNBars()+nbar);
+              //new G4PVPlacement(G4Transform3D(rotM, G4ThreeVector((GetNBars()-nbar*2-1)*fBarX/2, 0, (-GetNLayers()+nlayer*2+1)*fBarZ/2)),coatingVolume,GetName()+barName.Data()+"/Coating",Astra_logicalV,false,nlayer*GetNBars()+nbar);
           }
       }
   }
 
-  return SciDet_logicalV;
+  return Astra_logicalV;
 }

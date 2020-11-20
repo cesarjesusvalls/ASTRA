@@ -13,7 +13,7 @@
 #include <TRandom3.h>
 #include "CMOSPixel.hh"
 #include "pCTXML.hh"
-#include "SciDetHit.hh"
+#include "AstraHit.hh"
 #include "pCTTrack.hh"
 #include "TVector3.h"
 
@@ -22,7 +22,7 @@ class pCTEvent : public TObject {
 private:
     int fEvtId;
     std::map <G4int, std::vector< CMOSPixel* >>     fPixelsMap;
-    std::vector< SciDetHit* >                       fSciDetHits;
+    std::vector< AstraHit* >                       fAstraHits;
     std::vector< pCTTrack* >                        fRecoProtons;
     std::map <int, double >                         fGunEnergy;   // map from track ID to pgun true kin energy.
     TRandom3 * fRndm;
@@ -42,7 +42,7 @@ public:
         fRndm = new TRandom3(0);
     };
 
-    void DrawSciDetHits (pCTXML* config);
+    void DrawAstraHits (pCTXML* config);
     void DrawRecoTracks (pCTXML* config, std::vector< pCTTrack* > trks);
     void DrawRecoTracks3D (pCTXML* config, std::vector< pCTTrack* > trks);
     void DrawCMOSHits   (pCTXML* config);
@@ -51,7 +51,7 @@ public:
 
     void SetEvtId(int evtid)                                                {fEvtId       = evtid;};
     void SetPixelHitsMap(std::map<G4int, std::vector< CMOSPixel* >> pxls)   {fPixelsMap   = pxls;};
-    void SetSciDetHits(std::vector< SciDetHit* > hits)                      {fSciDetHits  = hits;};
+    void SetAstraHits(std::vector< AstraHit* > hits)                      {fAstraHits  = hits;};
     void SetGunEnergyMap(std::map <int, double > gun)                       {fGunEnergy   = gun;};
     void SetRecoProtons(std::vector< pCTTrack* > trks)                      {fRecoProtons = trks;};
     void SetPhantomHits(std::map<G4int,std::vector<std::pair<TVector3,double>>> phHits) {fPhantomHits = phHits;};
@@ -63,7 +63,7 @@ public:
 
     int GetEvtId() {return fEvtId;};
     std::map<G4int, std::vector< CMOSPixel* >>  GetPixelHitsMap()    {return fPixelsMap;};
-    std::vector< SciDetHit* >                   GetSciDetHits()      {return fSciDetHits;};
+    std::vector< AstraHit* >                   GetAstraHits()      {return fAstraHits;};
     std::map <int, double >                     GetGunEnergyMap()    {return fGunEnergy;};
     std::vector< pCTTrack* >                    GetRecoProtons()     {return fRecoProtons;};
     std::map<G4int,std::vector<std::pair<TVector3,double>>> GetPhantomHits() {return fPhantomHits;};
@@ -77,7 +77,7 @@ public:
         fphMidPos.SetXYZ(-999,-999,-999);
         fPixelsMap.clear();
        	fPhantomHits.clear();
-	    fSciDetHits.clear();
+	    fAstraHits.clear();
         fGunEnergy.clear();
         for (auto prot:fRecoProtons) delete prot;
         fRecoProtons.clear();

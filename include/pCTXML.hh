@@ -39,18 +39,18 @@ public :
     G4String GetXMLExample()    {return fExample;};
     G4String GetBeamType()      {return fBeamType;};
     
-    int GetSciDetNBars()      {return fSciDetNBars;};
-    int GetSciDetNLayers()    {return fSciDetNLayers;};
+    int GetAstraNBars()      {return fAstraNBars;};
+    int GetAstraNLayers()    {return fAstraNLayers;};
     
-    double GetSciDetBarX()       {return fSciDetBarX;};
-    double GetSciDetBarY()       {return fSciDetBarY;};
-    double GetSciDetBarZ()       {return fSciDetBarZ;};
+    double GetAstraBarX()       {return fAstraBarX;};
+    double GetAstraBarY()       {return fAstraBarY;};
+    double GetAstraBarZ()       {return fAstraBarZ;};
 
     double GetBarCoatThick()      {return fBarCoat;};
 
-    double GetSciDetX()          {return fSciDetX;};
-    double GetSciDetY()          {return fSciDetY;};
-    double GetSciDetZ()          {return fSciDetZ;};
+    double GetAstraX()          {return fAstraX;};
+    double GetAstraY()          {return fAstraY;};
+    double GetAstraZ()          {return fAstraZ;};
 
     double GetIniPGUNEnergy()    {return fIniPGUNEnergy;}
     int    GetNProtons()         {return fNProtons; }
@@ -77,7 +77,7 @@ public :
         return -999;
     }
     
-    G4bool GetUseSciDet()          {return fUseSciDet;};
+    G4bool GetUseAstra()          {return fUseAstra;};
     G4bool GetUseCMOS()            {return fUseCMOS;};
     G4bool GetUse4thCMOS()         {return fUse4thCMOS;};
     G4bool GetUsePhantom()          {return fUsePhantom;};
@@ -87,15 +87,15 @@ public :
     void SetXMLFileName(G4String val)       {fXMLFile           = val;}
     void SetXMLExample(G4String val)        {fExample           = val;}
     void SetBeamType(G4String val)          {fBeamType          = val;}
-    void SetSciDetNBars(int val)            {fSciDetNBars       = val;}
-    void SetSciDetNLayers(int val)          {fSciDetNLayers     = val;}
-    void SetSciDetBarX(double val)          {fSciDetBarX        = val;}
-    void SetSciDetBarY(double val)          {fSciDetBarY        = val;}
-    void SetSciDetBarZ(double val)          {fSciDetBarZ        = val;}
+    void SetAstraNBars(int val)            {fAstraNBars       = val;}
+    void SetAstraNLayers(int val)          {fAstraNLayers     = val;}
+    void SetAstraBarX(double val)          {fAstraBarX        = val;}
+    void SetAstraBarY(double val)          {fAstraBarY        = val;}
+    void SetAstraBarZ(double val)          {fAstraBarZ        = val;}
     void SetBarCoatThick(double val)        {fBarCoat           = val;}
-    void SetSciDetX(double val)             {fSciDetX           = val;}
-    void SetSciDetY(double val)             {fSciDetY           = val;}
-    void SetSciDetZ(double val)             {fSciDetZ           = val;}
+    void SetAstraX(double val)             {fAstraX           = val;}
+    void SetAstraY(double val)             {fAstraY           = val;}
+    void SetAstraZ(double val)             {fAstraZ           = val;}
     void SetIniPGUNEnergy(double val)       {fIniPGUNEnergy     = val;}
     void SetNProtons(int val)               {fNProtons          = val;}
     void SetPosX(double val)                {fPosX              = val;}
@@ -110,7 +110,7 @@ public :
     void SetPixelY(double val)              {fPixelY            = val;}
     void SetEpiThickness(double val)        {fEpiThickness      = val;}
     void SetSubThickness(double val)        {fSubThickness      = val;}
-    void SetUseSciDet(G4bool val)           {fUseSciDet         = val;}
+    void SetUseAstra(G4bool val)           {fUseAstra         = val;}
     void SetUseCMOS(G4bool val)             {fUseCMOS           = val;}
     void SetUse4thCMOS(G4bool val)          {fUse4thCMOS        = val;}
     void SetUsePhantom(G4bool val)          {fUsePhantom        = val;}
@@ -124,18 +124,18 @@ private :
     G4String fExample;
     G4String fBeamType;
 
-    int    fSciDetNBars;
-    int    fSciDetNLayers;
+    int    fAstraNBars;
+    int    fAstraNLayers;
     int    fNProtons;
 
     double fIniPGUNEnergy;
-    double fSciDetBarX;
-    double fSciDetBarY;
-    double fSciDetBarZ;
+    double fAstraBarX;
+    double fAstraBarY;
+    double fAstraBarZ;
 
-    double fSciDetX;
-    double fSciDetY;
-    double fSciDetZ;
+    double fAstraX;
+    double fAstraY;
+    double fAstraZ;
     double fBarCoat;
 
     double fPosX;
@@ -151,7 +151,7 @@ private :
     double fEpiThickness;
     double fSubThickness;
   
-    G4bool   fUseSciDet;
+    G4bool   fUseAstra;
     G4bool   fUseCMOS;
     G4bool   fUse4thCMOS;
     G4bool   fUsePhantom;

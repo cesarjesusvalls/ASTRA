@@ -13,7 +13,7 @@
 #include <TVector3.h>
 #include "pCTEvent.hh"
 #include "pCTXML.hh"
-#include "SciDetHit.hh"
+#include "AstraHit.hh"
 #include "CMOSPixel.hh"
 #include <TH1.h>
 #include <TGraph.h>

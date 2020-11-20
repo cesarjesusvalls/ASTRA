@@ -63,7 +63,7 @@ class pCTDetectorConstruction : public G4VUserDetectorConstruction
         G4LogicalVolume* logicPlane;
         G4LogicalVolume* logicPhantom;
         G4LogicalVolume* logicRT;
-        G4LogicalVolume* logicSciDet;
+        G4LogicalVolume* logicAstra;
         CMOSSD*          fCMOSSD;
   //        Phantom*         fPhantom;
 };

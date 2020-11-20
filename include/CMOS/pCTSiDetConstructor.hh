@@ -50,7 +50,7 @@ public:
 
   /// Set the Y position of the SiDet detector                                                                                                                                    
   void SetPosY(double pos) {fPosY = pos;}
-  /// Get the Y position of the SciDet detector
+  /// Get the Y position of the Astra detector
   double GetPosY(void) {return fPosY;}
 
   /// Set the Z0 position of the SiDet detector

@@ -15,8 +15,8 @@
 #pragma link C++ class std::vector< CMOSPixel >+;
 #pragma link C++ class std::map<G4int, std::vector< CMOSPixel >>+;
 
-#pragma link C++ class SciDetHit+;
-#pragma link C++ class std::vector< SciDetHit >+;
+#pragma link C++ class AstraHit+;
+#pragma link C++ class std::vector< AstraHit >+;
 
 #pragma link C++ class pCTTrack+;
 #pragma link C++ class std::vector< pCTTrack >+;

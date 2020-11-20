@@ -110,7 +110,7 @@ int main(int argc,char** argv)
                 cout << "   -h || --help      print help info." << endl;
                 cout << "   -o || --output    output file name, including the path." << endl;
                 cout << endl;
-                cout << "   --Nlay              SciDet # of layers.    " << endl;
+                cout << "   --Nlay              Astra # of layers.    " << endl;
                 cout << "   --barZ             Layer's thickness (mm)." << endl;
                 cout << "   --NOTusePhantom     do not place phantom." << endl;
                 cout << "   --NOTuseCMOS        do not place CMOS (including 4th plane)." << endl;
@@ -136,23 +136,23 @@ int main(int argc,char** argv)
             else if (string(argv[iarg])=="--barZ"){
                 iarg++;
                 cout << "New bar Z thickness: " << atof(string(argv[iarg]).c_str()) << endl;
-                pCTXMLInput->SetSciDetBarZ(atof(string(argv[iarg]).c_str()));
+                pCTXMLInput->SetAstraBarZ(atof(string(argv[iarg]).c_str()));
             }
             else if (string(argv[iarg])=="--Nlay"){
                 iarg++;
-                cout << "New number of SciDet layers: " << atof(string(argv[iarg]).c_str()) << endl;
-                pCTXMLInput->SetSciDetNLayers(atoi(string(argv[iarg]).c_str()));
+                cout << "New number of Astra layers: " << atof(string(argv[iarg]).c_str()) << endl;
+                pCTXMLInput->SetAstraNLayers(atoi(string(argv[iarg]).c_str()));
             }
             else if (string(argv[iarg])=="--DoSquareSec"){
                 cout << "Forcing Squared Bar Xsec" << endl;
-                pCTXMLInput->SetSciDetBarX(pCTXMLInput->GetSciDetBarZ());
-                int nBars = pCTXMLInput->GetSciDetBarY()/pCTXMLInput->GetSciDetBarX()+0.5;
-                pCTXMLInput->SetSciDetNBars(nBars);
-                pCTXMLInput->SetSciDetBarY(nBars*pCTXMLInput->GetSciDetBarZ());
-                cout << "New number of bars: " << pCTXMLInput->GetSciDetNBars() << endl;
-                cout << "Bar Width:  " << pCTXMLInput->GetSciDetBarX() << endl;
-                cout << "Bar Height: " << pCTXMLInput->GetSciDetBarY() << endl;
-                cout << "Bar Depth:  " << pCTXMLInput->GetSciDetBarZ() << endl;
+                pCTXMLInput->SetAstraBarX(pCTXMLInput->GetAstraBarZ());
+                int nBars = pCTXMLInput->GetAstraBarY()/pCTXMLInput->GetAstraBarX()+0.5;
+                pCTXMLInput->SetAstraNBars(nBars);
+                pCTXMLInput->SetAstraBarY(nBars*pCTXMLInput->GetAstraBarZ());
+                cout << "New number of bars: " << pCTXMLInput->GetAstraNBars() << endl;
+                cout << "Bar Width:  " << pCTXMLInput->GetAstraBarX() << endl;
+                cout << "Bar Height: " << pCTXMLInput->GetAstraBarY() << endl;
+                cout << "Bar Depth:  " << pCTXMLInput->GetAstraBarZ() << endl;
             }
             else if (string(argv[iarg])=="--NProt"){
                 iarg++;
