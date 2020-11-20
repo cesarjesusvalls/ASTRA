@@ -8,7 +8,7 @@ Is_Interactive      = False
 Cut_In_Straightness = True
 
 Nprotons  = [1]
-barZthick = [3] 
+barZthick = [3,6,9] 
 
 max_events = 1000000
 

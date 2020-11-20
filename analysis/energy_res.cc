@@ -28,7 +28,7 @@
 
 int total_reco = 0;
 
-bool GenerateNewRngToEnergyTable = false;
+bool GenerateNewRngToEnergyTable = true;
 int  observable = 0;
 
 double straightness_cut = 0;
@@ -202,19 +202,25 @@ int main(int argc,char** argv){
         hitsMap[(*sciHit)->GetLayerID()][(*sciHit)->GetBarID()][(*sciHit)->GetOrientation()] 
         = (*sciHit)->GetEnergyDeposited();
 
-        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
-        trkMan->DoCMOSChi2Tracking();
-        trkMan->DoRTTracking();
-        auto recoTracks = trkMan->GetRecoTracks();
-
-        total_reco+=recoTracks.size();
-
-        for(int i(0); i<recoTracks.size(); i++){
-            std::vector<TVector3> track3Dhits = recoTracks[i]->Get3DHits(); 
-            if(track3Dhits.size()){
-                double trueEnergy = recoTracks[i]->GetTrueEnergy();
-                double range = (track3Dhits.back()-(*track3Dhits.begin())).Mag();
-                h_trueEvsRng->Fill(range,trueEnergy);
+        if(!config->GetUseCMOS()){
+            std::vector< pCTTrack* > recoTracks = event->Reconstruct(config);
+            if(recoTracks.size() == 1){
+                h_trueEvsRng->Fill((*recoTracks.begin())->GetRecoMeas(2),(*trackIdToGunEnergy.begin()).second);
+            }
+        }
+        else{
+            pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
+            trkMan->DoCMOSChi2Tracking();
+            trkMan->DoRTTracking();
+            auto recoTracks = trkMan->GetRecoTracks();
+            total_reco+=recoTracks.size();
+            for(int i(0); i<recoTracks.size(); i++){
+                std::vector<TVector3> track3Dhits = recoTracks[i]->Get3DHits(); 
+                if(track3Dhits.size()){
+                    double trueEnergy = recoTracks[i]->GetTrueEnergy();
+                    double range = (track3Dhits.back()-(*track3Dhits.begin())).Mag();
+                    h_trueEvsRng->Fill(range,trueEnergy);
+                }
             }
         }
 
@@ -258,42 +264,57 @@ int main(int argc,char** argv){
         hitsMap[(*sciHit)->GetLayerID()][(*sciHit)->GetBarID()][(*sciHit)->GetOrientation()] 
         = (*sciHit)->GetEnergyDeposited();
 
-        pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
-        trkMan->DoCMOSChi2Tracking();
-        trkMan->DoRTTracking();
-        trkMan->phantomPositions();
-        auto recoTracks = trkMan->GetRecoTracks();
-
-        for(int i(0); i<recoTracks.size(); i++){
-            double trueEnergy = recoTracks[i]->GetTrueEnergy();
-            std::vector<TVector3> track3Dhits = recoTracks[i]->Get3DHits(); 
-            if(track3Dhits.size()){
-                double range = (track3Dhits.back()-(*track3Dhits.begin())).Mag();
+        if(!config->GetUseCMOS()){
+            std::vector< pCTTrack* > recoTracks = event->Reconstruct(config);
+            if(recoTracks.size() == 1){
+                double trueEnergy = (*trackIdToGunEnergy.begin()).second;
+                double range      = (*recoTracks.begin())->GetRecoMeas(2);
+                double accumRng   = (*recoTracks.begin())->GetRecoMeas(3);
+                double straightness = accumRng == 0 ? 1 : range/accumRng;
+                h_StraightnessVsE->Fill(trueEnergy,straightness);
+                for (int it(0); it<10; it++) if(straightness >= eff_bin[it]) eff_cnt[it]++;
                 double recoEnergyByRng = fitval->Eval(range);
                 int RngResBin = (int) trueEnergy/nResBinWidth;
                 double RngRes = 100*(trueEnergy-recoEnergyByRng)/trueEnergy;
-                int hit_cnt = 0;
-                double accumRng = 0;
-                for(int j(0); j<track3Dhits.size(); j++){
-                    if (j>0) accumRng += (track3Dhits[j]-track3Dhits[j-1]).Mag();
-                }
-                double straightness = accumRng == 0 ? 1 : range/accumRng;
-                //cout << "straightness: " << straightness << endl;
                 h_StraightnessVsE->Fill(trueEnergy,straightness);
                 for (int it(0); it<10; it++) if(straightness >= eff_bin[it]) eff_cnt[it]++;
                 if(straightness < straightness_cut) continue;
                 h_EResByRng[RngResBin]->Fill(RngRes);
+            }
+        }
+        else{
+            pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
+            trkMan->DoCMOSChi2Tracking();
+            trkMan->DoRTTracking();
+            trkMan->phantomPositions();
+            auto recoTracks = trkMan->GetRecoTracks();
 
-                //std::cout << "X,Y: " << recoTracks[i]->GetPhantomProjX() << "," << recoTracks[i]->GetPhantomProjY() << std::endl;
+            for(int i(0); i<recoTracks.size(); i++){
+                double trueEnergy = recoTracks[i]->GetTrueEnergy();
+                std::vector<TVector3> track3Dhits = recoTracks[i]->Get3DHits(); 
+                if(track3Dhits.size()){
+                    double range = (track3Dhits.back()-(*track3Dhits.begin())).Mag();
+                    double recoEnergyByRng = fitval->Eval(range);
+                    int RngResBin = (int) trueEnergy/nResBinWidth;
+                    double RngRes = 100*(trueEnergy-recoEnergyByRng)/trueEnergy;
+                    double accumRng = 0;
+                    for(int j(0); j<track3Dhits.size(); j++){
+                        if (j>0) accumRng += (track3Dhits[j]-track3Dhits[j-1]).Mag();
+                    }
+                    double straightness = accumRng == 0 ? 1 : range/accumRng;
+                    h_StraightnessVsE->Fill(trueEnergy,straightness);
+                    for (int it(0); it<10; it++) if(straightness >= eff_bin[it]) eff_cnt[it]++;
+                    if(straightness < straightness_cut) continue;
+                    h_EResByRng[RngResBin]->Fill(RngRes);
 
-                if (recoEnergyByRng>135){
-                    h_hitsMap->Fill(recoTracks[i]->GetPhantomProjX(),recoTracks[i]->GetPhantomProjY(),recoEnergyByRng);
-                    h_recoE->Fill(recoEnergyByRng);
-                    h_hitsMapNorm->Fill(recoTracks[i]->GetPhantomProjX(),recoTracks[i]->GetPhantomProjY(),1);
+                    if (recoEnergyByRng>135){
+                        h_hitsMap->Fill(recoTracks[i]->GetPhantomProjX(),recoTracks[i]->GetPhantomProjY(),recoEnergyByRng);
+                        h_recoE->Fill(recoEnergyByRng);
+                        h_hitsMapNorm->Fill(recoTracks[i]->GetPhantomProjX(),recoTracks[i]->GetPhantomProjY(),1);
+                    }
                 }
             }
         }
-
     }
 
     TGraphErrors* g_EffVsStraigness = new TGraphErrors();

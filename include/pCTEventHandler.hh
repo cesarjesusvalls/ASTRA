@@ -83,6 +83,8 @@ public:
         trkMan->DoRTTracking();
         auto recoTracks = trkMan->GetRecoTracks(); 
 
+        std::cout << "alive: " << std::endl;
+
         int nbars(config->GetSciDetNBars());
         int nlayers(config->GetSciDetNLayers());
         for (int it(0); it<nbars*nlayers; ++it){
@@ -92,6 +94,8 @@ public:
             //delete tmpEve;
         }
 
+        std::cout << "alive1: " << std::endl;
+
         std::vector< SciDetHit* > listOfSciHits = event->GetSciDetHits();
         for(std::vector< SciDetHit* >::iterator sciHit=listOfSciHits.begin(); sciHit!=listOfSciHits.end(); sciHit++){
             int node_id = (*sciHit)->GetLayerID()*nbars+(*sciHit)->GetBarID();
@@ -100,6 +104,8 @@ public:
             tmpEve->SetMainColor(1);
             delete tmpEve;
         }
+
+        std::cout << "alive2: " << std::endl;
 
         //event->DrawSciDetHits(config);
 
@@ -114,6 +120,8 @@ public:
             }
             trkCnt++;
         }
+
+        std::cout << "alive3: " << std::endl;
         
         // for (int it(0); it<30; ++it){
         //     TEveGeoNode* tmpEve = new TEveGeoNode(SciDet->GetDaughter(it));
