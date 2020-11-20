@@ -6,7 +6,7 @@
 // MMG998@student.bham.ac.uk
 //
 
-#include "CMOSPixel.hh"
+#include "DMAPSPixel.hh"
 #include "pCTEvent.hh"
 #include "../utils/global_tools.cc"
 #include "pCTXML.hh"
@@ -52,7 +52,7 @@ int main(int argc,char** argv){
     int     selEvents      = 0;
     float   start_time     = clock();
     bool    show_Astra    = false;
-    bool    show_CMOS      = false;
+    bool    show_DMAPS      = false;
     TString fileIn         = "/Users/cjesus/Dev/protonCT/output/simulation_file.root";
     TString fileOut        = "/Users/cjesus/Dev/protonCT/output/analysis_outfile.root";
     int evtIni             = 0;
@@ -98,8 +98,8 @@ int main(int argc,char** argv){
         else if (string( gApplication->Argv(iarg))=="-showAstra"){
             show_Astra = true;
         }
-        else if (string( gApplication->Argv(iarg))=="-showCMOS"){
-            show_CMOS = true;
+        else if (string( gApplication->Argv(iarg))=="-showDMAPS"){
+            show_DMAPS = true;
         }
         else if (string( gApplication->Argv(iarg))=="-UsePreFitInfo"){
             GenerateNewRngToEnergyTable = false;
@@ -202,7 +202,7 @@ int main(int argc,char** argv){
         hitsMap[(*sciHit)->GetLayerID()][(*sciHit)->GetBarID()][(*sciHit)->GetOrientation()] 
         = (*sciHit)->GetEnergyDeposited();
 
-        if(!config->GetUseCMOS()){
+        if(!config->GetUseDMAPS()){
             std::vector< pCTTrack* > recoTracks = event->Reconstruct(config);
             if(recoTracks.size() == 1){
                 h_trueEvsRng->Fill((*recoTracks.begin())->GetRecoMeas(2),(*trackIdToGunEnergy.begin()).second);
@@ -210,7 +210,7 @@ int main(int argc,char** argv){
         }
         else{
             pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
-            trkMan->DoCMOSChi2Tracking();
+            trkMan->DoDMAPSChi2Tracking();
             trkMan->DoRTTracking();
             auto recoTracks = trkMan->GetRecoTracks();
             total_reco+=recoTracks.size();
@@ -225,7 +225,7 @@ int main(int argc,char** argv){
         }
 
         if(show_Astra) event->DrawAstraHits(config);
-        if(show_CMOS)   event->DrawCMOSHits(config);
+        if(show_DMAPS)   event->DrawDMAPSHits(config);
     }
 
     if(GenerateNewRngToEnergyTable){
@@ -264,7 +264,7 @@ int main(int argc,char** argv){
         hitsMap[(*sciHit)->GetLayerID()][(*sciHit)->GetBarID()][(*sciHit)->GetOrientation()] 
         = (*sciHit)->GetEnergyDeposited();
 
-        if(!config->GetUseCMOS()){
+        if(!config->GetUseDMAPS()){
             std::vector< pCTTrack* > recoTracks = event->Reconstruct(config);
             if(recoTracks.size() == 1){
                 double trueEnergy = (*trackIdToGunEnergy.begin()).second;
@@ -284,7 +284,7 @@ int main(int argc,char** argv){
         }
         else{
             pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
-            trkMan->DoCMOSChi2Tracking();
+            trkMan->DoDMAPSChi2Tracking();
             trkMan->DoRTTracking();
             trkMan->phantomPositions();
             auto recoTracks = trkMan->GetRecoTracks();

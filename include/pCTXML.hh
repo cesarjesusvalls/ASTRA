@@ -78,8 +78,8 @@ public :
     }
     
     G4bool GetUseAstra()          {return fUseAstra;};
-    G4bool GetUseCMOS()            {return fUseCMOS;};
-    G4bool GetUse4thCMOS()         {return fUse4thCMOS;};
+    G4bool GetUseDMAPS()            {return fUseDMAPS;};
+    G4bool GetUse4thDMAPS()         {return fUse4thDMAPS;};
     G4bool GetUsePhantom()          {return fUsePhantom;};
 
     G4bool UseEnergyWide()    {return fUseEnergyWide;};
@@ -111,8 +111,8 @@ public :
     void SetEpiThickness(double val)        {fEpiThickness      = val;}
     void SetSubThickness(double val)        {fSubThickness      = val;}
     void SetUseAstra(G4bool val)           {fUseAstra         = val;}
-    void SetUseCMOS(G4bool val)             {fUseCMOS           = val;}
-    void SetUse4thCMOS(G4bool val)          {fUse4thCMOS        = val;}
+    void SetUseDMAPS(G4bool val)             {fUseDMAPS           = val;}
+    void SetUse4thDMAPS(G4bool val)          {fUse4thDMAPS        = val;}
     void SetUsePhantom(G4bool val)          {fUsePhantom        = val;}
     void SetUseEnergyWide(G4bool val)       {fUseEnergyWide     = val;}
 
@@ -152,8 +152,8 @@ private :
     double fSubThickness;
   
     G4bool   fUseAstra;
-    G4bool   fUseCMOS;
-    G4bool   fUse4thCMOS;
+    G4bool   fUseDMAPS;
+    G4bool   fUse4thDMAPS;
     G4bool   fUsePhantom;
     G4bool   fUseEnergyWide;
 

@@ -14,18 +14,18 @@
 #include "pCTEvent.hh"
 #include "pCTXML.hh"
 #include "pCTTrack.hh"
-    // int nCMOS = 4;
-    // if (!config->GetUse4thCMOS()) nCMOS = 3;
+    // int nDMAPS = 4;
+    // if (!config->GetUse4thDMAPS()) nDMAPS = 3;
 
-    // TGeoNode* CMOS[nCMOS];
-    // TGeoNode* CMOSepi[nCMOS];
-    // TGeoNode* CMOSsub[nCMOS];
-    // for (int it(0); it<nCMOS; ++it){
-    //     CMOS[it] = topNode->GetDaughter(it);
-    //     CMOSepi[it] = CMOS[it]->GetDaughter(0);
-    //     CMOSsub[it] = CMOS[it]->GetDaughter(1);
+    // TGeoNode* DMAPS[nDMAPS];
+    // TGeoNode* DMAPSepi[nDMAPS];
+    // TGeoNode* DMAPSsub[nDMAPS];
+    // for (int it(0); it<nDMAPS; ++it){
+    //     DMAPS[it] = topNode->GetDaughter(it);
+    //     DMAPSepi[it] = DMAPS[it]->GetDaughter(0);
+    //     DMAPSsub[it] = DMAPS[it]->GetDaughter(1);
     // }
-    // TGeoNode* Astra = topNode->GetDaughter(nCMOS);
+    // TGeoNode* Astra = topNode->GetDaughter(nDMAPS);
 
     // int nbars(config->GetAstraNBars());
     // int nlayers(config->GetAstraNLayers());
@@ -61,8 +61,8 @@ public:
         
         std::vector<TVector3> points;
         std::vector<TVector3> vecs;
-        std::map<int, std::vector< CMOSPixel* > > Counter = event->GetPixelHitsMap();
-        std::map<int, std::vector< CMOSPixel*> >::iterator it;
+        std::map<int, std::vector< DMAPSPixel* > > Counter = event->GetPixelHitsMap();
+        std::map<int, std::vector< DMAPSPixel*> >::iterator it;
         for(it=Counter.begin(); it!=Counter.end(); it++){
             ushort Plane = (*it).first;
             if (Plane != 3) continue;
@@ -78,8 +78,8 @@ public:
             std::cout <<  points.back().X() << "," << points.back().Y() << "," << points.back().Z() << std::endl;
         
         pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
-        //trkMan->DoCMOSTracking();
-        trkMan->DoCMOSChi2Tracking();
+        //trkMan->DoDMAPSTracking();
+        trkMan->DoDMAPSChi2Tracking();
         trkMan->DoRTTracking();
         auto recoTracks = trkMan->GetRecoTracks(); 
 

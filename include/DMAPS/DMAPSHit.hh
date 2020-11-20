@@ -1,8 +1,8 @@
-#ifndef CMOSHit_h
-#define CMOSHit_h 1
+#ifndef DMAPSHit_h
+#define DMAPSHit_h 1
 
 /*
- * Define user class CMOSHit.
+ * Define user class DMAPSHit.
  *
  * We define "our" hit format : it is caracterized by its plane and strip
  * numbers, and an energy value, the accumulated energy in this strip
@@ -24,12 +24,12 @@
  *  - position information
  */
 
-class CMOSHit : public G4VHit {
+class DMAPSHit : public G4VHit {
 public:
   /// Constructor
-  CMOSHit(const G4int plane, G4ThreeVector position, G4int particle_ID, G4int track_ID);
+  DMAPSHit(const G4int plane, G4ThreeVector position, G4int particle_ID, G4int track_ID);
   /// Destructor
-  ~CMOSHit();
+  ~DMAPSHit();
   //! Print on screen a Hit
   void Print();
   
@@ -67,24 +67,24 @@ private:
 };
 
 // Define the "hit collection" using the template class G4THitsCollection:
-typedef G4THitsCollection<CMOSHit> CMOSHitCollection;
+typedef G4THitsCollection<DMAPSHit> DMAPSHitCollection;
 
 
 // -- new and delete overloaded operators:
-extern G4ThreadLocal G4Allocator<CMOSHit>* CMOSHitAllocator;
+extern G4ThreadLocal G4Allocator<DMAPSHit>* DMAPSHitAllocator;
 
-inline void* CMOSHit::operator new(size_t)
+inline void* DMAPSHit::operator new(size_t)
 {
   //void *aHit;
-  //aHit = (void *) CMOSHitAllocator.MallocSingle();
+  //aHit = (void *) DMAPSHitAllocator.MallocSingle();
   //return aHit;
-  if(!CMOSHitAllocator) CMOSHitAllocator = new G4Allocator<CMOSHit>;
-  return (void *) CMOSHitAllocator->MallocSingle();
+  if(!DMAPSHitAllocator) DMAPSHitAllocator = new G4Allocator<DMAPSHit>;
+  return (void *) DMAPSHitAllocator->MallocSingle();
 }
-inline void CMOSHit::operator delete(void *aHit)
+inline void DMAPSHit::operator delete(void *aHit)
 {
-  //CMOSHitAllocator.FreeSingle((CMOSHit*) aHit);
-  CMOSHitAllocator->FreeSingle((CMOSHit*) aHit);
+  //DMAPSHitAllocator.FreeSingle((DMAPSHit*) aHit);
+  DMAPSHitAllocator->FreeSingle((DMAPSHit*) aHit);
 }
 
 #endif

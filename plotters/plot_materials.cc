@@ -6,7 +6,7 @@
 // MMG998@student.bham.ac.uk
 //
 
-#include "CMOSPixel.hh"
+#include "DMAPSPixel.hh"
 #include "pCTEvent.hh"
 #include "../utils/global_tools.cc"
 #include "pCTXML.hh"

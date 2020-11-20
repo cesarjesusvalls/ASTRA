@@ -6,7 +6,7 @@
 // MMG998@student.bham.ac.uk
 //
 
-#include "CMOSPixel.hh"
+#include "DMAPSPixel.hh"
 #include "pCTEvent.hh"
 #include "../utils/global_tools.cc"
 #include "pCTXML.hh"
@@ -49,9 +49,9 @@ int main(int argc,char** argv){
     int     selEvents      = 0;
     float   start_time     = clock();
     bool    show_Astra    = false;
-    bool    show_CMOS      = false;
+    bool    show_DMAPS      = false;
     bool    show_reco      = false;
-    TString fileIn         = "/Users/cjesus/Dev/protonCT/output/simulation_file_3_0.05_CMOS.root";
+    TString fileIn         = "/Users/cjesus/Dev/protonCT/output/simulation_file_3_0.05_DMAPS.root";
     TString fileOut        = "/Users/cjesus/Dev/protonCT/output/erase_me.root";
     int evtIni             = 0;
     int evtFin             = 0;
@@ -93,8 +93,8 @@ int main(int argc,char** argv){
         else if (string( gApplication->Argv(iarg))=="-showAstra"){
             show_Astra = true;
         }
-        else if (string( gApplication->Argv(iarg))=="-showCMOS"){
-            show_CMOS = true;
+        else if (string( gApplication->Argv(iarg))=="-showDMAPS"){
+            show_DMAPS = true;
         }
         else if (string( gApplication->Argv(iarg))=="-showRECO"){
             show_reco = true;
@@ -139,11 +139,11 @@ int main(int argc,char** argv){
         cout << "# RT hits: " << event->GetAstraHits().size() << endl;
 
         if(show_Astra) event->DrawAstraHits(config);
-        if(show_CMOS)   event->DrawCMOSHits(config);
+        if(show_DMAPS)   event->DrawDMAPSHits(config);
 
         if(show_reco){
             pCTTrackingManager* trkMan = new pCTTrackingManager(event,config);
-            trkMan->DoCMOSChi2Tracking();
+            trkMan->DoDMAPSChi2Tracking();
             trkMan->DoRTTracking();
             auto recoTracks = trkMan->GetRecoTracks();
             if(recoTracks.size()==4){

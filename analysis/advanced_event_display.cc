@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include "CMOSPixel.hh"
+#include "DMAPSPixel.hh"
 #include "TrackFitter.cc"
 #include "pCTEvent.hh"
 #include "pCTXML.hh"
@@ -98,19 +98,19 @@ inline void make_display(pCTXML* cfg)
     
     TGeoNode* topNode = gGeoManager->GetTopVolume()->FindNode("Envelope_0");
 
-    int nCMOS = 4;
-    if (!cfg->GetUse4thCMOS()) nCMOS = 3;
-    if (cfg->GetUsePhantom()) nCMOS ++;
+    int nDMAPS = 4;
+    if (!cfg->GetUse4thDMAPS()) nDMAPS = 3;
+    if (cfg->GetUsePhantom()) nDMAPS ++;
 
-    TGeoNode* CMOS[nCMOS];
-    TGeoNode* CMOSepi[nCMOS];
-    TGeoNode* CMOSsub[nCMOS];
-    for (int it(0); it<nCMOS; ++it){
-        CMOS[it] = topNode->GetDaughter(it);
-        CMOSepi[it] = CMOS[it]->GetDaughter(0);
-        CMOSsub[it] = CMOS[it]->GetDaughter(1);
+    TGeoNode* DMAPS[nDMAPS];
+    TGeoNode* DMAPSepi[nDMAPS];
+    TGeoNode* DMAPSsub[nDMAPS];
+    for (int it(0); it<nDMAPS; ++it){
+        DMAPS[it] = topNode->GetDaughter(it);
+        DMAPSepi[it] = DMAPS[it]->GetDaughter(0);
+        DMAPSsub[it] = DMAPS[it]->GetDaughter(1);
     }
-    Astra = topNode->GetDaughter(nCMOS);
+    Astra = topNode->GetDaughter(nDMAPS);
 
     int nbars(cfg->GetAstraNBars());
     int nlayers(cfg->GetAstraNLayers());

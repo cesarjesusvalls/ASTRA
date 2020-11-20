@@ -13,14 +13,14 @@
 #include <TVector3.h>
 #include "pCTXML.hh"
 #include "AstraHit.hh"
-#include "CMOSPixel.hh"
-#include "CMOSHit.hh"
-#include "CMOSSD.hh"
+#include "DMAPSPixel.hh"
+#include "DMAPSHit.hh"
+#include "DMAPSSD.hh"
 
 class pCTTrack : public TObject {
 
 private:
-    std::map <G4int, std::vector< CMOSPixel* >>     fPixelsMap;
+    std::map <G4int, std::vector< DMAPSPixel* >>     fPixelsMap;
     std::vector< AstraHit* >                       fAstraHits;
     double                                          fRecoEnergy;
     double                                          fTrueEnergy;
@@ -53,7 +53,7 @@ public:
     };
 
     //-----Setters------
-    void SetPixelHitsMap(std::map<G4int, std::vector< CMOSPixel* >> pxls)  {fPixelsMap       = pxls;};
+    void SetPixelHitsMap(std::map<G4int, std::vector< DMAPSPixel* >> pxls)  {fPixelsMap       = pxls;};
     void SetAstraHits(std::vector< AstraHit* > hits)                     {fAstraHits      = hits;};
     void SetRecoEnergy(double E)                                           {fRecoEnergy      = E;};
     void SetTrueEnergy(double E)                                           {fTrueEnergy      = E;};
@@ -66,7 +66,7 @@ public:
     //------------------
 
     //-----Getters------
-    std::map<G4int, std::vector< CMOSPixel* >>  GetPixelHitsMap()       {return fPixelsMap;};
+    std::map<G4int, std::vector< DMAPSPixel* >>  GetPixelHitsMap()       {return fPixelsMap;};
     std::vector< AstraHit* >                   GetAstraHits()         {return fAstraHits;};
     double                                      GetRecoEnergy()         {return fRecoEnergy;};
     double                                      GetTrueEnergy()         {return fTrueEnergy;};

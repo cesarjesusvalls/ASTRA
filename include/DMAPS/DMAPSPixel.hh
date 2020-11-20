@@ -1,9 +1,9 @@
 
-#ifndef CMOSPixel_h
-#define CMOSPixel_h 1
+#ifndef DMAPSPixel_h
+#define DMAPSPixel_h 1
 
 /*
- * Define user class CMOSPixel.
+ * Define user class DMAPSPixel.
  *
  * We define "our" hit format : it is caracterized by its plane and strip
  * numbers, and an energy value, the accumulated energy in this strip
@@ -25,12 +25,12 @@
  *  - position information
  */
 
-class CMOSPixel : public G4VHit {
+class DMAPSPixel : public G4VHit {
 public:
   /// Constructor
-  CMOSPixel();
+  DMAPSPixel();
   /// Destructor
-  ~CMOSPixel();
+  ~DMAPSPixel();
   //! Print on screen a Hit
   void Print();
   
@@ -65,16 +65,16 @@ private:
 
 
 // -- new and delete overloaded operators:
-extern G4ThreadLocal G4Allocator<CMOSPixel>* CMOSPixelAllocator;
+extern G4ThreadLocal G4Allocator<DMAPSPixel>* DMAPSPixelAllocator;
 
-inline void* CMOSPixel::operator new(size_t)
+inline void* DMAPSPixel::operator new(size_t)
 {
-  if(!CMOSPixelAllocator) CMOSPixelAllocator = new G4Allocator<CMOSPixel>;
-  return (void *) CMOSPixelAllocator->MallocSingle();
+  if(!DMAPSPixelAllocator) DMAPSPixelAllocator = new G4Allocator<DMAPSPixel>;
+  return (void *) DMAPSPixelAllocator->MallocSingle();
 }
-inline void CMOSPixel::operator delete(void *aHit)
+inline void DMAPSPixel::operator delete(void *aHit)
 {
-  CMOSPixelAllocator->FreeSingle((CMOSPixel*) aHit);
+  DMAPSPixelAllocator->FreeSingle((DMAPSPixel*) aHit);
 }
 
 #endif

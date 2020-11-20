@@ -1,6 +1,6 @@
 
-#include "CMOSSD.hh"
-#include "CMOSPixel.hh"
+#include "DMAPSSD.hh"
+#include "DMAPSPixel.hh"
 
 #include "G4Step.hh"
 #include "Randomize.hh"
@@ -18,13 +18,13 @@
 
 #include "stdio.h"
 
-CMOSSD::CMOSSD(G4String SDname)
+DMAPSSD::DMAPSSD(G4String SDname)
   : G4VSensitiveDetector(SDname)
 {
   // 'collectionName' is a protected data member of base class G4VSensitiveDetector.
   // Here we declare the name of the collection we will be using.
   collectionName.insert(SDname);
-  //collectionName.insert("CMOSHitCollection");
+  //collectionName.insert("DMAPSHitCollection");
  
   // Note that we may add as many collection names we would wish: ie
   // a sensitive detector can have many collections.
@@ -32,7 +32,7 @@ CMOSSD::CMOSSD(G4String SDname)
   pEvtID = -1;
 }
 
-CMOSSD::~CMOSSD()
+DMAPSSD::~DMAPSSD()
 {
   
         //G4cout << "BLAH" << " deleting SD called "<< GetName() << G4endl;
@@ -41,7 +41,7 @@ CMOSSD::~CMOSSD()
   //  rename(fname.c_str(), (fHistoManager->GetFileName()+"_"+GetName()+".bin").c_str());
 }
 
-G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
+G4bool DMAPSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
 {
   // step is guaranteed to be in Strip volume : no need to check for volume
   
@@ -73,7 +73,7 @@ G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   G4ThreeVector localPosition = touchable->GetHistory()->GetTopTransform().TransformPoint(worldPosition);  
 
   // create a hit and populate it with information
-  CMOSHit* hit = new CMOSHit(planeCopyNo,localPosition,particle_id,track_id);
+  DMAPSHit* hit = new DMAPSHit(planeCopyNo,localPosition,particle_id,track_id);
   hit->SetEnergyDeposited(edep);
   
   // finally store the hit in the collection
@@ -84,14 +84,14 @@ G4bool CMOSSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   return true;
 }
 
-void CMOSSD::Initialize(G4HCofThisEvent* HCE)
+void DMAPSSD::Initialize(G4HCofThisEvent* HCE)
 {
 
   // ------------------------------
   // -- Creation of the collection
   // ------------------------------
-  // -- collectionName[0] is "CMOSHitCollection", as declared in constructor
-  hitCollection = new CMOSHitCollection(SensitiveDetectorName, collectionName[0]);
+  // -- collectionName[0] is "DMAPSHitCollection", as declared in constructor
+  hitCollection = new DMAPSHitCollection(SensitiveDetectorName, collectionName[0]);
 
   // ----------------------------------------------------------------------------
   // -- and attachment of this collection to the "Hits Collection of this Event":
@@ -107,7 +107,7 @@ void CMOSSD::Initialize(G4HCofThisEvent* HCE)
 
 #include "G4Timer.hh"
 
-void CMOSSD::EndOfEvent(G4HCofThisEvent*)
+void DMAPSSD::EndOfEvent(G4HCofThisEvent*)
 {
     G4Timer* timer = new G4Timer();
     timer->Start();
@@ -127,7 +127,7 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
     //G4cout << "EndOfEvent " << eventID << G4endl;
   
     // test output of hits
-    //G4cout << "\nCMOSSD::EndOfEvent method of SD `" << GetName() << "' called." << G4endl;
+    //G4cout << "\nDMAPSSD::EndOfEvent method of SD `" << GetName() << "' called." << G4endl;
     //G4cout << "\thitCollection " << collectionName[0] << " has " << nHits << " hits" << G4endl;
     
     // container to add the edep for multiple hits on a strip (if this happens)
@@ -135,7 +135,7 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
     
     for ( G4int h = 0 ; (h<nHits) ; ++h )
     {
-            const CMOSHit* hit = static_cast<const CMOSHit*>( hitCollection->GetHit( h ) );
+            const DMAPSHit* hit = static_cast<const DMAPSHit*>( hitCollection->GetHit( h ) );
             
             //Uncomment this line if you want to record only
             //primary energy depositions
@@ -168,7 +168,7 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
     // first.first = planeNumber
     // second.second = total energy deposited
 
-    std::map<G4int, std::vector< CMOSPixel* > > Counter;
+    std::map<G4int, std::vector< DMAPSPixel* > > Counter;
     // now loop through the map and check if above threshold
     std::map<std::pair<G4int, std::pair<G4int,std::pair<G4int,G4int>> >, G4double>::iterator it;
     for(it=Digits.begin(); it!=Digits.end(); it++)
@@ -182,27 +182,27 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
         //
         if( nElectrons > threshold )
         {               
-            CMOSPixel* pixel_temp = new CMOSPixel();
+            DMAPSPixel* pixel_temp = new DMAPSPixel();
             pixel_temp->SetPlaneNumber(Plane);
             pixel_temp->SetPixelIndex((*it).first.second.second);
             pixel_temp->SetElectronsLiberated(nElectrons);
             pixel_temp->SetTrackID((*it).first.second.first);
 
-            std::map<G4int, std::vector< CMOSPixel* > >::iterator it2 = Counter.find(Plane);
+            std::map<G4int, std::vector< DMAPSPixel* > >::iterator it2 = Counter.find(Plane);
             if(Counter.find(Plane) != Counter.end())
             {
                 (*it2).second.push_back(pixel_temp);
             }
             else
             {
-                  std::vector<CMOSPixel* > spam;
+                  std::vector<DMAPSPixel* > spam;
                   spam.push_back(pixel_temp);
                   Counter[Plane] = spam;
             }
         }               
     }
 
-    //  write out to the text file as used to with old CMOS
+    //  write out to the text file as used to with old DMAPS
     const int evtID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   
     // if pEvtID  ==-1 then no runs have occured before and we need to make the file
@@ -224,7 +224,7 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
 
     //std::cout << "Nhits:" << pCT_Event->GetPixelHitsMap().size() << std::endl;
 
-    // std::map<G4int, std::vector< CMOSPixel*> >::iterator it2;
+    // std::map<G4int, std::vector< DMAPSPixel*> >::iterator it2;
     // for(it2=Counter.begin(); it2!=Counter.end(); it2++)
     // {
     //     unsigned short int Plane = (*it2).first;
@@ -245,5 +245,5 @@ void CMOSSD::EndOfEvent(G4HCofThisEvent*)
     // }
     pEvtID = evtID;
     timer->Stop();
-    //G4cout << "real time elapsed in CMOSSD::EndOfAction() = " << timer->GetRealElapsed() << G4endl; 
+    //G4cout << "real time elapsed in DMAPSSD::EndOfAction() = " << timer->GetRealElapsed() << G4endl; 
 }

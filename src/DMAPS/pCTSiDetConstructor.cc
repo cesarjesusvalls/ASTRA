@@ -103,7 +103,7 @@ G4Box* epiShape =
 	      0.5*GetPlaneColumns()*mm,
 	      0.5*GetPlaneRows()*mm,
 	      0.5*GetEpiThickness()*um);//Maybe GetEpiThickness()
- epiLogic = //defined in hh to pass it to CMOSSD
+ epiLogic = //defined in hh to pass it to DMAPSSD
     new G4LogicalVolume(epiShape, Silicon,"epi");  
  new G4PVPlacement(0, posEpi, epiLogic, GetEpiName(), planeLogic, false,0, checkOverlaps);
  
@@ -116,7 +116,7 @@ G4LogicalVolume* subLogic = new G4LogicalVolume(subShape,Silicon, "sub");
  new G4PVPlacement(0, posSub, subLogic, "sub", planeLogic, false, GetCopyNum(),checkOverlaps);
 
 G4SDManager* SDman      = G4SDManager::GetSDMpointer();
-CMOSSD*      aTrackerSD = (CMOSSD*)SDman->FindSensitiveDetector("CMOS");
+DMAPSSD*      aTrackerSD = (DMAPSSD*)SDman->FindSensitiveDetector("DMAPS");
 
 epiLogic->SetSensitiveDetector( aTrackerSD );
 epiLogic->SetVisAttributes(G4Colour(0.6, 0., 0.));

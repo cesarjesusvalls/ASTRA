@@ -1,12 +1,12 @@
 
-#ifndef CMOSSD_h
-#define CMOSSD_h 1
+#ifndef DMAPSSD_h
+#define DMAPSSD_h 1
 #include "pCTXML.hh"
 #include "G4VSensitiveDetector.hh"
 ///class DetectorConstruction;
 ///class RunAction;
 
-#include "CMOSHit.hh"              // <<- the hit "format" we define
+#include "DMAPSHit.hh"              // <<- the hit "format" we define
 #include "pCTXML.hh"   
 class G4HCofThisEvent;           // <<- means "H(it) C(ollections) of This Event"
 
@@ -23,13 +23,13 @@ class G4HCofThisEvent;           // <<- means "H(it) C(ollections) of This Event
  *
  * ProcessHits()
  */
-class CMOSSD : public G4VSensitiveDetector
+class DMAPSSD : public G4VSensitiveDetector
 {
 public:
   /// Constructor
-  CMOSSD(G4String SDname);
+  DMAPSSD(G4String SDname);
   /// Destructor
-  ~CMOSSD();
+  ~DMAPSSD();
 
 public:
   /// methods from base class G4VSensitiveDetector
@@ -44,7 +44,7 @@ public:
   void SetBinaryName(G4String name) { fname = name; };
 
 private:
-  CMOSHitCollection*      hitCollection;
+  DMAPSHitCollection*      hitCollection;
   G4int                   HCID;       //JT
   G4int pEvtID;
 	//std::ofstream fout;

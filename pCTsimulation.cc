@@ -113,20 +113,20 @@ int main(int argc,char** argv)
                 cout << "   --Nlay              Astra # of layers.    " << endl;
                 cout << "   --barZ             Layer's thickness (mm)." << endl;
                 cout << "   --NOTusePhantom     do not place phantom." << endl;
-                cout << "   --NOTuseCMOS        do not place CMOS (including 4th plane)." << endl;
-                cout << "   --useCMOS        do not place CMOS (including 4th plane)." << endl;
+                cout << "   --NOTuseDMAPS        do not place DMAPS (including 4th plane)." << endl;
+                cout << "   --useDMAPS        do not place DMAPS (including 4th plane)." << endl;
                 cout << "**************************************" << endl;
             }
             else if (string(argv[iarg])=="--NOTusePhantom"){
                 pCTXMLInput->SetUsePhantom(false);
             }
-            else if (string(argv[iarg])=="--NOTuseCMOS"){
-                pCTXMLInput->SetUseCMOS(false);
-                pCTXMLInput->SetUse4thCMOS(false);
+            else if (string(argv[iarg])=="--NOTuseDMAPS"){
+                pCTXMLInput->SetUseDMAPS(false);
+                pCTXMLInput->SetUse4thDMAPS(false);
             }
-            else if (string(argv[iarg])=="--useCMOS"){
-                pCTXMLInput->SetUseCMOS(true);
-                pCTXMLInput->SetUse4thCMOS(true);
+            else if (string(argv[iarg])=="--useDMAPS"){
+                pCTXMLInput->SetUseDMAPS(true);
+                pCTXMLInput->SetUse4thDMAPS(true);
             }
             else if (string(argv[iarg])=="--barCoat"){
                 iarg++;

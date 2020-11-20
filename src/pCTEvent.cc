@@ -89,7 +89,7 @@ void pCTEvent::DrawAstraHits(pCTXML* config){
 
 }
 
-void pCTEvent::DrawCMOSHits(pCTXML* config){
+void pCTEvent::DrawDMAPSHits(pCTXML* config){
 
     const int    nplanes(4);
     const double pitchX(config->GetPixelX());
@@ -129,8 +129,8 @@ void pCTEvent::DrawCMOSHits(pCTXML* config){
         cmosBox->SetFillColor(gridColor);
         cmosBox->Draw("same");
 
-        std::map<G4int, std::vector< CMOSPixel* > > Counter = this->GetPixelHitsMap();
-        std::map<G4int, std::vector< CMOSPixel*> >::iterator it;
+        std::map<G4int, std::vector< DMAPSPixel* > > Counter = this->GetPixelHitsMap();
+        std::map<G4int, std::vector< DMAPSPixel*> >::iterator it;
         for(it=Counter.begin(); it!=Counter.end(); it++){
             ushort Plane = (*it).first;
             if (Plane != p) continue;

@@ -11,7 +11,7 @@
 
 #include <TObject.h>
 #include <TRandom3.h>
-#include "CMOSPixel.hh"
+#include "DMAPSPixel.hh"
 #include "pCTXML.hh"
 #include "AstraHit.hh"
 #include "pCTTrack.hh"
@@ -21,7 +21,7 @@ class pCTEvent : public TObject {
 
 private:
     int fEvtId;
-    std::map <G4int, std::vector< CMOSPixel* >>     fPixelsMap;
+    std::map <G4int, std::vector< DMAPSPixel* >>     fPixelsMap;
     std::vector< AstraHit* >                       fAstraHits;
     std::vector< pCTTrack* >                        fRecoProtons;
     std::map <int, double >                         fGunEnergy;   // map from track ID to pgun true kin energy.
@@ -45,12 +45,12 @@ public:
     void DrawAstraHits (pCTXML* config);
     void DrawRecoTracks (pCTXML* config, std::vector< pCTTrack* > trks);
     void DrawRecoTracks3D (pCTXML* config, std::vector< pCTTrack* > trks);
-    void DrawCMOSHits   (pCTXML* config);
+    void DrawDMAPSHits   (pCTXML* config);
 
     //-----Setters------
 
     void SetEvtId(int evtid)                                                {fEvtId       = evtid;};
-    void SetPixelHitsMap(std::map<G4int, std::vector< CMOSPixel* >> pxls)   {fPixelsMap   = pxls;};
+    void SetPixelHitsMap(std::map<G4int, std::vector< DMAPSPixel* >> pxls)   {fPixelsMap   = pxls;};
     void SetAstraHits(std::vector< AstraHit* > hits)                      {fAstraHits  = hits;};
     void SetGunEnergyMap(std::map <int, double > gun)                       {fGunEnergy   = gun;};
     void SetRecoProtons(std::vector< pCTTrack* > trks)                      {fRecoProtons = trks;};
@@ -62,7 +62,7 @@ public:
     //-----Getters------
 
     int GetEvtId() {return fEvtId;};
-    std::map<G4int, std::vector< CMOSPixel* >>  GetPixelHitsMap()    {return fPixelsMap;};
+    std::map<G4int, std::vector< DMAPSPixel* >>  GetPixelHitsMap()    {return fPixelsMap;};
     std::vector< AstraHit* >                   GetAstraHits()      {return fAstraHits;};
     std::map <int, double >                     GetGunEnergyMap()    {return fGunEnergy;};
     std::vector< pCTTrack* >                    GetRecoProtons()     {return fRecoProtons;};

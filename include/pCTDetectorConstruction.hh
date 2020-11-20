@@ -33,7 +33,7 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 #include "pCTXML.hh"
-#include "CMOSSD.hh"
+#include "DMAPSSD.hh"
 #include "phantom.hh"
 
 class G4VPhysicalVolume;
@@ -54,7 +54,7 @@ class pCTDetectorConstruction : public G4VUserDetectorConstruction
      
         G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
         pCTXML* pCTXMLInput;
-        CMOSSD* GetSensitiveDetector() {return fCMOSSD;};
+        DMAPSSD* GetSensitiveDetector() {return fDMAPSSD;};
   //  Phantom* GetSensitiveDetector()  {return fPhantom;};
     protected:
         G4Material* FindMaterial(G4String m);
@@ -64,7 +64,7 @@ class pCTDetectorConstruction : public G4VUserDetectorConstruction
         G4LogicalVolume* logicPhantom;
         G4LogicalVolume* logicRT;
         G4LogicalVolume* logicAstra;
-        CMOSSD*          fCMOSSD;
+        DMAPSSD*          fDMAPSSD;
   //        Phantom*         fPhantom;
 };
 

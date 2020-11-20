@@ -14,7 +14,7 @@
 #include <TH3.h>
 #include <TGraph.h>
 
-#include "CMOSPixel.hh"
+#include "DMAPSPixel.hh"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -33,7 +33,7 @@ pCTTrackingManager::pCTTrackingManager(pCTEvent* evt, pCTXML* cnf) : fevent(evt)
 //************************************************************************************************************
 
 //************************************************************************************************************
-bool checkHitsCompatibility(CMOSPixel* hit2, CMOSPixel* hit1, double Z){
+bool checkHitsCompatibility(DMAPSPixel* hit2, DMAPSPixel* hit1, double Z){
 //************************************************************************************************************
     return TVector3(hit1->GetX()-hit2->GetX(),hit1->GetY()-hit2->GetY(),Z).Theta() <= 1;
 }
@@ -65,12 +65,12 @@ void pCTTrackingManager::DoRTTracking(){
     std::map<int, int> track_to_id;
     for (int s(0); s<fcmosTracks.size(); ++s){
 
-         if(!isCMOSReco[s]) continue;
+         if(!isDMAPSReco[s]) continue;
         // set true by default and make it false if the track building fails.
         isReco[s] = true;
         
         // this distance is hardcoded... ideally mode to config XML!
-        // last CMOS plane to first layer distance is set to 5mm
+        // last DMAPS plane to first layer distance is set to 5mm
         double delta = 5 + barWidth/2;
 
         // for each seed, compute a prediction in the first Astra layer.
@@ -189,13 +189,13 @@ void pCTTrackingManager::DoRTTracking(){
 }
 
 //************************************************************************************************************
-double pCTTrackingManager::TrackOptimality(vector <CMOSPixel*> inputPixels, pCTXML*  config){
+double pCTTrackingManager::TrackOptimality(vector <DMAPSPixel*> inputPixels, pCTXML*  config){
 //************************************************************************************************************
     // function Object to be minimized
     struct SumDistance2 {
-        const vector <CMOSPixel*> fPixels;
+        const vector <DMAPSPixel*> fPixels;
         pCTXML* fconfig;
-        SumDistance2(const vector <CMOSPixel*> g, pCTXML*  config) : fPixels(g), fconfig(config) {}
+        SumDistance2(const vector <DMAPSPixel*> g, pCTXML*  config) : fPixels(g), fconfig(config) {}
         // calculate distance line-point
         double distance2(double x,double y,double z, const double *p) {
             // distance line point is D= | (xp-x0) cross  ux |
@@ -238,44 +238,44 @@ double pCTTrackingManager::TrackOptimality(vector <CMOSPixel*> inputPixels, pCTX
 }
 
 //************************************************************************************************************
-void pCTTrackingManager::DoCMOSTracking(){
+void pCTTrackingManager::DoDMAPSTracking(){
 //************************************************************************************************************
 
-    isCMOSReco.clear();
+    isDMAPSReco.clear();
     fcmosTracks.clear();
 
     int Nplanes    = 4;
     int maxTracks  = 10;
     int Ntracks    = 1000;
     double zPos[4] = {fconfig->GetPosZ0(),fconfig->GetPosZ1(),fconfig->GetPosZ2(),fconfig->GetPosZ3()};
-    std::map<G4int, std::vector< CMOSPixel* > > planeToHits = fevent->GetPixelHitsMap();
-    std::map<G4int, std::vector< CMOSPixel*> >::iterator plane;
-    std::vector< CMOSPixel*>::iterator cmosHit;
+    std::map<G4int, std::vector< DMAPSPixel* > > planeToHits = fevent->GetPixelHitsMap();
+    std::map<G4int, std::vector< DMAPSPixel*> >::iterator plane;
+    std::vector< DMAPSPixel*>::iterator cmosHit;
 
     for(plane=planeToHits.begin(); plane!=planeToHits.end(); plane++) 
         if ((*plane).second.size() < Ntracks) Ntracks = (*plane).second.size(); 
 
     if(Ntracks>maxTracks) {return;}
 
-    std::map<int, std::vector< std::vector<CMOSPixel*>>> cmos_tracks;
+    std::map<int, std::vector< std::vector<DMAPSPixel*>>> cmos_tracks;
     // start creating 1 cmos_track per hit in the first plane
     for(uint i(0); i<planeToHits[0].size(); i++){
-        isCMOSReco[i] = true;
-        std::vector<std::vector<CMOSPixel*>> new_set_of_tracks;
-        std::vector<CMOSPixel*> new_track;
+        isDMAPSReco[i] = true;
+        std::vector<std::vector<DMAPSPixel*>> new_set_of_tracks;
+        std::vector<DMAPSPixel*> new_track;
         new_track.push_back(planeToHits[0][i]);
         new_set_of_tracks.push_back(new_track);
         cmos_tracks[i] = new_set_of_tracks;
         int trks_size = 1;
-        while(isCMOSReco[i] and trks_size<Nplanes){
-            std::vector<std::vector<CMOSPixel*>> tmp_tracks;
+        while(isDMAPSReco[i] and trks_size<Nplanes){
+            std::vector<std::vector<DMAPSPixel*>> tmp_tracks;
             int tracks_to_rm = (int) cmos_tracks[i].size();
             for(int trk(0); trk<(int)cmos_tracks[i].size(); trk++){
                 int p_it = (int)cmos_tracks[i][trk].size();
                 int compat_count = 0;
                 for(uint j(0); j<planeToHits[p_it].size(); j++){
                     if(checkHitsCompatibility(cmos_tracks[i][trk].back(),planeToHits[p_it][j],zPos[p_it]-zPos[p_it-1])){
-                        std::vector<CMOSPixel*> new_tmp_track;
+                        std::vector<DMAPSPixel*> new_tmp_track;
                         for(auto tmpTrkHit:cmos_tracks[i][trk]) new_tmp_track.push_back(tmpTrkHit);
                         new_tmp_track.push_back(planeToHits[p_it][j]);
                         tmp_tracks.push_back(new_tmp_track);
@@ -283,16 +283,16 @@ void pCTTrackingManager::DoCMOSTracking(){
                     }
                 }
                 if(compat_count==1) for (auto tmpTrk:tmp_tracks) cmos_tracks[i].push_back((tmpTrk));
-                else isCMOSReco[i] = false;
+                else isDMAPSReco[i] = false;
                 cmos_tracks[i].erase(cmos_tracks[i].begin(), cmos_tracks[i].begin() + tracks_to_rm);
             }
             trks_size++;
         }
     }
 
-    std::vector<std::vector<CMOSPixel*>> result;
+    std::vector<std::vector<DMAPSPixel*>> result;
     for(uint i(0); i<planeToHits[0].size(); i++){
-        if(isCMOSReco[i]){
+        if(isDMAPSReco[i]){
             result.push_back(cmos_tracks[i][0]);
         }
     }
@@ -301,7 +301,7 @@ void pCTTrackingManager::DoCMOSTracking(){
 }
 
 //************************************************************************************************************
-TVector3 pCTTrackingManager::GetSpacePoint (CMOSPixel* pixel, int plane){
+TVector3 pCTTrackingManager::GetSpacePoint (DMAPSPixel* pixel, int plane){
 //************************************************************************************************************
     double zPos[4] = {fconfig->GetPosZ0(),fconfig->GetPosZ1(),fconfig->GetPosZ2(),fconfig->GetPosZ3()};
     double xPos = 0.04*(pixel->GetX()-fconfig->GetPlaneColumns()*0.5);
@@ -310,16 +310,16 @@ TVector3 pCTTrackingManager::GetSpacePoint (CMOSPixel* pixel, int plane){
 }
 
 //************************************************************************************************************
-void pCTTrackingManager::DoCMOSChi2Tracking(){
+void pCTTrackingManager::DoDMAPSChi2Tracking(){
 //************************************************************************************************************
-    isCMOSReco.clear();
+    isDMAPSReco.clear();
     fcmosTracks.clear();
 
     // check how many tracks do we have and return if there are too many.
     int maxTracks  = 10;
     int Ntracks    = 1000;
-    std::map<G4int, std::vector< CMOSPixel* > > planeToHits = fevent->GetPixelHitsMap();
-    std::map<G4int, std::vector< CMOSPixel*> >::iterator plane;
+    std::map<G4int, std::vector< DMAPSPixel* > > planeToHits = fevent->GetPixelHitsMap();
+    std::map<G4int, std::vector< DMAPSPixel*> >::iterator plane;
     for(plane=planeToHits.begin(); plane!=planeToHits.end(); plane++) 
         if ((*plane).second.size() < Ntracks) Ntracks = (*plane).second.size(); 
     if(Ntracks>maxTracks) {return;}
@@ -327,13 +327,13 @@ void pCTTrackingManager::DoCMOSChi2Tracking(){
     // form all possible track combinations and sort them by fitness (chi2).
     int tot_size = 0;
     for (int p_it(0); p_it<4; p_it++) tot_size += planeToHits[p_it].size();
-    std::vector<std::pair<double,std::vector<CMOSPixel*>>> tracks_fitness;
+    std::vector<std::pair<double,std::vector<DMAPSPixel*>>> tracks_fitness;
 
     for(int i(0); i<(int)planeToHits[0].size(); i++){
         for(int j(0); j<(int)planeToHits[1].size(); j++){
             for(int k(0); k<(int)planeToHits[2].size(); k++){
                 for(int l(0); l<(int)planeToHits[3].size(); l++){
-                    std::vector< CMOSPixel* > track;
+                    std::vector< DMAPSPixel* > track;
                     track.push_back(planeToHits[0][i]);
                     track.push_back(planeToHits[1][j]);
                     track.push_back(planeToHits[2][k]);
@@ -345,23 +345,23 @@ void pCTTrackingManager::DoCMOSChi2Tracking(){
     }
     std::sort(tracks_fitness.begin(), tracks_fitness.end()); 
 
-    // select tracks not sharing CMOSPixel*.
-    std::vector<std::vector<CMOSPixel*>> result;
-    std::vector<std::pair<double,std::vector<CMOSPixel*>>>::iterator trk;
-    std::vector<CMOSPixel*> selPixels;
+    // select tracks not sharing DMAPSPixel*.
+    std::vector<std::vector<DMAPSPixel*>> result;
+    std::vector<std::pair<double,std::vector<DMAPSPixel*>>>::iterator trk;
+    std::vector<DMAPSPixel*> selPixels;
     int trk_cnt = 0;
 
     for(trk=tracks_fitness.begin(); trk!=tracks_fitness.end(); trk++){
         bool found = false;
         for(auto cmoshit:trk->second){
-            std::vector<CMOSPixel*>::iterator it = std::find(selPixels.begin(), selPixels.end(), cmoshit);
+            std::vector<DMAPSPixel*>::iterator it = std::find(selPixels.begin(), selPixels.end(), cmoshit);
             if(it != selPixels.end()){
                 found = true;
                 break;
             }
         }
         if (!found){
-            isCMOSReco[trk_cnt] = true;
+            isDMAPSReco[trk_cnt] = true;
 
             for(auto cmoshit:trk->second) selPixels.push_back(cmoshit);
             result.push_back((trk->second));
@@ -377,7 +377,7 @@ void pCTTrackingManager::phantomPositions(){
 //************************************************************************************************************
     for (int s(0); s<fcmosTracks.size(); ++s){
 
-        if(!isCMOSReco[s]) continue;
+        if(!isDMAPSReco[s]) continue;
 
         TVector3 phantomHit = fevent->GetPhantomMidPos();
         float phantomPosZ = (fconfig->GetPosZ2()+fconfig->GetPosZ1())*0.5;

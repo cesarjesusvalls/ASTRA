@@ -14,7 +14,7 @@
 #include "pCTEvent.hh"
 #include "pCTXML.hh"
 #include "AstraHit.hh"
-#include "CMOSPixel.hh"
+#include "DMAPSPixel.hh"
 #include <TH1.h>
 #include <TGraph.h>
 #include <TH2.h>
@@ -27,10 +27,10 @@ private:
     pCTXML*   fconfig;                                  // the configuration used to generate the event.
 
     //--------------
-    std::vector< std::vector<CMOSPixel*>> fcmosTracks;  // list of tracks provided by the CMOS tracking algorithm.       
+    std::vector< std::vector<DMAPSPixel*>> fcmosTracks;  // list of tracks provided by the DMAPS tracking algorithm.       
     int NrecoTracks;                                    // number of tracks which are succesfully reconstructed.
     std::map<int, bool> isReco;                         // true if the track is reco.
-    std::map<int, bool> isCMOSReco;                     // true if the track is reco.
+    std::map<int, bool> isDMAPSReco;                     // true if the track is reco.
     std::vector< pCTTrack* > fRecoTracks;               // list of pCTTracks
     //--------------
 
@@ -59,13 +59,13 @@ public:
 
     //------------------
 
-    double TrackOptimality(vector <CMOSPixel*> inputPixels, pCTXML* config);
+    double TrackOptimality(vector <DMAPSPixel*> inputPixels, pCTXML* config);
 
     void DoRTTracking();
-    void DoCMOSTracking();
-    void DoCMOSChi2Tracking();
+    void DoDMAPSTracking();
+    void DoDMAPSChi2Tracking();
     void phantomPositions();
-    TVector3 GetSpacePoint (CMOSPixel* pixel, int plane);
+    TVector3 GetSpacePoint (DMAPSPixel* pixel, int plane);
 };
 
 #endif

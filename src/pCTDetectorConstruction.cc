@@ -8,7 +8,7 @@
 
 #include "pCTDetectorConstruction.hh"
 #include "G4SDManager.hh"
-#include "CMOSSD.hh"
+#include "DMAPSSD.hh"
 #include "AstraSD.hh"
 #include "phantom.hh"
 #include "G4RunManager.hh"
@@ -52,8 +52,8 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     this->DefineMaterials();
 
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
-    fCMOSSD = new CMOSSD("CMOS");
-    SDman->AddNewDetector(fCMOSSD);
+    fDMAPSSD = new DMAPSSD("DMAPS");
+    SDman->AddNewDetector(fDMAPSSD);
     SDman->AddNewDetector(new AstraSD("AstraSensDet"));
     SDman->AddNewDetector(new Phantom("PhantomSD"));
     pCTRootPersistencyManager *InputPersistencyManager = pCTRootPersistencyManager::GetInstance();
@@ -158,14 +158,14 @@ G4VPhysicalVolume* pCTDetectorConstruction::Construct()
     G4ThreeVector pos3   = G4ThreeVector((pCTXMLInput->GetPosX())*cm, (pCTXMLInput->GetPosY())*cm, (pCTXMLInput->GetPosZ3())*cm);
 
     G4ThreeVector Astra;
-    if(pCTXMLInput->GetUse4thCMOS()) Astra = G4ThreeVector(0, 0, pos3.getZ() + 0.5*cm + pCTXMLInput->GetAstraNLayers()*pCTXMLInput->GetAstraBarZ()*mm/2);
+    if(pCTXMLInput->GetUse4thDMAPS()) Astra = G4ThreeVector(0, 0, pos3.getZ() + 0.5*cm + pCTXMLInput->GetAstraNLayers()*pCTXMLInput->GetAstraBarZ()*mm/2);
     else                             Astra = G4ThreeVector(0, 0, pos2.getZ() + 0.5*cm + pCTXMLInput->GetAstraNLayers()*pCTXMLInput->GetAstraBarZ()*mm/2);
 
-   if(pCTXMLInput->GetUseCMOS()){
+   if(pCTXMLInput->GetUseDMAPS()){
 		new G4PVPlacement(0,pos0,logicPlane,nameSiliconDet,logicEnv,false,0,checkOverlaps);
 		new G4PVPlacement(0,pos1,logicPlane,nameSiliconDet,logicEnv,false,1,checkOverlaps);
 		new G4PVPlacement(0,pos2,logicPlane,nameSiliconDet,logicEnv,false,2,checkOverlaps);
-   		if(pCTXMLInput->GetUse4thCMOS()) new G4PVPlacement(0,pos3,logicPlane,nameSiliconDet,logicEnv,false,3,checkOverlaps);
+   		if(pCTXMLInput->GetUse4thDMAPS()) new G4PVPlacement(0,pos3,logicPlane,nameSiliconDet,logicEnv,false,3,checkOverlaps);
    }
 
     //______ Astra ______
