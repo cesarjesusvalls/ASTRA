@@ -198,10 +198,3 @@ This work was supported by:
 - Swiss National Foundation — Grant 200021_85012
 - EPSRC — Grant EP/R023220/1
 
----
-
-## See Also
-
-- [Proton Computed Tomography — Wikipedia](https://en.wikipedia.org/wiki/Proton_computed_tomography)
-- [GEANT4 Documentation](https://geant4.web.cern.ch/documentation)
-- [PRaVDA Collaboration](https://www.pravda.uk/)
